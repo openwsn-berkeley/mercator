@@ -6,7 +6,8 @@ For more information, contact `TODO`.
 
 This repository is organized as follows:
 
-* `locations/` contains the locations of all the motes, grouped by deployment site.
 * `datasets/` contains a collection of connectivity datasets.
+* `locations/` contains the locations of all the motes, grouped by deployment site.
+* `code/` contains the firmware run on the motes, and the scripts to run an experiment. All experiments are run on the [IoT-LAB testbeds](https://www.iot-lab.info/).
 
-Navigate into each directory for more detailed information.
+Navigate into each directory for more detailed information. You will find the source code of the web interface at `TODO` in the `gh-pages` branch of this repository.
