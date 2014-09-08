@@ -1,4 +1,4 @@
-You are watching the raw data. To visualize it: **https://openwsn-berkeley.github.io/aila/**
+_You are watching the raw data. To visualize it: https://openwsn-berkeley.github.io/aila/._
 
 ### Aila: Dense Wireless Connectivity Datasets for the IoT
 
