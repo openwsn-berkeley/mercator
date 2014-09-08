@@ -1,8 +1,6 @@
-You are watching the raw data. To visualize it:
+You are watching the raw data. To visualize it: **https://openwsn-berkeley.github.io/aila/**
 
-#### https://openwsn-berkeley.github.io/aila/ ####
-
-# Aila: Dense Wireless Connectivity Datasets for the IoT
+### Aila: Dense Wireless Connectivity Datasets for the IoT
 
 **Aila** is a collection of connectivity datasets gathered on the IoT-LAB sites. These datasets are:
 * **dense in time**, meaning the connectivity is continuously assessed over a long period of time; it allows one to see variation of connectivity over time.
