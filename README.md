@@ -2,7 +2,7 @@ _You are watching the raw data. To visualize it: https://openwsn-berkeley.github
 
 ## Mercator: Dense Wireless Connectivity Datasets for the IoT
 
-<img src="https://raw.githubusercontent.com/wiki/openwsn-berkeley/mercator/figures/mercator.jpg" align="left">
+<img src="https://raw.githubusercontent.com/wiki/openwsn-berkeley/mercator/figures/mercator.jpg" align="left" style="margin:0px 50px">
 
 **Mercator** is a collection of connectivity datasets gathered on the IoT-LAB sites. These datasets are:
 * **dense in time**, meaning the connectivity is continuously assessed over a long period of time; it allows one to see variation of connectivity over time.
