@@ -4,16 +4,7 @@ This folder contains:
 * `datasets.csv` which lists the dataset files. This file is needed by the web interface.
 * `gen_datasets.py` which generates `datasets.csv` based on the current dataset files.
 
-Each dataset file corresponds to one experiment. In an experiment, each mote sends a packet while all the others listen. This packet has the following format:
-
-```
-<sourcemac> <counter> <fillbyte> <fillbyte> <fillbyte> ... <fillbyte>
-    8B         2B         1B         1B         1B             1B
-
-<-------------------------- length bytes --------------------------->
-```
-
-The experiment is driven is such a way that only one motes sends at a given time, and that all the other motes listen to the same channel. A record (line) is written for each of the receiving mote, after each transmitter is done transmitting.
+Each dataset file corresponds to one experiment. In an experiment, each mote sends a packet while all the others listen. The experiment is driven is such a way that only one motes sends at a given time, and that all the other motes listen to the same channel. A record (line) is written for each of the receiving mote, after each transmitter is done transmitting.
 
 It is a CSV file with the following columns:
 
