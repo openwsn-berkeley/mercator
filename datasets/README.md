@@ -25,4 +25,5 @@ column name  | description
 `pkctr`      | 2-byte counter read from the packet, in hexadecimal. Example: `0x0123`. Set to all `0`'s if `crc` or `mine` is `0`.
 `txnumpk`    | Number of packets the transmitter is configured to transmit.
 `txifdur`    | Number of millisecond the transmitter is configured to wait between the beginning of each packet.
+`txlength`   | Length, in bytes, of each transmitted packet.
 `txfillbyte` | Byte the transmitter uses to fill the packet, in hexadecimal. Example: `0x0a`.
