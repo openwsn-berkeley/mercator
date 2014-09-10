@@ -15,7 +15,7 @@ column name  | description
 -------------|------------
 `timestamp`  | Time at which this record was written to the file, in UTC, of the form `YYYY.MM.DD_hh.mm.ss`. Note that this time is _approximate_ only (e.g. buffering delays), and cannot be used to calculate inter-packet durations.
 `mac`        | 8-byte MAC address of the mote reporting this record, i.e. the mote which has received the wireless packet. The MAC address is written as hexadecimal bytes separated by `-`. Example:`14-15-92-00-00-12-34-56`.
-`frequency`  | Frequency channel the packet was received on, in MHz. For example, `2405` corresponds to 2.405GHz, or IEEE802.15.4 channel 11.
+`frequency`  | Frequency channel the packet was received on, in IEEE notattion (`11` for 2.405GHz, `26` for 2.480GHz).
 `length`     | Length, in bytes, of the received packet.
 `rssi`       | Received signal strength of the packet, in dBm.
 `crc`        | `1` if the packet was received with a good CRC, `0` otherwise.
