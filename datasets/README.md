@@ -1,21 +1,22 @@
 This folder contains:
 
-* a dataset per experiment. These files have the format `<site>-<timestamp>.csv`.
+* a dataset per experiment. These files have the format `<site>-<timestamp>_raw.csv`.
 * `datasets.csv` which lists the dataset files. This file is needed by the web interface.
 * `gen_datasets.py` which generates `datasets.csv` based on the current dataset files.
 
-Each dataset file corresponds to one experiment. In an experiment, each mote sends a packet while all the others listen. The experiment is driven is such a way that only one motes sends at a given time, and that all the other motes listen to the same channel. A record (line) is written for each of the receiving mote, after each transmitter is done transmitting.
+Each dataset file corresponds to one experiment. In an experiment, each mote sends packets while all the others listen. The experiment is driven is such a way that only one motes sends at a given time, and that all the other motes listen to the same channel. A record (line) is written each time a mote receives a packet.
 
 It is a CSV file with the following columns:
 
 column name  | description
 -------------|------------
-`timestamp`  | Time at which this record was written to the file, in UTC, of the form `YYYY.MM.DD_hh.mm.ss`.
-`mac`        | MAC address of the mote reporting this recordin, i.e. the mote which has received the wireless packets. The MAC address is written as hexadecimal bytes separated by `-`. Example:`14-15-92-00-00-12-34-56`.
-`frequency`  | Frequency channel the packets were received on, in MHz. For example, `2405` corresponds to 2.405GHz, or IEEE802.15.4 channel 11.
-`sourcemac`  | MAC address of the mote sending the received packets, as read from the packet.
-`counter`    | 2-byte counter read from the packet, in hexadecimal. Example: `0x0123`.
-`length`     | Length, in bytes of the received packets.
+`timestamp`  | Time at which this record was written to the file, in UTC, of the form `YYYY.MM.DD_hh.mm.ss`. Note that this time is _approximate_ only (e.g. buffering delays), and cannot be used to calculate for example inter-packet durations.
+`mac`        | 8-byte MAC address of the mote reporting this recording, i.e. the mote which has received the wireless packet. The MAC address is written as hexadecimal bytes separated by `-`. Example:`14-15-92-00-00-12-34-56`.
+`frequency`  | Frequency channel the packet was received on, in MHz. For example, `2405` corresponds to 2.405GHz, or IEEE802.15.4 channel 11.
+`sourcemac`  | 8-byte MAC address of the mote sending the received packets, as read from the packet.
+`transctr`   | 1-byte transaction counter, read from the packet, in hexadecimal. Example: `0x01`.
+`pkctr`      | 2-byte counter read from the packet, in hexadecimal. Example: `0x0123`.
+`length`     | Length, in bytes, of the received packet.
 `interframeduration` | the number of milliseconds between packet, as configured on the transmitting mote.
 `fillbyte`   | Byte used to fill the packet, in hexadecimal. Example: `0x0a`.
 `numtxmine`  | Number of packets the transmitter is configured to transmit.
