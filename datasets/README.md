@@ -20,7 +20,7 @@ column name  | description
 `rssi`       | Received signal strength of the packet, in dBm.
 `crc`        | `1` if the packet was received with a good CRC, `0` otherwise.
 `mine`       | `1` if the packet is expected, `0` otherwise.
-`sourcemac`  | 8-byte MAC address of the mote sending the received packets, as read from the packet. Set to all `0`'s if `crc` or `mine` is `0`.
+`srcmac`     | 8-byte MAC address of the mote sending the received packets, as read from the packet. Set to all `0`'s if `crc` or `mine` is `0`.
 `transctr`   | 1-byte transaction counter, read from the packet, in hexadecimal. Example: `0x01`. Set to all `0`'s if `crc` or `mine` is `0`.
 `pkctr`      | 2-byte counter read from the packet, in hexadecimal. Example: `0x0123`. Set to all `0`'s if `crc` or `mine` is `0`.
 `txnumpk`    | Number of packets the transmitter is configured to transmit.
