@@ -1,0 +1,1 @@
+This folder contains the pre-compiled firmware to run on the IoT-LAB motes.
