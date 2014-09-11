@@ -11,23 +11,23 @@ class MoteHandler(threading.Thread):
     
     _BAUDRATE = 115200
     
-    STAT_NUMRXCRCOK     = 'numRxOK'
-    STAT_NUMRXCRCWRONG  = 'numRxWrongCrc'
-    STAT_NUMTX          = 'numTx'
+    STAT_UARTNUMRXCRCOK      = 'uartNumRxCrcOk'
+    STAT_UARTNUMRXCRCWRONG   = 'uartNumRxCrcWrong'
+    STAT_UARTNUMTX           = 'uartNumTx'
     
     def __init__(self,serialport,cb_respNotif=None):
         
-        self.serialport       = serialport
-        self.cb_respNotif     = cb_respNotif
-        self.serialLock       = threading.Lock()
-        self.dataLock         = threading.RLock()
-        self.hdlc             = Hdlc.Hdlc()
-        self.busyReceiving    = False
-        self.inputBuf         = ''
-        self.lastRxByte       = self.hdlc.HDLC_FLAG
-        self.goOn             = True
+        self.serialport      = serialport
+        self.cb_respNotif    = cb_respNotif
+        self.serialLock      = threading.Lock()
+        self.dataLock        = threading.RLock()
+        self.hdlc            = Hdlc.Hdlc()
+        self.busyReceiving   = False
+        self.inputBuf        = ''
+        self.lastRxByte      = self.hdlc.HDLC_FLAG
+        self.goOn            = True
         self._resetStats()
-        self.serial           = serial.Serial(self.serialport,self._BAUDRATE)
+        self.serial          = serial.Serial(self.serialport,self._BAUDRATE)
         
         threading.Thread.__init__(self)
         self.name = serialport
@@ -72,9 +72,9 @@ class MoteHandler(threading.Thread):
                     try:
                         self.inputBuf        = self.hdlc.dehdlcify(self.inputBuf)
                     except Hdlc.HdlcException as err:
-                        self.stats[self.STAT_NUMRXCRCWRONG] += 1
+                        self.stats[self.STAT_UARTNUMRXCRCWRONG] += 1
                     else:
-                        self.stats[self.STAT_NUMRXCRCOK] += 1
+                        self.stats[self.STAT_UARTNUMRXCRCOK] += 1
                         self._handle_inputBuf([ord(b) for b in self.inputBuf])
                 
                 self.lastRxByte = rxByte
@@ -90,17 +90,49 @@ class MoteHandler(threading.Thread):
     #=== requests
     
     def send_REQ_ST(self):
-        self._send(struct.pack('>B',d.TYPE_REQ_ST))
+        self._send(
+            struct.pack(
+                '>B',
+                d.TYPE_REQ_ST,
+            )
+        )
     
     def send_REQ_IDLE(self):
-        self._send(struct.pack('>B',d.TYPE_REQ_IDLE))
+        self._send(
+            struct.pack(
+                '>B',
+                d.TYPE_REQ_IDLE,
+            )
+        )
     
     def send_REQ_TX(self,frequency,txpower,transctr,txnumpk,txifdur,txlength,txfillbyte):
-        self._send(struct.pack('>BBbBHHBB',d.TYPE_REQ_TX,frequency,txpower,transctr,txnumpk,txifdur,txlength,txfillbyte))
+        self._send(
+            struct.pack(
+                '>BBbBHHBB',
+                d.TYPE_REQ_TX,
+                frequency,
+                txpower,
+                transctr,
+                txnumpk,
+                txifdur,
+                txlength,
+                txfillbyte,
+            )
+        )
     
     def send_REQ_RX(self,frequency,srcmac,transctr,txlength,txfillbyte):
         [m0,m1,m2,m3,m4,m5,m6,m7] = srcmac
-        self._send(struct.pack('>BBBBBBBBBBBBB',d.TYPE_REQ_RX,frequency,m0,m1,m2,m3,m4,m5,m6,m7,transctr,txlength,txfillbyte))
+        self._send(
+            struct.pack(
+                '>BBBBBBBBBBBBB',
+                d.TYPE_REQ_RX,
+                frequency,
+                m0,m1,m2,m3,m4,m5,m6,m7,
+                transctr,
+                txlength,
+                txfillbyte,
+            )
+        )
     
     #======================== private =========================================
     
@@ -109,9 +141,9 @@ class MoteHandler(threading.Thread):
     def _resetStats(self):
         with self.dataLock:
             self.stats = {
-                self.STAT_NUMRXCRCOK          : 0,
-                self.STAT_NUMRXCRCWRONG    : 0,
-                self.STAT_NUMTX            : 0,
+                self.STAT_UARTNUMRXCRCOK       : 0,
+                self.STAT_UARTNUMRXCRCWRONG    : 0,
+                self.STAT_UARTNUMTX            : 0,
             }
     
     #=== serial rx
@@ -124,7 +156,7 @@ class MoteHandler(threading.Thread):
     
     def _send(self,dataToSend):
         with self.dataLock:
-            self.stats[self.STAT_NUMTX] += 1
+            self.stats[self.STAT_UARTNUMTX] += 1
         with self.serialLock:
             self.serial.write(self.hdlc.hdlcify(dataToSend))
     

@@ -46,6 +46,27 @@ class Mercator(object):
             ['serialport'],
             self._cli_state
         )
+        cli.registerCommand(
+            'idle',
+            'id',
+            'switch radio off',
+            ['serialport'],
+            self._cli_idle
+        )
+        cli.registerCommand(
+            'tx',
+            'tx',
+            'transmit a number of packets',
+            ['serialport'],
+            self._cli_tx
+        )
+        cli.registerCommand(
+            'rx',
+            'rx',
+            'start receiving',
+            ['serialport'],
+            self._cli_rx
+        )
         cli.start()
     
     def quitCallback(self):
@@ -71,6 +92,38 @@ class Mercator(object):
         
         with self.dataLock:
             self.motes[serialport].send_REQ_ST()
+    
+    def _cli_idle(self,params):
+        serialport = params[0]
+        
+        with self.dataLock:
+            self.motes[serialport].send_REQ_IDLE()
+    
+    def _cli_tx(self,params):
+        serialport = params[0]
+        
+        with self.dataLock:
+            self.motes[serialport].send_REQ_TX(
+                frequency    = 26,
+                txpower      = 0,
+                transctr     = 0x0a,
+                txnumpk      = 10,
+                txifdur      = 100,
+                txlength     = 100,
+                txfillbyte   = 0x0b,
+            )
+    
+    def _cli_rx(self,params):
+        serialport = params[0]
+        
+        with self.dataLock:
+            self.motes[serialport].send_REQ_RX(
+                frequency    = 26,
+                srcmac       = [0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88],
+                transctr     = 0x0a,
+                txlength     = 100,
+                txfillbyte   = 0x0b,
+            )
     
 #============================ main ============================================
 
