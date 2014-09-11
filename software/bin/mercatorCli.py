@@ -22,7 +22,7 @@ class Mercator(object):
     def __init__(self):
         
         self.dataLock   = threading.Lock()
-        self.motes      = []
+        self.motes      = {}
         
         cli             = OpenCli.OpenCli("Mercator CLI",self.quitCallback)
         cli.registerCommand(
@@ -39,6 +39,13 @@ class Mercator(object):
             [],
             self._cli_list
         )
+        cli.registerCommand(
+            'state',
+            'st',
+            'request state',
+            ['serialport'],
+            self._cli_state
+        )
         cli.start()
     
     def quitCallback(self):
@@ -47,11 +54,23 @@ class Mercator(object):
     def _cli_connect(self,params):
         serialport = params[0]
         
+        if serialport in self.motes:
+            print 'already connected to {0}'.format(serialport)
+            return
+        
         with self.dataLock:
-            self.motes += [MoteHandler.MoteHandler(serialport)]
+            self.motes[serialport] = MoteHandler.MoteHandler(serialport)
     
     def _cli_list(self,params):
-        print 'poipoi'
+        with self.dataLock:
+            for m in self.motes.keys():
+                print m
+    
+    def _cli_state(self,params):
+        serialport = params[0]
+        
+        with self.dataLock:
+            self.motes[serialport].send_REQ_ST()
     
 #============================ main ============================================
 

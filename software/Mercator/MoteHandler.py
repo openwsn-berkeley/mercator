@@ -1,5 +1,6 @@
 import copy
 import threading
+import struct
 
 import serial
 
@@ -116,7 +117,8 @@ class MoteHandler(threading.Thread):
     #=== serial rx
     
     def _handle_inputBuf(self,inputBuf):
-        print inputBuf
+        pass
+        #print inputBuf
     
     #=== serial tx
     
