@@ -149,8 +149,7 @@ class MoteHandler(threading.Thread):
     #=== serial rx
     
     def _handle_inputBuf(self,inputBuf):
-        pass
-        #print inputBuf
+        print inputBuf
     
     #=== serial tx
     
