@@ -57,7 +57,7 @@ class Mercator(object):
             'tx',
             'tx',
             'transmit a number of packets',
-            ['serialport'],
+            ['serialport', 'frequency'],
             self._cli_tx
         )
         cli.registerCommand(
@@ -101,10 +101,11 @@ class Mercator(object):
     
     def _cli_tx(self,params):
         serialport = params[0]
-        
+        frequency = params[1]
+
         with self.dataLock:
             self.motes[serialport].send_REQ_TX(
-                frequency    = 26,
+                frequency    = frequency,
                 txpower      = 0,
                 transctr     = 0x0a,
                 txnumpk      = 10,
