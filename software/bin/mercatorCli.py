@@ -23,6 +23,7 @@ class Mercator(object):
         
         self.dataLock   = threading.Lock()
         self.motes      = {}
+        self.iotlab     = False
         
         cli             = OpenCli.OpenCli("Mercator CLI",self.quitCallback)
         cli.registerCommand(
@@ -57,7 +58,7 @@ class Mercator(object):
             'tx',
             'tx',
             'transmit a number of packets',
-            ['serialport', 'frequency'],
+            ['serialport'],
             self._cli_tx
         )
         cli.registerCommand(
@@ -66,6 +67,13 @@ class Mercator(object):
             'start receiving',
             ['serialport'],
             self._cli_rx
+        )
+        cli.registerCommand(
+            'setiotlab',
+            'iotlab',
+            'set iot-lab',
+            ['status'],
+            self._set_iotlab
         )
         cli.start()
     
@@ -80,7 +88,7 @@ class Mercator(object):
             return
         
         with self.dataLock:
-            self.motes[serialport] = MoteHandler.MoteHandler(serialport)
+            self.motes[serialport] = MoteHandler.MoteHandler(serialport, iotlab=self.iotlab)
     
     def _cli_list(self,params):
         with self.dataLock:
@@ -101,11 +109,10 @@ class Mercator(object):
     
     def _cli_tx(self,params):
         serialport = params[0]
-        frequency = params[1]
-
+        
         with self.dataLock:
             self.motes[serialport].send_REQ_TX(
-                frequency    = frequency,
+                frequency    = 26,
                 txpower      = 0,
                 transctr     = 0x0a,
                 txnumpk      = 10,
@@ -125,6 +132,15 @@ class Mercator(object):
                 txlength     = 100,
                 txfillbyte   = 0x0b,
             )
+
+    def _set_iotlab(self, params):
+        iotlab = params[0];
+        if iotlab == 'on':
+            self.iotlab = True
+            print 'IoT-Lab mode on'
+        elif iotlab == 'off':
+            print 'IoT-Lab mode off'
+            self.iotlab = False
     
 #============================ main ============================================
 

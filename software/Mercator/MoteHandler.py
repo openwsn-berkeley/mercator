@@ -3,6 +3,7 @@ import threading
 import struct
 
 import serial
+import socket
 
 import Hdlc
 import MercatorDefines as d
@@ -15,8 +16,9 @@ class MoteHandler(threading.Thread):
     STAT_UARTNUMRXCRCWRONG   = 'uartNumRxCrcWrong'
     STAT_UARTNUMTX           = 'uartNumTx'
     
-    def __init__(self,serialport,cb_respNotif=None):
+    def __init__(self,serialport,cb_respNotif=None, iotlab=False):
         
+        self.iotlab          = iotlab
         self.serialport      = serialport
         self.cb_respNotif    = cb_respNotif
         self.serialLock      = threading.Lock()
@@ -27,8 +29,22 @@ class MoteHandler(threading.Thread):
         self.lastRxByte      = self.hdlc.HDLC_FLAG
         self.goOn            = True
         self._resetStats()
-        self.serial          = serial.Serial(self.serialport,self._BAUDRATE)
-        
+        if iotlab:
+            try:
+                self.serial         = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                self.serial.connect((serialport, 20000))
+            except Exception as err:
+                print 'could not connect to {0}, reason: {1}'.format(serialport,err)
+                raw_input('Press Enter to close.')
+                sys.exit(1)
+        else:
+            try:
+                self.serial          = serial.Serial(self.serialport,self._BAUDRATE)
+            except Exception as err:
+                print 'could not connect to {0}, reason: {1}'.format(serialport,err)
+                raw_input('Press Enter to close.')
+                sys.exit(1)
+
         threading.Thread.__init__(self)
         self.name = serialport
         
@@ -40,7 +56,10 @@ class MoteHandler(threading.Thread):
         
         while self.goOn:
             
-            rxByte = self.serial.read(1)
+            if self.iotlab:
+                rxByte = mote.recv(1)
+            else:
+                rxByte = self.serial.read(1)
             
             with self.dataLock:
                 if      (
@@ -133,7 +152,6 @@ class MoteHandler(threading.Thread):
                 txfillbyte,
             )
         )
-    
     #======================== private =========================================
     
     #=== stats
@@ -157,5 +175,8 @@ class MoteHandler(threading.Thread):
         with self.dataLock:
             self.stats[self.STAT_UARTNUMTX] += 1
         with self.serialLock:
-            self.serial.write(self.hdlc.hdlcify(dataToSend))
+            if self.iotlab:
+                self.serial.send(self.hdlc.hdlcify(dataToSend))
+            else:
+                self.serial.write(self.hdlc.hdlcify(dataToSend))
     
