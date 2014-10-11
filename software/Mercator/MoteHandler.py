@@ -57,7 +57,7 @@ class MoteHandler(threading.Thread):
         while self.goOn:
             
             if self.iotlab:
-                rxByte = mote.recv(1)
+                rxByte = self.serial.recv(1)
             else:
                 rxByte = self.serial.read(1)
             
