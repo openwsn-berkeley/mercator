@@ -168,7 +168,7 @@ class MoteHandler(threading.Thread):
             crc = 0
             is_expected = 0
             [type, length, rssi, flags, pkctr] = \
-            struct.unpack(">BBbBH", inputBuf)
+            struct.unpack(">BBbBH", ''.join([chr(b) for b in inputBuf))
             if flags&128 != 0:
                 crc = 1
             if flags&64 != 0:
