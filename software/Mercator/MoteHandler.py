@@ -163,11 +163,11 @@ class MoteHandler(threading.Thread):
     
     def _handle_inputBuf(self,inputBuf):
         
-        if inputBuf[0] === TYPE_IND_RX:
+        if inputBuf[0] == d.TYPE_IND_RX:
             print "Packet received"
-        elif inputBuf[0] === TYPE_IND_TXDONE:
+        elif inputBuf[0] == d.TYPE_IND_TXDONE:
             print "TXDONE"
-        elif inputBuf[0] === TYPE_RESP_ST:
+        elif inputBuf[0] == d.TYPE_RESP_ST:
             print "Received status"
         print inputBuf
     
