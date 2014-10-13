@@ -29,21 +29,16 @@ class MoteHandler(threading.Thread):
         self.lastRxByte      = self.hdlc.HDLC_FLAG
         self.goOn            = True
         self._resetStats()
-        if iotlab:
-            try:
+        try:
+            if iotlab:
                 self.serial         = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
                 self.serial.connect((serialport, 20000))
-            except Exception as err:
-                print 'could not connect to {0}, reason: {1}'.format(serialport,err)
-                raw_input('Press Enter to close.')
-                sys.exit(1)
-        else:
-            try:
+            else:
                 self.serial          = serial.Serial(self.serialport,self._BAUDRATE)
-            except Exception as err:
-                print 'could not connect to {0}, reason: {1}'.format(serialport,err)
-                raw_input('Press Enter to close.')
-                sys.exit(1)
+        except Exception as err:
+            print 'could not connect to {0}, reason: {1}'.format(serialport,err)
+            raw_input('Press Enter to close.')
+            sys.exit(1)
 
         threading.Thread.__init__(self)
         self.name = serialport
@@ -167,6 +162,13 @@ class MoteHandler(threading.Thread):
     #=== serial rx
     
     def _handle_inputBuf(self,inputBuf):
+        
+        if inputBuf[0] === TYPE_IND_RX:
+            print "Packet received"
+        elif inputBuf[0] === TYPE_IND_TXDONE:
+            print "TXDONE"
+        elif inputBuf[0] === TYPE_RESP_ST:
+            print "Received status"
         print inputBuf
     
     #=== serial tx
