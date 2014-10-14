@@ -169,9 +169,9 @@ class MoteHandler(threading.Thread):
             is_expected = 0
             [type, length, rssi, flags, pkctr] = \
             struct.unpack(">BBbBH", ''.join([chr(b) for b in inputBuf]))
-            if flags&128 != 0:
+            if flags&(1 << 7) != 0:
                 crc = 1
-            if flags&64 != 0:
+            if flags&(1 << 6) != 0:
                 is_expected = 1
             print 'len={0:<3} num={1:<3} rssi={2:<4} crc={3} expected={4}'.format(
                 length,
@@ -183,8 +183,13 @@ class MoteHandler(threading.Thread):
         elif inputBuf[0] == d.TYPE_IND_TXDONE:
             print "TXDONE"
         elif inputBuf[0] == d.TYPE_RESP_ST:
-            print "Received status"
-            print inputBuf
+            print "Status received"
+            [type, status, numnotifications] = \
+            struct.unpack(">BBH", ''.join([chr(b) for b in inputBuf]))
+            print 'State: {0} Notifications: {1}'.format(
+                d.STATUS[status],
+                numnotifications
+            )
     
     #=== serial tx
     

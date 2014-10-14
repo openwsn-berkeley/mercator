@@ -14,3 +14,10 @@ TYPE_ALL = [
     TYPE_REQ_RX,
     TYPE_IND_RX
 ]
+
+STATUS = {
+  1: "IDLE",
+  2: "TX",
+  3: "TXDONE",
+  4: "RX"
+}
