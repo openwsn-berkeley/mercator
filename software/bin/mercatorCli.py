@@ -115,8 +115,8 @@ class Mercator(object):
                 frequency    = 26,
                 txpower      = 0,
                 transctr     = 0x0a,
-                txnumpk      = 10,
-                txifdur      = 100,
+                txnumpk      = 30,
+                txifdur      = 1000,
                 txlength     = 100,
                 txfillbyte   = 0x0b,
             )
