@@ -164,7 +164,6 @@ class MoteHandler(threading.Thread):
     def _handle_inputBuf(self,inputBuf):
         
         if inputBuf[0] == d.TYPE_IND_RX:
-            print "Packet received"
             crc = 0
             is_expected = 0
             [type, length, rssi, flags, pkctr] = \
@@ -173,7 +172,8 @@ class MoteHandler(threading.Thread):
                 crc = 1
             if flags&(1 << 6) != 0:
                 is_expected = 1
-            print 'len={0:<3} num={1:<3} rssi={2:<4} crc={3} expected={4}'.format(
+            print 'type={0} len={1:<3} num={2:<3} rssi={3:<4} crc={4} expected={5}'.format(
+                d.TYPE_IND_RX,
                 length,
                 pkctr,
                 rssi,
@@ -181,13 +181,14 @@ class MoteHandler(threading.Thread):
                 is_expected
             )
         elif inputBuf[0] == d.TYPE_IND_TXDONE:
-            print "TXDONE"
+            print "type={0}".format(d.TYPE_IND_TXDONE)
         elif inputBuf[0] == d.TYPE_RESP_ST:
-            print "Status received"
             [type, status, numnotifications] = \
             struct.unpack(">BBH", ''.join([chr(b) for b in inputBuf]))
-            print 'State: {0} Notifications: {1}'.format(
+            print 'type={0} state={1} stateId={2} numnotifications={3}'.format(
+                d.TYPE_RESP_ST,
                 d.STATUS[status],
+                status,
                 numnotifications
             )
     
