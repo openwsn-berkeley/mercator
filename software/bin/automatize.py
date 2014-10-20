@@ -51,7 +51,7 @@ class Mercator(object):
         def check_state():
           if (self.get_experiment_state() != "Running"):
             print "The experiment has stoped"
-            exit()
+            sys.exit()
         set_interval(check_state, 1)
         return
       else:
