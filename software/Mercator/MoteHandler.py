@@ -28,6 +28,7 @@ class MoteHandler(threading.Thread):
         self.inputBuf        = ''
         self.lastRxByte      = self.hdlc.HDLC_FLAG
         self.goOn            = True
+        self.mac             = []
         self._resetStats()
         try:
             if iotlab:
@@ -183,14 +184,16 @@ class MoteHandler(threading.Thread):
         elif inputBuf[0] == d.TYPE_IND_TXDONE:
             print "type={0}".format(d.TYPE_IND_TXDONE)
         elif inputBuf[0] == d.TYPE_RESP_ST:
-            [type, status, numnotifications] = \
-            struct.unpack(">BBH", ''.join([chr(b) for b in inputBuf]))
-            print 'type={0} state={1} stateId={2} numnotifications={3}'.format(
+            [type, status, numnotifications, m1, m2, m3, m4, m5, m6, m7, m8] = \
+            struct.unpack(">BBHBBBBBBBB", ''.join([chr(b) for b in inputBuf]))
+            print 'type={0} state={1} stateId={2} numnotifications={3} mac={4}:{5}:{6}:{7}:{8}:{9}:{10}:{11}'.format(
                 d.TYPE_RESP_ST,
                 d.STATUS[status],
                 status,
-                numnotifications
+                numnotifications,
+                m1,m2,m3,m4,m5,m6,m7,m8
             )
+            self.mac = [m1,m2,m3,m4,m5,m6,m7,m8]
     
     #=== serial tx
     

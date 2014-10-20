@@ -19,30 +19,97 @@ import MoteHandler
 
 #============================ body ============================================
 
+class Mercator(object):
+
+  def __init__(self):
+    self.motes  = {}
+    self.iotlab = True
+    self.dataLock   = threading.Lock()
+    self.experiment_id = 0
+
+  def create_experiment(self):
+    # Create a new experiment
+    command_line = 'experiment-cli load -f "experiment/experiment.json" -l "../../firmware/03oos_mercator_prog.ihex"'
+    out, err = run_command(command_line)
+    data = json.loads(out)
+    self.experiment_id = data["id"]
+    print "New Experiment ID:", self.experiment_id
+
+  def get_experiment_state():
+    command_line = 'experiment-cli get -i {0} -s'.format(self.experiment_id)
+    out, err = run_command(command_line)
+    data = json.loads(out)
+    return data["state"]
+
+  def wait_for_running(self):
+    # Check if experiment is running
+    while True:
+      print "Checking experiment {0} state...".format(self.experiment_id)
+      state = self.get_experiment_state()
+      print "State: %s" % state
+      if state == "Running":
+        def check_state():
+          if (self.get_experiment_state() != "Running"):
+            print "The experiment has stoped"
+            exit()
+        set_interval(check_state, 1)
+        return
+      else:
+        time.sleep(0.2)
+
+  def get_motes(self):
+    command = "experiment-cli get -i {0} -r".format(self.experiment_id)
+    out, err = run_command(command)
+    data = json.loads(err)
+    self.motes = {}
+    for mote in data.items:
+      motename = mote.archi.split(':')[0]
+      mote.motename = motename
+      self.motes[motename] = mote
+
+  def connect_motes(self):
+    self.get_motes()
+    for motename, mote in self.motes:
+      with self.dataLock:
+        print "Connecting {0}".format(motename)
+        mote.connection = MoteHandler.MoteHandler(motename, iotlab=self.iotlab)
+
+  # Puts the first mote to TX, the remaining motes will RX
+  def send_TX_and_RX(self, freq, txpower, transctr, txnumpk, txifdur, txlength, txfillbyte):
+    c = 0
+    self.srcmac = ""
+    for motename, mote in self.motes:
+      if c == 0:
+        print "TX: {0}".format(motename)
+        self.srcmote = motename
+        mote.connection.send_REQ_ST()
+        mote.connection.send_REQ_TX(freq, txpower, transctr, txnumpk, txifdur, txlength, txfillbyte)
+        while self.motes[self.srcmote].connection.mac == []:
+          time.sleep(0.2)
+        self.srcmac = self.motes[self.srcmote].connection.mac
+      else:
+        print "RX: {0}".format(motename)
+        mote.connection.send_REQ_RX(freq, self.srcmac, transctr, txlength, txfillbyte)
+      c += 1
+
+
+def set_interval(func, sec):
+  def func_wrapper():
+    set_interval(func, sec)
+    func()
+  t = threading.Timer(sec, func_wrapper)
+  t.start()
+  return t
+
+# Function to execute a linux command and return the result.
 def run_command(command_line):
   args = shlex.split(command_line)
   p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   return p.communicate()
 
-if __name__ == "__main__":
-  # Create a experiment
-  command_line = 'experiment-cli load -f "9714.json" -l "01bsp_radio_tx_prog.ihex" -l "01bsp_radio_rx_prog.ihex"'
-  out, err = run_command(command_line)
-  data = json.loads(out)
-  experiment_id = data["id"]
-  print "ID:", data["id"]
-
-  # Check if experiment is running
-  while True:
-    print "Checking experiment %f state..." % experiment_id
-    command_line = 'experiment-cli get -i %f -s' % experiment_id
-    out, err = run_command(command_line)
-    data = json.loads(out)
-    state = data["state"]
-    print "State: %s" % state
-    if state == "Running":
-      break
-    else:
-      time.sleep(0.2)
-
-  # Connect with every motes in experiment
+if __name__ == '__main__':
+  mercator = Mercator()
+  mercator.create_experiment()
+  mercator.wait_for_running()
+  mercator.connect_motes()
+  mercator.send_TX_and_RX(26, 0, 0x0a, 30, 1000, 100, 0x0b)
