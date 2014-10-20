@@ -55,16 +55,16 @@ class Mercator(object):
         set_interval(check_state, 1)
         return
       else:
-        time.sleep(0.2)
+        time.sleep(1)
 
   def get_motes(self):
     command = "experiment-cli get -i {0} -r".format(self.experiment_id)
     out, err = run_command(command)
-    data = json.loads(err)
+    data = json.loads(out)
     self.motes = {}
-    for mote in data.items:
-      motename = mote.archi.split(':')[0]
-      mote.motename = motename
+    for mote in data["items"]:
+      motename = mote["network_address"].split('.')[0]
+      mote["motename"] = motename
       self.motes[motename] = mote
 
   def connect_motes(self):
@@ -72,7 +72,7 @@ class Mercator(object):
     for motename, mote in self.motes:
       with self.dataLock:
         print "Connecting {0}".format(motename)
-        mote.connection = MoteHandler.MoteHandler(motename, iotlab=self.iotlab)
+        mote["connection"] = MoteHandler.MoteHandler(motename, iotlab=self.iotlab)
 
   # Puts the first mote to TX, the remaining motes will RX
   def send_TX_and_RX(self, freq, txpower, transctr, txnumpk, txifdur, txlength, txfillbyte):
@@ -82,14 +82,14 @@ class Mercator(object):
       if c == 0:
         print "TX: {0}".format(motename)
         self.srcmote = motename
-        mote.connection.send_REQ_ST()
-        mote.connection.send_REQ_TX(freq, txpower, transctr, txnumpk, txifdur, txlength, txfillbyte)
+        mote["connection"].send_REQ_ST()
+        mote["connection"].send_REQ_TX(freq, txpower, transctr, txnumpk, txifdur, txlength, txfillbyte)
         while self.motes[self.srcmote].connection.mac == []:
           time.sleep(0.2)
         self.srcmac = self.motes[self.srcmote].connection.mac
       else:
         print "RX: {0}".format(motename)
-        mote.connection.send_REQ_RX(freq, self.srcmac, transctr, txlength, txfillbyte)
+        mote["connection"].send_REQ_RX(freq, self.srcmac, transctr, txlength, txfillbyte)
       c += 1
 
 
