@@ -69,27 +69,27 @@ class Mercator(object):
 
   def connect_motes(self):
     self.get_motes()
-    for motename, mote in self.motes:
+    for motename in self.motes:
       with self.dataLock:
         print "Connecting {0}".format(motename)
-        mote["connection"] = MoteHandler.MoteHandler(motename, iotlab=self.iotlab)
+        self.motes[motename]["connection"] = MoteHandler.MoteHandler(motename, iotlab=self.iotlab)
 
   # Puts the first mote to TX, the remaining motes will RX
   def send_TX_and_RX(self, freq, txpower, transctr, txnumpk, txifdur, txlength, txfillbyte):
     c = 0
     self.srcmac = ""
-    for motename, mote in self.motes:
+    for motename in self.motes:
       if c == 0:
         print "TX: {0}".format(motename)
         self.srcmote = motename
-        mote["connection"].send_REQ_ST()
-        mote["connection"].send_REQ_TX(freq, txpower, transctr, txnumpk, txifdur, txlength, txfillbyte)
+        self.motes[motename]["connection"].send_REQ_ST()
+        self.motes[motename]["connection"].send_REQ_TX(freq, txpower, transctr, txnumpk, txifdur, txlength, txfillbyte)
         while self.motes[self.srcmote].connection.mac == []:
           time.sleep(0.2)
         self.srcmac = self.motes[self.srcmote].connection.mac
       else:
         print "RX: {0}".format(motename)
-        mote["connection"].send_REQ_RX(freq, self.srcmac, transctr, txlength, txfillbyte)
+        self.motes[motename]["connection"].send_REQ_RX(freq, self.srcmac, transctr, txlength, txfillbyte)
       c += 1
 
 
