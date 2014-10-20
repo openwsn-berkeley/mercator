@@ -29,7 +29,7 @@ class Mercator(object):
 
   def create_experiment(self):
     # Create a new experiment
-    command_line = 'experiment-cli load -f "experiment/experiment.json" -l "../../firmware/03oos_mercator_prog.ihex"'
+    command_line = 'experiment-cli load -f "../bin/experiment/experiment.json" -l "../../firmware/03oos_mercator_prog.ihex"'
     out, err = run_command(command_line)
     data = json.loads(out)
     self.experiment_id = data["id"]

@@ -28,7 +28,7 @@
   "nodes": ["wsn430-147.rennes.iot-lab.info", "wsn430-148.rennes.iot-lab.info", "wsn430-153.rennes.iot-lab.info"],
   "firmwareassociations": [{
     "nodes": ["wsn430-147.rennes.iot-lab.info", "wsn430-148.rennes.iot-lab.info", "wsn430-153.rennes.iot-lab.info"],
-    "firmwarename": "../../../firmware/03oos_mercator.ihex"
+    "firmwarename": "03oos_mercator_prog.ihex"
   }],
   "profileassociations": [{
     "nodes": ["wsn430-147.rennes.iot-lab.info", "wsn430-148.rennes.iot-lab.info", "wsn430-153.rennes.iot-lab.info"],
