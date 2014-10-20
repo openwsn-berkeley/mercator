@@ -1,0 +1,37 @@
+{
+  "type": "physical",
+  "duration": 40,
+  "name": "mercatorExperiment",
+  "reservation": null,
+  "profiles": {
+    "Test": {
+      "nodearch": "wsn430",
+      "power": "dc",
+      "sensor": {
+        "temperature": true,
+        "luminosity": true,
+        "frequency": 5000
+      },
+      "consumption": {
+        "current": true,
+        "voltage": true,
+        "power": true,
+        "frequency": 70
+      },
+      "radio": {
+        "rssi": true,
+        "frequency": 500
+      },
+      "profilename": "Test"
+    }
+  },
+  "nodes": ["wsn430-147.rennes.iot-lab.info", "wsn430-148.rennes.iot-lab.info", "wsn430-153.rennes.iot-lab.info"],
+  "firmwareassociations": [{
+    "nodes": ["wsn430-147.rennes.iot-lab.info", "wsn430-148.rennes.iot-lab.info", "wsn430-153.rennes.iot-lab.info"],
+    "firmwarename": "../../../firmware/03oos_mercator.ihex"
+  }],
+  "profileassociations": [{
+    "nodes": ["wsn430-147.rennes.iot-lab.info", "wsn430-148.rennes.iot-lab.info", "wsn430-153.rennes.iot-lab.info"],
+    "profilename": "Test"
+  }]
+}
