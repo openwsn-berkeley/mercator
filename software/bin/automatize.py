@@ -35,7 +35,7 @@ class Mercator(object):
     self.experiment_id = data["id"]
     print "New Experiment ID:", self.experiment_id
 
-  def get_experiment_state():
+  def get_experiment_state(self):
     command_line = 'experiment-cli get -i {0} -s'.format(self.experiment_id)
     out, err = run_command(command_line)
     data = json.loads(out)
