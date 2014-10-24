@@ -79,7 +79,7 @@ class Mercator(object):
     c = 0
     self.srcmac = ""
     for motename, mote in self.motes.iteritems():
-      if c == 0:
+      if c == len(self.motes.iteritems())-1:
         print "TX: {0}".format(motename)
         self.srcmote = motename
         mote["connection"].send_REQ_ST()
@@ -92,6 +92,11 @@ class Mercator(object):
         mote["connection"].send_REQ_RX(freq, self.srcmac, transctr, txlength, txfillbyte)
       c += 1
 
+  def stop_TX_and_RX(self):
+    for motename, mote in self.motes.iteritems():
+      mote["connection"].send_REQ_IDLE()
+
+#=== Function that executes a function 'func' every 'sec' seconds
 
 def set_interval(func, sec):
   def func_wrapper():
@@ -101,7 +106,8 @@ def set_interval(func, sec):
   t.start()
   return t
 
-# Function to execute a linux command and return the result.
+#=== Function that executes a linux command and returns the result.
+
 def run_command(command_line):
   args = shlex.split(command_line)
   p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
