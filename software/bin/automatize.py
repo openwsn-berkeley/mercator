@@ -74,7 +74,7 @@ class Mercator(object):
         print "Connecting {0}".format(motename)
         mote["connection"] = MoteHandler.MoteHandler(motename, iotlab=self.iotlab)
 
-  # Puts the first mote to TX, the remaining motes will RX
+  # Puts the last mote to TX and the rest to RX
   def send_TX_and_RX(self, freq, txpower, transctr, txnumpk, txifdur, txlength, txfillbyte):
     c = 0
     self.srcmac = ""
