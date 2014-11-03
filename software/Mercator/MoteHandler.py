@@ -186,7 +186,7 @@ class MoteHandler(threading.Thread):
         elif inputBuf[0] == d.TYPE_RESP_ST:
             [type, status, numnotifications, m1, m2, m3, m4, m5, m6, m7, m8] = \
             struct.unpack(">BBHBBBBBBBB", ''.join([chr(b) for b in inputBuf]))
-            print 'type={0} state={1} stateId={2} numnotifications={3} mac={4}:{5}:{6}:{7}:{8}:{9}:{10}:{11}'.format(
+            print 'type={0} state={1} stateId={2} numnotifications={3} mac={4}-{5}-{6}-{7}-{8}-{9}-{10}-{11}'.format(
                 d.TYPE_RESP_ST,
                 d.STATUS[status],
                 status,
