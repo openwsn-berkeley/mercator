@@ -77,7 +77,7 @@ class Mercator(object):
   # Puts the last mote to TX and the rest to RX
   def send_TX_and_RX(self, freq, txpower, transctr, txnumpk, txifdur, txlength, txfillbyte):
     c = 0
-    self.srcmac = self.motes.items()[-1]["connection"].mac
+    self.srcmac = self.motes.items()[-1][1]["connection"].mac
     for motename, mote in self.motes.iteritems():
       if c == len(self.motes)-1:
         print "TX: {0}".format(motename)
