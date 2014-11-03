@@ -23,7 +23,7 @@ column name  | description
 `expected`   | `1` if the packet is expected, `0` otherwise.
 `srcmac`     | 8-byte MAC address of the mote sending the received packets, as read from the packet. Set to all `0`'s if `crc` or `expected` is `0`.
 `transctr`   | 1-byte transaction counter, read from the packet, in hexadecimal. Example: `0x01`. Set to all `0`'s if `crc` or `expected` is `0`.
-`pkctr`      | 2-byte counter read from the packet, in hexadecimal. Example: `0x0123`. Set to all `0`'s if `crc` or `mine` is `0`.
+`pkctr`      | 2-byte counter read from the packet, in hexadecimal. Example: `0x0123`. Set to all `0`'s if `crc` or `expected` is `0`.
 `txnumpk`    | Number of packets the transmitter is configured to transmit.
 `txifdur`    | Number of millisecond the transmitter is configured to wait between the beginning of each packet.
 `txlength`   | Length, in bytes, of each transmitted packet.
