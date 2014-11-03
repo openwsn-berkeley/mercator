@@ -155,13 +155,13 @@ def get_motes(eid):
     out, err = run_command(command)
     data = json.loads(out)
     return data["items"]
-    
+
 #============================ main ============================================
 
 def main(eid=None):
     if (eid):
         MercatorRunExperiment(
-            serialports = get_motes(eid)
+            serialports = map(lambda x: x.split('.')[0], get_motes(eid))
         )
     else:
         MercatorRunExperiment(
