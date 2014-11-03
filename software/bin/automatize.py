@@ -79,7 +79,7 @@ class Mercator(object):
     c = 0
     self.srcmac = ""
     for motename, mote in self.motes.iteritems():
-      if c == len(self.motes.iteritems())-1:
+      if c == len(self.motes)-1:
         print "TX: {0}".format(motename)
         self.srcmote = motename
         mote["connection"].send_REQ_ST()
