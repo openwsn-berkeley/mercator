@@ -191,7 +191,7 @@ class MoteHandler(threading.Thread):
                 d.STATUS[status],
                 status,
                 numnotifications,
-                m1,m2,m3,m4,m5,m6,m7,m8
+                dec2hex(m1),dec2hex(m2),dec2hex(m3),dec2hex(m4),dec2hex(m5),dec2hex(m6),dec2hex(m7),dec2hex(m8)
             )
             self.mac = [m1,m2,m3,m4,m5,m6,m7,m8]
     
@@ -206,3 +206,5 @@ class MoteHandler(threading.Thread):
             else:
                 self.serial.write(self.hdlc.hdlcify(dataToSend))
     
+def dec2hex(dec):
+    return hex(dec).split('x')[1]
