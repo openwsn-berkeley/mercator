@@ -154,14 +154,14 @@ def get_motes(eid):
     command = "experiment-cli get -i {0} -r".format(eid)
     out, err = run_command(command)
     data = json.loads(out)
-    return data["items"]
+    return map(lambda x: x["network_address"].split('.')[0], data["items"])
 
 #============================ main ============================================
 
 def main(eid=None):
     if (eid):
         MercatorRunExperiment(
-            serialports = map(lambda x: x.split('.')[0], get_motes(eid))
+            serialports =  get_motes(eid)
         )
     else:
         MercatorRunExperiment(
