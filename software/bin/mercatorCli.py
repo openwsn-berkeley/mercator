@@ -107,7 +107,7 @@ class MercatorCli(object):
         
         with self.dataLock:
             for s in serialports:
-                self.motes[s].send_REQ_ST()
+                print self.motes[s].send_REQ_ST()
     
     def _cli_idle(self,params):
         serialport = params[0]

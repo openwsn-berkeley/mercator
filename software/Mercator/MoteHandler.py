@@ -10,27 +10,31 @@ import MercatorDefines as d
 
 class MoteHandler(threading.Thread):
     
-    _BAUDRATE = 115200
+    _BAUDRATE                     = 115200
+    TIMEOUT_RESPONSE              = 5
     
-    STAT_UARTNUMRXCRCOK      = 'uartNumRxCrcOk'
-    STAT_UARTNUMRXCRCWRONG   = 'uartNumRxCrcWrong'
-    STAT_UARTNUMTX           = 'uartNumTx'
+    STAT_UARTNUMRXCRCOK           = 'uartNumRxCrcOk'
+    STAT_UARTNUMRXCRCWRONG        = 'uartNumRxCrcWrong'
+    STAT_UARTNUMTX                = 'uartNumTx'
     
     def __init__(self,serialport,cb=None):
         
-        self.serialport      = serialport
-        self.cb              = cb
-        self.serialLock      = threading.Lock()
-        self.dataLock        = threading.RLock()
-        self.hdlc            = Hdlc.Hdlc()
-        self.busyReceiving   = False
-        self.inputBuf        = ''
-        self.lastRxByte      = self.hdlc.HDLC_FLAG
-        self.goOn            = True
+        self.serialport           = serialport
+        self.cb                   = cb
+        self.serialLock           = threading.Lock()
+        self.dataLock             = threading.RLock()
+        self.mac                  = None
+        self.hdlc                 = Hdlc.Hdlc()
+        self.busyReceiving        = False
+        self.inputBuf             = ''
+        self.lastRxByte           = self.hdlc.HDLC_FLAG
+        self.goOn                 = True
+        self.waitResponse         = None
+        self.waitResponseEvent    = None
         self._resetStats()
         try:
             if self.iotlab:
-                self.serial  = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                self.serial       = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
                 self.serial.connect((serialport, 20000))
             else:
                 self.serial  = serial.Serial(self.serialport,self._BAUDRATE)
@@ -40,10 +44,15 @@ class MoteHandler(threading.Thread):
             raise SystemError(msg)
 
         threading.Thread.__init__(self)
-        self.name            = 'MoteHandler@{0}'.format(serialport)
-        self.daemon          = True
+        self.name                 = 'MoteHandler@{0}'.format(serialport)
+        self.daemon               = True
         
+        # start reception thread
         self.start()
+        
+        # retrieve the state of the mote (to get MAC address)
+        self.send_REQ_ST()
+        assert self.mac
     
     #======================== thread ==========================================
     
@@ -104,12 +113,30 @@ class MoteHandler(threading.Thread):
     #=== requests
     
     def send_REQ_ST(self):
+        
+        with self.dataLock:
+            assert not self.waitResponse
+            self.waitResponseEvent     = threading.Event()
+            self.waitResponse          = True
+        
         self._send(
             struct.pack(
                 '>B',
                 d.TYPE_REQ_ST,
             )
         )
+        
+        res = self.waitResponseEvent.wait(self.TIMEOUT_RESPONSE)
+        if not res:
+            raise SystemError('timeout when waiting for status')
+        
+        with self.dataLock:
+            self.waitResponse          = False
+            self.waitResponseEvent     = False
+            returnVal = copy.deepcopy(self.response)
+            self.response              = None
+        
+        return returnVal
     
     def send_REQ_IDLE(self):
         self._send(
@@ -148,6 +175,10 @@ class MoteHandler(threading.Thread):
             )
         )
     
+    def getMac(self):
+        with self.dataLock:
+            return self.mac
+    
     #======================== private =========================================
     
     #=== stats
@@ -170,9 +201,11 @@ class MoteHandler(threading.Thread):
             
             if   inputtype == d.TYPE_IND_TXDONE:
                 
+                # parse input
                 [type] = \
                 struct.unpack(">B", ''.join([chr(b) for b in inputBuf]))
                 
+                # notify higher layer
                 self.cb(
                     serialport = self.serialport,
                     notif      = {
@@ -182,6 +215,7 @@ class MoteHandler(threading.Thread):
                 
             elif inputtype == d.TYPE_IND_RX:
                 
+                # parse input
                 [type, length, rssi, flags, pkctr] = \
                 struct.unpack(">BBbBH", ''.join([chr(b) for b in inputBuf]))
                 if flags & (1<<7):
@@ -193,6 +227,7 @@ class MoteHandler(threading.Thread):
                 else:
                     expected     = 0
                 
+                # notify higher layer
                 self.cb(
                     serialport = self.serialport,
                     notif      = {
@@ -207,18 +242,24 @@ class MoteHandler(threading.Thread):
             
             elif inputtype == d.TYPE_RESP_ST:
                 
+                # parse input
                 [type, status, numnotifications, m1, m2, m3, m4, m5, m6, m7, m8] = \
                 struct.unpack(">BBHBBBBBBBB", ''.join([chr(b) for b in inputBuf]))
                 
-                self.cb(
-                    serialport = self.serialport,
-                    notif      = {
+                # remember this mote's MAC address
+                with self.dataLock:
+                    self.mac = (m1,m2,m3,m4,m5,m6,m7,m8)
+                
+                # send response as return code
+                with self.dataLock:
+                    assert self.waitResponse
+                    self.response = {
                         'type':             type,
                         'status':           status,
                         'numnotifications': numnotifications,
                         'mac':              (m1,m2,m3,m4,m5,m6,m7,m8),
                     }
-                )
+                    self.waitResponseEvent.set()
             
             else:
                 
