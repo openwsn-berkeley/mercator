@@ -72,7 +72,18 @@ class OpenCli(threading.Thread):
                 self._handleUptime)
         
     def run(self):
-        print '{0} - OpenWSN project\n'.format(self.appName)
+        banner  = []
+        banner += [""]
+        banner += [" ___                 _ _ _  ___  _ _ "]
+        banner += ["| . | ___  ___ ._ _ | | | |/ __>| \ |"]
+        banner += ["| | || . \/ ._>| ' || | | |\__ \|   |"]
+        banner += ["`___'|  _/\___.|_|_||__/_/ <___/|_\_|"]
+        banner += ["     |_|                  openwsn.org"]
+        banner += [""]
+        banner  = '\n'.join(banner)
+        print banner
+        
+        print '{0}\n'.format(self.appName)
         
         self.startTime = time.time()
         

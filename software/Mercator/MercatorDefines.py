@@ -1,3 +1,5 @@
+#=== type
+
 TYPE_REQ_ST        = 1
 TYPE_RESP_ST       = 2
 TYPE_REQ_IDLE      = 3
@@ -15,9 +17,52 @@ TYPE_ALL = [
     TYPE_IND_RX
 ]
 
-STATUS = {
-  1: "IDLE",
-  2: "TX",
-  3: "TXDONE",
-  4: "RX"
-}
+def type_num2text(num):
+    if   num==TYPE_REQ_ST:
+        returnval = 'REQ_ST'
+    elif num==TYPE_RESP_ST:
+        returnval = 'RESP_ST'
+    elif num==TYPE_REQ_IDLE:
+        returnval = 'REQ_IDLE'
+    elif num==TYPE_REQ_TX:
+        returnval = 'REQ_TX'
+    elif num==TYPE_IND_TXDONE:
+        returnval = 'IND_TXDONE'
+    elif num==TYPE_REQ_RX:
+        returnval = 'REQ_RX'
+    elif num==TYPE_IND_RX:
+        returnval = 'IND_RX'
+    else:
+        returnval = '<unknown>'
+    return returnval
+
+#=== status
+
+ST_IDLE            = 1
+ST_TX              = 2
+ST_TXDONE          = 3
+ST_RX              = 4
+ST_ALL = [
+    ST_IDLE,
+    ST_TX,
+    ST_TXDONE,
+    ST_RX,
+]
+
+def status_num2text(num):
+    if   num==ST_IDLE:
+        returnval = 'IDLE'
+    elif num==ST_TX:
+        returnval = 'TX'
+    elif num==ST_TXDONE:
+        returnval = 'TXDONE'
+    elif num==ST_RX:
+        returnval = 'RX'
+    else:
+        returnval = '<unknown>'
+    return returnval
+
+#=== helper
+
+def formatMac(mac):
+    return '-'.join(['%02x'%b for b in mac])

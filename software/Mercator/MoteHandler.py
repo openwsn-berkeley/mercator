@@ -16,11 +16,10 @@ class MoteHandler(threading.Thread):
     STAT_UARTNUMRXCRCWRONG   = 'uartNumRxCrcWrong'
     STAT_UARTNUMTX           = 'uartNumTx'
     
-    def __init__(self,serialport,cb_respNotif=None, iotlab=False):
+    def __init__(self,serialport,cb=None):
         
-        self.iotlab          = iotlab
         self.serialport      = serialport
-        self.cb_respNotif    = cb_respNotif
+        self.cb              = cb
         self.serialLock      = threading.Lock()
         self.dataLock        = threading.RLock()
         self.hdlc            = Hdlc.Hdlc()
@@ -28,21 +27,21 @@ class MoteHandler(threading.Thread):
         self.inputBuf        = ''
         self.lastRxByte      = self.hdlc.HDLC_FLAG
         self.goOn            = True
-        self.mac             = []
         self._resetStats()
         try:
-            if iotlab:
-                self.serial         = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            if self.iotlab:
+                self.serial  = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
                 self.serial.connect((serialport, 20000))
             else:
-                self.serial          = serial.Serial(self.serialport,self._BAUDRATE)
+                self.serial  = serial.Serial(self.serialport,self._BAUDRATE)
         except Exception as err:
-            print 'could not connect to {0}, reason: {1}'.format(serialport,err)
-            raw_input('Press Enter to close.')
-            sys.exit(1)
+            msg = 'could not connect to {0}, reason: {1}'.format(serialport,err)
+            print msg
+            raise SystemError(msg)
 
         threading.Thread.__init__(self)
-        self.name = serialport
+        self.name            = 'MoteHandler@{0}'.format(serialport)
+        self.daemon          = True
         
         self.start()
     
@@ -148,6 +147,7 @@ class MoteHandler(threading.Thread):
                 txfillbyte,
             )
         )
+    
     #======================== private =========================================
     
     #=== stats
@@ -164,36 +164,74 @@ class MoteHandler(threading.Thread):
     
     def _handle_inputBuf(self,inputBuf):
         
-        if inputBuf[0] == d.TYPE_IND_RX:
-            crc = 0
-            is_expected = 0
-            [type, length, rssi, flags, pkctr] = \
-            struct.unpack(">BBbBH", ''.join([chr(b) for b in inputBuf]))
-            if flags&(1 << 7) != 0:
-                crc = 1
-            if flags&(1 << 6) != 0:
-                is_expected = 1
-            print 'type={0} len={1:<3} num={2:<3} rssi={3:<4} crc={4} expected={5}'.format(
-                d.TYPE_IND_RX,
-                length,
-                pkctr,
-                rssi,
-                crc,
-                is_expected
+        try:
+            
+            inputtype = inputBuf[0]
+            
+            if   inputtype == d.TYPE_IND_TXDONE:
+                
+                [type] = \
+                struct.unpack(">B", ''.join([chr(b) for b in inputBuf]))
+                
+                self.cb(
+                    serialport = self.serialport,
+                    notif      = {
+                        'type':             type,
+                    }
+                )
+                
+            elif inputtype == d.TYPE_IND_RX:
+                
+                [type, length, rssi, flags, pkctr] = \
+                struct.unpack(">BBbBH", ''.join([chr(b) for b in inputBuf]))
+                if flags & (1<<7):
+                    crc          = 1
+                else:
+                    crc          = 0
+                if flags & (1<<6) != 0:
+                    expected     = 1
+                else:
+                    expected     = 0
+                
+                self.cb(
+                    serialport = self.serialport,
+                    notif      = {
+                        'type':             type,
+                        'length':           length,
+                        'rssi':             rssi,
+                        'crc':              crc,
+                        'expected':         expected,
+                        'pkctr':            pkctr,
+                    }
+                )
+            
+            elif inputtype == d.TYPE_RESP_ST:
+                
+                [type, status, numnotifications, m1, m2, m3, m4, m5, m6, m7, m8] = \
+                struct.unpack(">BBHBBBBBBBB", ''.join([chr(b) for b in inputBuf]))
+                
+                self.cb(
+                    serialport = self.serialport,
+                    notif      = {
+                        'type':             type,
+                        'status':           status,
+                        'numnotifications': numnotifications,
+                        'mac':              (m1,m2,m3,m4,m5,m6,m7,m8),
+                    }
+                )
+            
+            else:
+                
+                raise SystemError('unknown notification type {0}'.format(inputBuf[0]))
+        
+        except Exception as err:
+            
+            print err
+            
+            self.cb(
+                serialport = self.serialport,
+                notif      = err,
             )
-        elif inputBuf[0] == d.TYPE_IND_TXDONE:
-            print "type={0}".format(d.TYPE_IND_TXDONE)
-        elif inputBuf[0] == d.TYPE_RESP_ST:
-            [type, status, numnotifications, m1, m2, m3, m4, m5, m6, m7, m8] = \
-            struct.unpack(">BBHBBBBBBBB", ''.join([chr(b) for b in inputBuf]))
-            print 'type={0} state={1} stateId={2} numnotifications={3} mac={4}-{5}-{6}-{7}-{8}-{9}-{10}-{11}'.format(
-                d.TYPE_RESP_ST,
-                d.STATUS[status],
-                status,
-                numnotifications,
-                dec2hex(m1),dec2hex(m2),dec2hex(m3),dec2hex(m4),dec2hex(m5),dec2hex(m6),dec2hex(m7),dec2hex(m8)
-            )
-            self.mac = [m1,m2,m3,m4,m5,m6,m7,m8]
     
     #=== serial tx
     
@@ -206,5 +244,17 @@ class MoteHandler(threading.Thread):
             else:
                 self.serial.write(self.hdlc.hdlcify(dataToSend))
     
-def dec2hex(dec):
-    return hex(dec).split('x')[1]
+    #=== helpers
+    
+    @property
+    def iotlab(self):
+        if hasattr(self, '_iotlab'):
+            return self._iotlab
+        
+        assert self.serialport
+        if   self.serialport.lower().startswith('com') or self.serialport.count('tty'):
+            self._iotlab = False
+        else:
+            self._iotlab = True
+        
+        return self._iotlab
