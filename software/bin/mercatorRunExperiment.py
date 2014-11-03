@@ -11,7 +11,10 @@ if __name__=='__main__':
 #============================ imports =========================================
 
 import threading
-
+import subprocess
+import json
+import shlex
+import time
 import MoteHandler
 import MercatorDefines as d
 
@@ -140,12 +143,34 @@ class MercatorRunExperiment(object):
     def _quitCallback(self):
         print "quitting!"
 
+#=========================== helpers ==========================================
+
+def run_command(command_line):
+    args = shlex.split(command_line)
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return p.communicate()
+
+def get_motes(eid):
+    command = "experiment-cli get -i {0} -r".format(eid)
+    out, err = run_command(command)
+    data = json.loads(out)
+    return data["items"]
+    
 #============================ main ============================================
 
-def main():
-    MercatorRunExperiment(
-       serialports = ['COM4','COM5','COM6']
-    )
+def main(eid=None):
+    if (eid):
+        MercatorRunExperiment(
+            serialports = get_motes(eid)
+        )
+    else:
+        MercatorRunExperiment(
+           serialports = ['COM4','COM5','COM6']
+        )
 
 if __name__=='__main__':
-    main()
+    if len(sys.argv) == 1:
+        main()
+    else:
+        main(sys.argv[1])
+
