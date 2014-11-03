@@ -82,6 +82,7 @@ class Mercator(object):
     self.motes[self.srcmote]["connection"].send_REQ_ST()
     while self.motes[self.srcmote]["connection"].mac == []:
           time.sleep(0.2)
+    self.srcmac = self.motes[self.srcmote]["connection"].mac
     for motename, mote in self.motes.iteritems():
       if motename == self.srcmote:
         print "TX: {0}".format(motename)
