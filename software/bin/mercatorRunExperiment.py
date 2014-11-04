@@ -15,6 +15,7 @@ import subprocess
 import json
 import shlex
 import time
+import datetime
 import MoteHandler
 import MercatorDefines as d
 from iotlabcli import rest
