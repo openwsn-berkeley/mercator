@@ -150,13 +150,13 @@ class MercatorRunExperiment(object):
             elif notif['type'] == d.TYPE_IND_RX:
                 # print '.', # TODO: log to file
                 timestamp  = datetime.datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
-                mac        = '-'.join(map(lambda x: hex(x).split('x')[1].zfill(2), self.motes[serialport].getMac()));
+                mac        = d.formatMac(self.motes[serialport].getMac());
                 frequency  = self.freq
                 length     = notif['length']
                 rssi       = notif['rssi']
                 crc        = notif['crc']
                 expected   = notif['expected']
-                srcmac     = '-'.join(map(lambda x: hex(x).split('x')[1].zfill(2), self.motes[self.transmitterPort].getMac()));
+                srcmac     = d.formatMac(self.motes[self.transmitterPort].getMac());
                 transctr   = self.transctr
                 pkctr      = notif['pkctr']
                 txnumpk    = self.TXNUMPK
