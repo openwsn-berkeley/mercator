@@ -63,6 +63,8 @@ class MercatorRunExperiment(object):
     
     def _doExperimentPerTransmitter(self,freq,transmitterPort):
         
+        self.transmitterPort = transmitterPort
+        self.freq            = freq
         print 'freq={0} transmitterPort={1}'.format(freq,transmitterPort)
         
         # switch all motes to idle
@@ -112,7 +114,7 @@ class MercatorRunExperiment(object):
         )
         
         # wait to be done
-        maxwaittime = 2*self.TXNUMPK*(self.TXIFDUR/1000.0)
+        maxwaittime = 3*self.TXNUMPK*(self.TXIFDUR/1000.0)
         self.waitTxDone.wait(maxwaittime)
         if self.waitTxDone.isSet():
             print 'done.'
@@ -140,26 +142,58 @@ class MercatorRunExperiment(object):
                     self.isTransmitting   = False
                     self.waitTxDone.set()
             elif notif['type'] == d.TYPE_IND_RX:
-                print '.', # TODO: log to file
+                # print '.', # TODO: log to file
+                timestamp  = datetime.datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
+                mac        = '-'.join(map(lambda x: hex(x).split('x')[1].zfill(2), self.motes[serialport].getMac()));
+                frequency  = self.freq
+                length     = notif['length']
+                rssi       = notif['rssi']
+                crc        = notif['crc']
+                expected   = notif['expected']
+                srcmac     = '-'.join(map(lambda x: hex(x).split('x')[1].zfill(2), self.motes[self.transmitterPort].getMac()));
+                transctr   = self.transctr
+                pkctr      = notif['pkctr']
+                txnumpk    = self.TXNUMPK
+                txpower    = self.TXPOWER
+                txifdur    = self.TXIFDUR
+                txlength   = self.TXLENGTH
+                txfillbyte = self.TXFILLBYTE
+                print "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}".format(
+                        timestamp,
+                        mac,
+                        frequency,
+                        length,
+                        rssi,
+                        crc,
+                        expected,
+                        srcmac,
+                        transctr,
+                        pkctr,
+                        txnumpk,
+                        txpower,
+                        txifdur,
+                        txlength,
+                        txfillbyte
+                    )
     
     def _quitCallback(self):
         print "quitting!"
 
 #=========================== helpers ==========================================
 
-def get_motes(eid):
+def get_motes(expid):
     request = rest.Api()
-    out = request.get_experiment_resources(eid)
-    data = json.loads(out)
+    response = request.get_experiment_resources(expid)
+    data = json.loads(response)
     return map(lambda x: x["network_address"].split('.')[0], data["items"])
 
 #============================ main ============================================
 
 def main(eid=None):
 
-    if (eid):
+    if (expid):
         MercatorRunExperiment(
-            serialports =  get_motes(eid)
+            serialports =  get_motes(expid)
         )
     else:
         MercatorRunExperiment(
