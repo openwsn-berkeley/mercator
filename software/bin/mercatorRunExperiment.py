@@ -113,8 +113,8 @@ class MercatorRunExperiment(object):
         
         # wait to be done
         maxwaittime = 2*self.TXNUMPK*(self.TXIFDUR/1000.0)
-        res = self.waitTxDone.wait(maxwaittime)
-        if res:
+        self.waitTxDone.wait(maxwaittime)
+        if self.waitTxDone.isSet():
             print 'done.'
         else:
             raise SystemError('timeout when waiting for transmission to be done (no IND_TXDONE after {0}s)'.format(maxwaittime))

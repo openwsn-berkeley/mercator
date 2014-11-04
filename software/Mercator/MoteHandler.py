@@ -126,8 +126,8 @@ class MoteHandler(threading.Thread):
             )
         )
         
-        res = self.waitResponseEvent.wait(self.TIMEOUT_RESPONSE)
-        if not res:
+        self.waitResponseEvent.wait(self.TIMEOUT_RESPONSE)
+        if not self.waitResponseEvent.isSet():
             raise SystemError('timeout when waiting for status')
         
         with self.dataLock:
