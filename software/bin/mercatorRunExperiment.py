@@ -24,8 +24,8 @@ from iotlabcli import rest
 
 class MercatorRunExperiment(object):
     
-    #FREQUENCIES    = [n+11 for n in range(16)]   # frequencies to measure on, in IEEE notation
-    FREQUENCIES    = [20,21]                     # frequencies to measure on, in IEEE notation
+    FREQUENCIES    = [n+11 for n in range(16)]   # frequencies to measure on, in IEEE notation
+    #FREQUENCIES    = [20,21]                     # frequencies to measure on, in IEEE notation
     TXPOWER        = 0                           # dBm
     NUMTRANS       = 5                           # number of transactions
     TXNUMPK        = 2                           # number of packets per transaction
