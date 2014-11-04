@@ -17,6 +17,7 @@ import shlex
 import time
 import MoteHandler
 import MercatorDefines as d
+from iotlabcli import rest
 
 #============================ body ============================================
 
@@ -38,7 +39,7 @@ class MercatorRunExperiment(object):
         self.transctr        = 0
         self.motes           = {}
         self.isTransmitting  = False
-        
+
         # connect to motes
         for s in serialports:
             print s
@@ -146,20 +147,16 @@ class MercatorRunExperiment(object):
 
 #=========================== helpers ==========================================
 
-def run_command(command_line):
-    args = shlex.split(command_line)
-    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return p.communicate()
-
 def get_motes(eid):
-    command = "experiment-cli get -i {0} -r".format(eid)
-    out, err = run_command(command)
+    request = rest.Api()
+    out = request.get_experiment_resources(eid)
     data = json.loads(out)
     return map(lambda x: x["network_address"].split('.')[0], data["items"])
 
 #============================ main ============================================
 
 def main(eid=None):
+
     if (eid):
         MercatorRunExperiment(
             serialports =  get_motes(eid)
