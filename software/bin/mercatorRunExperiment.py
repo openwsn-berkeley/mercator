@@ -189,7 +189,7 @@ def get_motes(expid):
 
 #============================ main ============================================
 
-def main(eid=None):
+def main(expid=None):
 
     if (expid):
         MercatorRunExperiment(
