@@ -41,6 +41,7 @@ class MercatorRunExperiment(object):
         
         # connect to motes
         for s in serialports:
+            print s
             self.motes[s]    = MoteHandler.MoteHandler(s,self._cb)
         
         # do experiments per frequency
