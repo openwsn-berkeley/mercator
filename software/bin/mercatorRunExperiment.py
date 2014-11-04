@@ -33,13 +33,17 @@ class MercatorRunExperiment(object):
     TXLENGTH       = 100                         # number of bytes (PHY payload) in a frame
     TXFILLBYTE     = 0x0a                        # padding byte
     
-    def __init__(self,serialports):
+    def __init__(self,serialports,site="local"):
         
         # local variables
         self.dataLock        = threading.Lock()
         self.transctr        = 0
         self.motes           = {}
         self.isTransmitting  = False
+        self.site            = site
+        self.file            = open('../../datasets/{0}-{1}_raw.csv'.format(self.site, datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")), 'w')
+        
+        self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,pkctr,txnumpk,txpower,txifdur,txlength,txfillbyte\n')
 
         # connect to motes
         for s in serialports:
@@ -51,6 +55,7 @@ class MercatorRunExperiment(object):
             self._doExperimentPerFrequency(freq)
         
         # print all OK
+        self.file.close()
         raw_input('\nExperiment ended normally. Press Enter to close.')
     
     #======================== public ==========================================
@@ -159,7 +164,7 @@ class MercatorRunExperiment(object):
                 txifdur    = self.TXIFDUR
                 txlength   = self.TXLENGTH
                 txfillbyte = self.TXFILLBYTE
-                print "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}".format(
+                self.file.write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}\n".format(
                         timestamp,
                         mac,
                         frequency,
@@ -175,7 +180,7 @@ class MercatorRunExperiment(object):
                         txifdur,
                         txlength,
                         txfillbyte
-                    )
+                    ))
     
     def _quitCallback(self):
         print "quitting!"
@@ -186,15 +191,17 @@ def get_motes(expid):
     request = rest.Api()
     response = request.get_experiment_resources(expid)
     data = json.loads(response)
-    return map(lambda x: x["network_address"].split('.')[0], data["items"])
+    return (map(lambda x: x["network_address"].split('.')[0], data["items"]), data["items"][0]["network_address"].split('.')[1])
 
 #============================ main ============================================
 
 def main(expid=None):
 
     if (expid):
+        (serialports, site) = get_motes(expid);
         MercatorRunExperiment(
-            serialports =  get_motes(expid)
+            serialports = serialports,
+            site = site
         )
     else:
         MercatorRunExperiment(
