@@ -163,7 +163,8 @@ class MercatorRunExperiment(object):
                 txpower    = self.TXPOWER
                 txifdur    = self.TXIFDUR
                 txlength   = self.TXLENGTH
-                txfillbyte = self.TXFILLBYTE
+                tfb_raw    = hex(self.TXFILLBYTE).split('x')
+                txfillbyte = "{0}x{1}".format(tfb_raw[0], tfb_raw[1].zfill(2))
                 self.file.write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}\n".format(
                         timestamp,
                         mac,
