@@ -218,8 +218,15 @@ class MoteHandler(threading.Thread):
                 # parse input
                 [type, length, rssi, flags, pkctr] = \
                 struct.unpack(">BBbBH", ''.join([chr(b) for b in inputBuf]))
-                crc = flags & (1<<7)
-                expected = flags & (1<<6)
+                if flags & (1<<7) != 0:
+                    crc = 1
+                else:
+                    crc = 0
+
+                if flags & (1<<6) != 0:
+                    expected = 1
+                else:
+                    expected = 0
                 
                 # notify higher layer
                 self.cb(
