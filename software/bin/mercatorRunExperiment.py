@@ -28,7 +28,7 @@ class MercatorRunExperiment(object):
     #FREQUENCIES    = [20,21]                     # frequencies to measure on, in IEEE notation
     TXPOWER        = 0                           # dBm
     NUMTRANS       = 5                           # number of transactions
-    TXNUMPK        = 2                           # number of packets per transaction
+    TXNUMPK        = 100                         # number of packets per transaction
     TXIFDUR        = 100                         # inter-frame duration, in ms
     TXLENGTH       = 100                         # number of bytes (PHY payload) in a frame
     TXFILLBYTE     = 0x0a                        # padding byte
