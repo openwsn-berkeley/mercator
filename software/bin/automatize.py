@@ -116,6 +116,8 @@ def run_command(command_line):
 if __name__ == '__main__':
   mercator = Mercator()
   mercator.create_experiment()
+  """
   mercator.wait_for_running()
   mercator.connect_motes()
   mercator.send_TX_and_RX(26, 0, 0x0a, 30, 1000, 100, 0x0b)
+  """
