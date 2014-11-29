@@ -78,12 +78,12 @@ class MercatorRunExperiment(object):
         for (sp,mh) in self.motes.items():
             print '    switch {0} to idle'.format(sp)
             mh.send_REQ_IDLE()
-        
+        """
         # check state, assert that all are idle
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
             assert status['status'] == d.ST_IDLE
-        
+        """
         # increment transaction counter
         self.transctr += 1
         
@@ -97,12 +97,12 @@ class MercatorRunExperiment(object):
                 txlength          = self.TXLENGTH,
                 txfillbyte        = self.TXFILLBYTE,
             )
-        
+        """
         # check state, assert that all are in rx mode
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
             assert status['status'] == d.ST_RX
-        
+        """
         # switch tx mote to tx
         print '    switch {0} to TX'.format(transmitterPort)
         
@@ -127,7 +127,8 @@ class MercatorRunExperiment(object):
             print 'done.'
         else:
             # raise SystemError('timeout when waiting for transmission to be done (no IND_TXDONE after {0}s)'.format(maxwaittime))
-            return 
+            return
+        """
         # check state, assert numnotifications is expected
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
@@ -135,7 +136,7 @@ class MercatorRunExperiment(object):
                 assert status['status'] == d.ST_TXDONE
             else:
                 assert status['status'] == d.ST_RX
-    
+        """
     #======================== private =========================================
     
     def _cb(self,serialport,notif):
@@ -145,7 +146,7 @@ class MercatorRunExperiment(object):
                 print 'state {0}'.format(serialport)
             elif notif['type'] == d.TYPE_IND_TXDONE:
                 with self.dataLock:
-                    assert self.isTransmitting
+                    # assert self.isTransmitting
                     self.isTransmitting   = False
                     self.waitTxDone.set()
             elif notif['type'] == d.TYPE_IND_RX:
