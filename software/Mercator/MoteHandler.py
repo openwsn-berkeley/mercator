@@ -52,7 +52,7 @@ class MoteHandler(threading.Thread):
         
         # retrieve the state of the mote (to get MAC address)
         self.send_REQ_ST()
-        assert self.mac
+        # assert self.mac
     
     #======================== thread ==========================================
     
