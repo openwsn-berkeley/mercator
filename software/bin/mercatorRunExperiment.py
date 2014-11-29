@@ -191,8 +191,7 @@ class MercatorRunExperiment(object):
 
 def get_motes(expid):
     api = rest.Api('perezgar', 'p3r3zgar')
-    response = experiment.get_experiment(api, expid, 'resources')
-    data = json.loads(response)
+    data = experiment.get_experiment(api, expid, 'resources')
     return (map(lambda x: x["network_address"].split('.')[0], data["items"]), data["items"][0]["network_address"].split('.')[1])
 
 #============================ main ============================================
