@@ -19,6 +19,7 @@ import datetime
 import MoteHandler
 import MercatorDefines as d
 from iotlabcli import rest
+from iotlabcli import experiment
 
 #============================ body ============================================
 
@@ -189,8 +190,8 @@ class MercatorRunExperiment(object):
 #=========================== helpers ==========================================
 
 def get_motes(expid):
-    request = rest.Api('perezgar', 'p3r3zgar')
-    response = request.get_experiment_resources(expid)
+    api = rest.Api('perezgar', 'p3r3zgar')
+    response = experiment.get_experiment(api, expid, 'resources')
     data = json.loads(response)
     return (map(lambda x: x["network_address"].split('.')[0], data["items"]), data["items"][0]["network_address"].split('.')[1])
 
