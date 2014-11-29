@@ -129,6 +129,7 @@ class MoteHandler(threading.Thread):
         self.waitResponseEvent.wait(self.TIMEOUT_RESPONSE)
         if not self.waitResponseEvent.isSet():
             # raise SystemError('timeout when waiting for status')
+            print self.serialport
             return
         
         with self.dataLock:
