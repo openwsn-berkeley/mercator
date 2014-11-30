@@ -43,7 +43,8 @@ class MercatorRunExperiment(object):
         self.isTransmitting  = False
         self.site            = site
         self.freq            = self.FREQUENCIES[0]
-
+        self.transmitterPort = ""
+        
         # connect to motes
         for s in serialports:
             print s
