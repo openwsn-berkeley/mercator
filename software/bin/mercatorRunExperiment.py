@@ -29,7 +29,7 @@ class MercatorRunExperiment(object):
     #FREQUENCIES    = [20,21]                     # frequencies to measure on, in IEEE notation
     TXPOWER        = 0                           # dBm
     NUMTRANS       = 5                           # number of transactions
-    TXNUMPK        = 10                         # number of packets per transaction
+    TXNUMPK        = 100                         # number of packets per transaction
     TXIFDUR        = 100                         # inter-frame duration, in ms
     TXLENGTH       = 100                         # number of bytes (PHY payload) in a frame
     TXFILLBYTE     = 0x0a                        # padding byte
@@ -42,15 +42,16 @@ class MercatorRunExperiment(object):
         self.motes           = {}
         self.isTransmitting  = False
         self.site            = site
-        self.file            = open('../../datasets/{0}-{1}_raw.csv'.format(self.site, datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")), 'w')
+        self.freq            = FREQUENCIES[0]
         
-        self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,pkctr,txnumpk,txpower,txifdur,txlength,txfillbyte\n')
-
         # connect to motes
         for s in serialports:
             print s
             self.motes[s]    = MoteHandler.MoteHandler(s,self._cb)
-        
+
+        self.file            = open('../../datasets/{0}-{1}_raw.csv'.format(self.site, datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")), 'w')        
+        self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,pkctr,txnumpk,txpower,txifdur,txlength,txfillbyte\n')
+
         # do experiments per frequency
         for freq in self.FREQUENCIES:
             self._doExperimentPerFrequency(freq)
