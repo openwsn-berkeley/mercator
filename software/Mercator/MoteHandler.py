@@ -270,7 +270,7 @@ class MoteHandler(threading.Thread):
         
         except Exception as err:
             
-            print err + ": ERROR"
+            print err
             
             self.cb(
                 serialport = self.serialport,
