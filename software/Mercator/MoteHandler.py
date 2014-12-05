@@ -31,6 +31,7 @@ class MoteHandler(threading.Thread):
         self.goOn                 = True
         self.waitResponse         = None
         self.waitResponseEvent    = None
+        self.isActive             = True
         self._resetStats()
         try:
             if self.iotlab:
@@ -130,6 +131,7 @@ class MoteHandler(threading.Thread):
         if not self.waitResponseEvent.isSet():
             # raise SystemError('timeout when waiting for status')
             print "---------------------------" + self.serialport
+            self.isActive = False
             return
         
         with self.dataLock:

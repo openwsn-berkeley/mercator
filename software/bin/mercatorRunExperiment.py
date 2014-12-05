@@ -49,6 +49,8 @@ class MercatorRunExperiment(object):
         for s in serialports:
             print s
             self.motes[s]    = MoteHandler.MoteHandler(s,self._cb)
+            if not self.motes[s].isActive:
+                del self.motes[s]
 
         self.file            = open('../../datasets/{0}-{1}_raw.csv'.format(self.site, datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")), 'w')        
         self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,pkctr,txnumpk,txpower,txifdur,txlength,txfillbyte\n')
@@ -58,9 +60,8 @@ class MercatorRunExperiment(object):
             self._doExperimentPerFrequency(freq)
         
         # print all OK
-        self.file.close()
         raw_input('\nExperiment ended normally. Press Enter to close.')
-    
+        self.file.close()
     #======================== public ==========================================
     
     #======================== cli handlers ====================================
