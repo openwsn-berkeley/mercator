@@ -26,7 +26,6 @@ from iotlabcli import experiment
 class MercatorRunExperiment(object):
     
     FREQUENCIES    = [n+11 for n in range(16)]   # frequencies to measure on, in IEEE notation
-    #FREQUENCIES    = [20,21]                     # frequencies to measure on, in IEEE notation
     TXPOWER        = 0                           # dBm
     NUMTRANS       = 5                           # number of transactions
     TXNUMPK        = 10                          # number of packets per transaction
@@ -81,12 +80,12 @@ class MercatorRunExperiment(object):
         for (sp,mh) in self.motes.items():
             print '    switch {0} to idle'.format(sp)
             mh.send_REQ_IDLE()
-        """
+        
         # check state, assert that all are idle
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
             assert status['status'] == d.ST_IDLE
-        """
+        
         # increment transaction counter
         self.transctr += 1
         
@@ -100,12 +99,12 @@ class MercatorRunExperiment(object):
                 txlength          = self.TXLENGTH,
                 txfillbyte        = self.TXFILLBYTE,
             )
-        """
+        
         # check state, assert that all are in rx mode
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
             assert status['status'] == d.ST_RX
-        """
+        
         # switch tx mote to tx
         print '    switch {0} to TX'.format(transmitterPort)
         
@@ -131,7 +130,7 @@ class MercatorRunExperiment(object):
         else:
             # raise SystemError('timeout when waiting for transmission to be done (no IND_TXDONE after {0}s)'.format(maxwaittime))
             return
-        """
+        
         # check state, assert numnotifications is expected
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
@@ -139,7 +138,7 @@ class MercatorRunExperiment(object):
                 assert status['status'] == d.ST_TXDONE
             else:
                 assert status['status'] == d.ST_RX
-        """
+        
     #======================== private =========================================
     
     def _cb(self,serialport,notif):
