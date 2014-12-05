@@ -46,9 +46,10 @@ class MercatorRunExperiment(object):
         
         # connect to motes
         for s in serialports:
-            print s
+            
             self.motes[s]    = MoteHandler.MoteHandler(s,self._cb)
             if not self.motes[s].isActive:
+                print "DELETED", s
                 del self.motes[s]
 
         self.file            = open('../../datasets/{0}-{1}_raw.csv'.format(self.site, datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")), 'w')        
