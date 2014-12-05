@@ -46,7 +46,7 @@ class MercatorRunExperiment(object):
         
         # connect to motes
         for s in serialports:
-            
+            print s
             self.motes[s]    = MoteHandler.MoteHandler(s,self._cb)
             if not self.motes[s].isActive:
                 print "DELETED", s
