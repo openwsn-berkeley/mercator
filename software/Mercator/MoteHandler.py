@@ -11,7 +11,7 @@ import MercatorDefines as d
 class MoteHandler(threading.Thread):
     
     _BAUDRATE                     = 115200
-    TIMEOUT_RESPONSE              = 5
+    TIMEOUT_RESPONSE              = 1
     
     STAT_UARTNUMRXCRCOK           = 'uartNumRxCrcOk'
     STAT_UARTNUMRXCRCWRONG        = 'uartNumRxCrcWrong'
@@ -116,7 +116,7 @@ class MoteHandler(threading.Thread):
     def send_REQ_ST(self):
         
         with self.dataLock:
-            assert not self.waitResponse
+            # assert not self.waitResponse
             self.waitResponseEvent     = threading.Event()
             self.waitResponse          = True
         
@@ -257,7 +257,7 @@ class MoteHandler(threading.Thread):
                 
                 # send response as return code
                 with self.dataLock:
-                    assert self.waitResponse
+                    # assert self.waitResponse
                     self.response = {
                         'type':             type,
                         'status':           status,
@@ -297,7 +297,7 @@ class MoteHandler(threading.Thread):
         if hasattr(self, '_iotlab'):
             return self._iotlab
         
-        assert self.serialport
+        # assert self.serialport
         if   self.serialport.lower().startswith('com') or self.serialport.count('tty'):
             self._iotlab = False
         else:
