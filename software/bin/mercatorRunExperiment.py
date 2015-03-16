@@ -220,7 +220,7 @@ def main(argv):
          expid = arg
       elif opt in ("-u", "--user"):
          user = arg
-      elif opt in ("-o", "--pwd"):
+      elif opt in ("-p", "--pwd"):
          pwd = arg
    print 'Experiment Id is "', expid
    print 'User is "', user
