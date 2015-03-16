@@ -202,19 +202,22 @@ def get_motes(expid):
 
 #============================ main ============================================
 
-def main(expid=None):
+def main(argv):
 
+   expid = None
    user = ''
    pwd = ''
    try:
-      opts, args = getopt.getopt(argv,"hi:o:",["user=","pwd="])
+      opts, args = getopt.getopt(argv,"hi:o:",["expid=","user=","pwd="])
    except getopt.GetoptError:
-      print 'mercatorRunExperiment.py -u <user> -p <password>'
+      print 'mercatorRunExperiment.py -e <expid> -u <user> -p <password>'
       sys.exit(2)
    for opt, arg in opts:
       if opt == '-h':
-         print 'mercatorRunExperiment.py -u <user> -p <password>'
+         print 'mercatorRunExperiment.py -e <expid> -u <user> -p <password>'
          sys.exit()
+      elif opt in ("-e", "--expid"):
+         expid = arg
       elif opt in ("-u", "--user"):
          user = arg
       elif opt in ("-o", "--pwd"):
