@@ -195,7 +195,7 @@ class MercatorRunExperiment(object):
 
 #=========================== helpers ==========================================
 
-def get_motes(expid):
+def get_motes(expid,user,pwd):
     api = rest.Api(user, pwd)
     data = experiment.get_experiment(api, expid, 'resources')
     return (map(lambda x: x["network_address"].split('.')[0], data["items"]), data["items"][0]["network_address"].split('.')[1])
@@ -227,7 +227,7 @@ def main(argv):
    print 'Pwd is "', pwd
 
    if (expid):
-        (serialports, site) = get_motes(expid);
+        (serialports, site) = get_motes(expid,user,pwd);
         MercatorRunExperiment(
             serialports = serialports,
             site = site
