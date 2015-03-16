@@ -10,6 +10,7 @@ if __name__=='__main__':
 
 #============================ imports =========================================
 
+import getopt
 import threading
 import subprocess
 import json
@@ -195,13 +196,31 @@ class MercatorRunExperiment(object):
 #=========================== helpers ==========================================
 
 def get_motes(expid):
-    api = rest.Api('perezgar', 'p3r3zgar')
+    api = rest.Api(user, pwd)
     data = experiment.get_experiment(api, expid, 'resources')
     return (map(lambda x: x["network_address"].split('.')[0], data["items"]), data["items"][0]["network_address"].split('.')[1])
 
 #============================ main ============================================
 
 def main(expid=None):
+
+   user = ''
+   pwd = ''
+   try:
+      opts, args = getopt.getopt(argv,"hi:o:",["user=","pwd="])
+   except getopt.GetoptError:
+      print 'mercatorRunExperiment.py -u <user> -p <password>'
+      sys.exit(2)
+   for opt, arg in opts:
+      if opt == '-h':
+         print 'mercatorRunExperiment.py -u <user> -p <password>'
+         sys.exit()
+      elif opt in ("-u", "--user"):
+         user = arg
+      elif opt in ("-o", "--pwd"):
+         pwd = arg
+   print 'User is "', inputfile
+   print 'Pwd is "', outputfile
 
     if (expid):
         (serialports, site) = get_motes(expid);
@@ -218,5 +237,5 @@ if __name__=='__main__':
     if len(sys.argv) == 1:
         main()
     else:
-        main(sys.argv[1])
+        main(sys.argv[1:])
 
