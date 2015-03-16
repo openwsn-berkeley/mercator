@@ -222,8 +222,9 @@ def main(argv):
          user = arg
       elif opt in ("-o", "--pwd"):
          pwd = arg
-   print 'User is "', inputfile
-   print 'Pwd is "', outputfile
+   print 'Experiment Id is "', expid
+   print 'User is "', user
+   print 'Pwd is "', pwd
 
    if (expid):
         (serialports, site) = get_motes(expid);
