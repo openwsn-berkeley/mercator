@@ -222,20 +222,20 @@ def main(expid=None):
    print 'User is "', inputfile
    print 'Pwd is "', outputfile
 
-    if (expid):
+   if (expid):
         (serialports, site) = get_motes(expid);
         MercatorRunExperiment(
             serialports = serialports,
             site = site
         )
-    else:
+   else:
         MercatorRunExperiment(
            serialports = ['COM4','COM5','COM6']
         )
 
 if __name__=='__main__':
-    if len(sys.argv) == 1:
+   if len(sys.argv) == 1:
         main()
-    else:
+   else:
         main(sys.argv[1:])
 
