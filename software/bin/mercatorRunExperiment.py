@@ -208,7 +208,7 @@ def main(argv):
    user = ''
    pwd = ''
    try:
-      opts, args = getopt.getopt(argv,"hi:o:",["expid=","user=","pwd="])
+      opts, args = getopt.getopt(argv,"he:u:p:",["expid=","user=","pwd="])
    except getopt.GetoptError:
       print 'mercatorRunExperiment.py -e <expid> -u <user> -p <password>'
       sys.exit(2)
