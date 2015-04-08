@@ -129,11 +129,19 @@ class MoteHandler(threading.Thread):
         
         self.waitResponseEvent.wait(self.TIMEOUT_RESPONSE)
         if not self.waitResponseEvent.isSet():
-            # raise SystemError('timeout when waiting for status')
-            print "---------------------------" + self.serialport
-            self.isActive = False
+	    # retry
+            self._send(
+                struct.pack(
+                    '>B',
+                    d.TYPE_REQ_ST,
+                )
+            )
+	    if not self.waitResponseEvent.isSet():	
+                # raise SystemError('timeout when waiting for status')
+                print "---------------------------" + self.serialport
+                self.isActive = False
             return
-        
+        return
         with self.dataLock:
             self.waitResponse          = False
             self.waitResponseEvent     = False
