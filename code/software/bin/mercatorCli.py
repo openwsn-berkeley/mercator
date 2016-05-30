@@ -19,14 +19,14 @@ import MercatorDefines as d
 #============================ body ============================================
 
 class MercatorCli(object):
-    
+
     ALL = 'all'
-    
+
     def __init__(self):
-        
+
         self.dataLock   = threading.Lock()
         self.motes      = {}
-        
+
         cli             = OpenCli.OpenCli("Mercator CLI",self._quitCallback)
         cli.registerCommand(
             'connect',
@@ -71,21 +71,21 @@ class MercatorCli(object):
             self._cli_rx
         )
         cli.start()
-    
+
     #======================== public ==========================================
-    
+
     #======================== cli handlers ====================================
-    
+
     def _cli_connect(self,params):
         serialport = params[0]
-        
+
         if serialport in self.motes:
             print 'already connected to {0}'.format(serialport)
             return
-        
+
         with self.dataLock:
             self.motes[serialport] = MoteHandler.MoteHandler(serialport,self._cb)
-    
+
     def _cli_list(self,params):
         output          = []
         with self.dataLock:
@@ -93,10 +93,10 @@ class MercatorCli(object):
             output     += ['- {0}'.format(m) for m in self.motes.keys()]
         output          = '\n'.join(output)
         print output
-    
+
     def _cli_state(self,params):
         serialport = params[0]
-        
+
         if serialport==self.ALL:
             serialports = self.motes.keys()
         else:
@@ -104,14 +104,14 @@ class MercatorCli(object):
                 print 'not serialport to {0}'.format(serialport)
                 return
             serialports = [serialport]
-        
+
         with self.dataLock:
             for s in serialports:
                 print self.motes[s].send_REQ_ST()
-    
+
     def _cli_idle(self,params):
         serialport = params[0]
-        
+
         if serialport==self.ALL:
             serialports = self.motes.keys()
         else:
@@ -119,18 +119,18 @@ class MercatorCli(object):
                 print 'not serialport to {0}'.format(serialport)
                 return
             serialports = [serialport]
-        
+
         with self.dataLock:
             for s in serialports:
                 self.motes[s].send_REQ_IDLE()
-    
+
     def _cli_tx(self,params):
         serialport = params[0]
-        
+
         if serialport not in self.motes:
             print 'not serialport to {0}'.format(serialport)
             return
-        
+
         with self.dataLock:
             self.motes[serialport].send_REQ_TX(
                 frequency    = 0x14,
@@ -141,10 +141,10 @@ class MercatorCli(object):
                 txlength     = 100,
                 txfillbyte   = 0x0b,
             )
-    
+
     def _cli_rx(self,params):
         serialport = params[0]
-        
+
         if serialport==self.ALL:
             serialports = self.motes.keys()
         else:
@@ -152,7 +152,7 @@ class MercatorCli(object):
                 print 'not serialport to {0}'.format(serialport)
                 return
             serialports = [serialport]
-        
+
         with self.dataLock:
             for s in serialports:
                 self.motes[s].send_REQ_RX(
@@ -162,9 +162,9 @@ class MercatorCli(object):
                     txlength     = 100,
                     txfillbyte   = 0x0b,
                 )
-    
+
     #======================== private =========================================
-    
+
     def _cb(self,serialport,notif):
         output               = []
         output              += [' - {0}'.format(serialport)]
@@ -183,7 +183,7 @@ class MercatorCli(object):
         output              += ['']
         output               = '\n'.join(output)
         print output
-    
+
     def _quitCallback(self):
         print "quitting!"
 

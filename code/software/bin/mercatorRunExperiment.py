@@ -25,7 +25,7 @@ from iotlabcli import experiment
 #============================ body ============================================
 
 class MercatorRunExperiment(object):
-    
+
     FREQUENCIES    = [n+11 for n in range(16)]   # frequencies to measure on, in IEEE notation
     TXPOWER        = 0                           # dBm
     NUMTRANS       = 5                           # number of transactions
@@ -33,9 +33,9 @@ class MercatorRunExperiment(object):
     TXIFDUR        = 100                         # inter-frame duration, in ms
     TXLENGTH       = 100                         # number of bytes (PHY payload) in a frame
     TXFILLBYTE     = 0x0a                        # padding byte
-    
+
     def __init__(self,serialports,site="local"):
-        
+
         # local variables
         self.dataLock        = threading.Lock()
         self.transctr        = 0
@@ -44,7 +44,7 @@ class MercatorRunExperiment(object):
         self.site            = site
         self.freq            = self.FREQUENCIES[0]
         self.transmitterPort = ""
-        
+
         # connect to motes
         for s in serialports:
             print s
@@ -53,44 +53,44 @@ class MercatorRunExperiment(object):
                 print "DELETED", s
                 del self.motes[s]
 
-        self.file            = open('../../datasets/{0}-{1}_raw.csv'.format(self.site, datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")), 'w')        
+        self.file            = open('../../datasets/{0}-{1}_raw.csv'.format(self.site, datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")), 'w')
         self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,pkctr,txnumpk,txpower,txifdur,txlength,txfillbyte\n')
 
         # do experiments per frequency
         for freq in self.FREQUENCIES:
             self._doExperimentPerFrequency(freq)
-        
+
         # print all OK
         raw_input('\nExperiment ended normally. Press Enter to close.')
         self.file.close()
     #======================== public ==========================================
-    
+
     #======================== cli handlers ====================================
-    
+
     def _doExperimentPerFrequency(self,freq):
-        
+
         for transmitterPort in self.motes:
             self._doExperimentPerTransmitter(freq,transmitterPort)
-    
+
     def _doExperimentPerTransmitter(self,freq,transmitterPort):
-        
+
         self.transmitterPort = transmitterPort
         self.freq            = freq
         print 'freq={0} transmitterPort={1}'.format(freq,transmitterPort)
-        
+
         # switch all motes to idle
         for (sp,mh) in self.motes.items():
             print '    switch {0} to idle'.format(sp)
             mh.send_REQ_IDLE()
-        
+
         # check state, assert that all are idle
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
             # assert status['status'] == d.ST_IDLE
-        
+
         # increment transaction counter
         self.transctr += 1
-        
+
         # switch all motes to rx
         for (sp,mh) in self.motes.items():
             print '    switch {0} to RX'.format(sp)
@@ -101,19 +101,19 @@ class MercatorRunExperiment(object):
                 txlength          = self.TXLENGTH,
                 txfillbyte        = self.TXFILLBYTE,
             )
-        
+
         # check state, assert that all are in rx mode
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
             # assert status['status'] == d.ST_RX
-        
+
         # switch tx mote to tx
         print '    switch {0} to TX'.format(transmitterPort)
-        
+
         with self.dataLock:
             self.waitTxDone       = threading.Event()
             self.isTransmitting   = True
-        
+
         self.motes[transmitterPort].send_REQ_TX(
             frequency             = freq,
             txpower               = self.TXPOWER,
@@ -123,7 +123,7 @@ class MercatorRunExperiment(object):
             txlength              = self.TXLENGTH,
             txfillbyte            = self.TXFILLBYTE,
         )
-        
+
         # wait to be done
         maxwaittime = 3*self.TXNUMPK*(self.TXIFDUR/1000.0)
         self.waitTxDone.wait(maxwaittime)
@@ -132,7 +132,7 @@ class MercatorRunExperiment(object):
         else:
             # raise SystemError('timeout when waiting for transmission to be done (no IND_TXDONE after {0}s)'.format(maxwaittime))
             return
-        
+
         # check state, assert numnotifications is expected
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
@@ -140,11 +140,11 @@ class MercatorRunExperiment(object):
                 # assert status['status'] == d.ST_TXDONE
             # else:
                 # assert status['status'] == d.ST_RX
-        
+
     #======================== private =========================================
-    
+
     def _cb(self,serialport,notif):
-        
+
         if isinstance(notif,dict):
             if   notif['type'] == d.TYPE_RESP_ST:
                 print 'state {0}'.format(serialport)
@@ -189,7 +189,7 @@ class MercatorRunExperiment(object):
                         txlength,
                         txfillbyte
                     ))
-    
+
     def _quitCallback(self):
         print "quitting!"
 
