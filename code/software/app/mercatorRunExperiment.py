@@ -19,7 +19,7 @@ import time
 import datetime
 import MoteHandler
 import MercatorDefines as d
-from iotlabcli import rest
+import iotlabcli as iotlab
 from iotlabcli import experiment
 
 #============================ body ============================================
@@ -195,43 +195,92 @@ class MercatorRunExperiment(object):
 
 #=========================== helpers ==========================================
 
-def get_motes(expid,user,pwd):
-    api = rest.Api(user, pwd)
+def get_motes(expid):
+    # use the file created by auth-cli command
+    usr, pwd    = iotlab.get_user_credentials()
+
+    # authenticate through the REST interface
+    api = iotlab.rest.Api(usr, pwd)
+
+    # get experiment resources
     data = experiment.get_experiment(api, expid, 'resources')
+
     return (map(lambda x: x["network_address"].split('.')[0], data["items"]), data["items"][0]["network_address"].split('.')[1])
+
+def submit_experiment(testbed_name, duration):
+    """
+    Reserve nodes in the given site.
+    The function uses the json experiment file corresponding to the site.
+    :param str testbed_name: The name of the testbed (ex: grenoble)
+    :param int duration: The duration of the experiment in minutes
+    :return: The id of the experiment
+    """
+
+    # use the file created by auth-cli command
+    usr, pwd    = iotlab.get_user_credentials()
+
+    # authenticate through the REST interface
+    api         = iotlab.rest.Api(usr, pwd)
+
+    # load the experiment
+    tb_file     = open("testbeds/{0}.json".format(testbed_name))
+    nodes       = json.load(tb_file)["nodes"]
+    firmware    = "../../firmware/03oos_mercator_prog.elf"
+    profile     = "mercator"
+    resources   = [experiment.exp_resources(nodes, firmware, profile)]
+
+    # submit experiment
+    exp_id      = experiment.submit_experiment(
+                    api, "mercatorExp", duration,
+                    resources)["id"]
+
+    print "Waiting for experiment to be running."
+    experiment.wait_experiment(api, exp_id)
+
+    return exp_res
 
 #============================ main ============================================
 
 def main():
 
-    expid = None
-    user = ''
-    pwd = ''
+    expid           = None
+    user            = None
+    pwd             = None
+    testbed_name    = None
+    local           = False
+    duration        = 20
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"he:u:p:",["expid=","user=","pwd="])
+        opts, args = getopt.getopt(
+                        sys.argv[1:],
+                        "he:t:l",
+                        ["expid=","testbed=","local"])
     except getopt.GetoptError:
-        print 'mercatorRunExperiment.py -e <expid> -u <user> -p <password>'
+        print 'mercatorRunExperiment.py -e <expid> -t <testbed_name>'
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'mercatorRunExperiment.py -e <expid> -u <user> -p <password>'
+            print 'mercatorRunExperiment.py -e <expid> -t <testbed_name>'
             sys.exit()
         elif opt in ("-e", "--expid"):
             expid = arg
-        elif opt in ("-u", "--user"):
-            user = arg
-        elif opt in ("-p", "--pwd"):
-            pwd = arg
+        elif opt in ("-t", "--testbed"):
+            testbed_name = arg
+        elif opt in ("-l", "--local"):
+            local = True
 
-    if (expid):
-        (serialports, site) = get_motes(expid,user,pwd);
+    if (local):
+        MercatorRunExperiment(
+            serialports = ['COM4','COM5','COM6']
+        )
+    else:
+        if expid is None:
+            expid = submit_experiment(testbed_name, duration)
+            # get the content
+            print("Exp submited with id: %u" % exp_id)
+        (serialports, site) = get_motes(expid);
         MercatorRunExperiment(
             serialports = serialports,
             site = site
-        )
-    else:
-        MercatorRunExperiment(
-            serialports = ['COM4','COM5','COM6']
         )
 
 if __name__=='__main__':
