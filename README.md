@@ -1,3 +1,5 @@
+[![Code Health](https://landscape.io/github/openwsn-berkeley/mercator/master/landscape.svg?style=flat)](https://landscape.io/github/openwsn-berkeley/mercator/master)
+
 _You are watching the raw data. To visualize it: https://openwsn-berkeley.github.io/mercator/._
 
 ## Mercator: Dense Wireless Connectivity Datasets for the IoT
