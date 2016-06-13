@@ -204,37 +204,34 @@ def get_motes(expid,user,pwd):
 
 def main():
 
-   expid = None
-   user = ''
-   pwd = ''
-   try:
-      opts, args = getopt.getopt(sys.argv[1:],"he:u:p:",["expid=","user=","pwd="])
-   except getopt.GetoptError:
-      print 'mercatorRunExperiment.py -e <expid> -u <user> -p <password>'
-      sys.exit(2)
-   for opt, arg in opts:
-      if opt == '-h':
-         print 'mercatorRunExperiment.py -e <expid> -u <user> -p <password>'
-         sys.exit()
-      elif opt in ("-e", "--expid"):
-         expid = arg
-      elif opt in ("-u", "--user"):
-         user = arg
-      elif opt in ("-p", "--pwd"):
-         pwd = arg
-   print 'Experiment Id is "', expid
-   print 'User is "', user
-   print 'Pwd is "', pwd
+    expid = None
+    user = ''
+    pwd = ''
+    try:
+        opts, args = getopt.getopt(sys.argv[1:],"he:u:p:",["expid=","user=","pwd="])
+    except getopt.GetoptError:
+        print 'mercatorRunExperiment.py -e <expid> -u <user> -p <password>'
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print 'mercatorRunExperiment.py -e <expid> -u <user> -p <password>'
+            sys.exit()
+        elif opt in ("-e", "--expid"):
+            expid = arg
+        elif opt in ("-u", "--user"):
+            user = arg
+        elif opt in ("-p", "--pwd"):
+            pwd = arg
 
-   if (expid):
+    if (expid):
         (serialports, site) = get_motes(expid,user,pwd);
         MercatorRunExperiment(
             serialports = serialports,
             site = site
         )
-   else:
+    else:
         MercatorRunExperiment(
-           serialports = ['COM4','COM5','COM6']
+            serialports = ['COM4','COM5','COM6']
         )
 
 if __name__=='__main__':
