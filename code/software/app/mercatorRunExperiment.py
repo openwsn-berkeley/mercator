@@ -53,7 +53,7 @@ class MercatorRunExperiment(object):
                 print "DELETED", s
                 del self.motes[s]
 
-        self.file            = open('../../datasets/{0}-{1}_raw.csv'.format(self.site, datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")), 'w')
+        self.file            = open('../../../datasets/{0}-{1}_raw.csv'.format(self.site, datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")), 'w')
         self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,pkctr,txnumpk,txpower,txifdur,txlength,txfillbyte\n')
 
         # do experiments per frequency
@@ -202,13 +202,13 @@ def get_motes(expid,user,pwd):
 
 #============================ main ============================================
 
-def main(argv):
+def main():
 
    expid = None
    user = ''
    pwd = ''
    try:
-      opts, args = getopt.getopt(argv,"he:u:p:",["expid=","user=","pwd="])
+      opts, args = getopt.getopt(sys.argv[1:],"he:u:p:",["expid=","user=","pwd="])
    except getopt.GetoptError:
       print 'mercatorRunExperiment.py -e <expid> -u <user> -p <password>'
       sys.exit(2)
@@ -238,8 +238,5 @@ def main(argv):
         )
 
 if __name__=='__main__':
-   if len(sys.argv) == 1:
-        main()
-   else:
-        main(sys.argv[1:])
+    main()
 
