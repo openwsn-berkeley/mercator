@@ -230,14 +230,14 @@ def submit_experiment(testbed_name, duration):
     resources   = [experiment.exp_resources(nodes, firmware, profile)]
 
     # submit experiment
-    exp_id      = experiment.submit_experiment(
+    expid       = experiment.submit_experiment(
                     api, "mercatorExp", duration,
                     resources)["id"]
 
     print "Waiting for experiment to be running."
-    experiment.wait_experiment(api, exp_id)
+    experiment.wait_experiment(api, expid)
 
-    return exp_res
+    return expid
 
 #============================ main ============================================
 
@@ -276,7 +276,7 @@ def main():
         if expid is None:
             expid = submit_experiment(testbed_name, duration)
             # get the content
-            print("Exp submited with id: %u" % exp_id)
+            print("Exp submited with id: %u" % expid)
         (serialports, site) = get_motes(expid);
         MercatorRunExperiment(
             serialports = serialports,
