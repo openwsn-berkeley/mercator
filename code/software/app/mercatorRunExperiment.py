@@ -244,11 +244,10 @@ def submit_experiment(testbed_name, duration):
 
 def main():
 
-    duration        = 20
-
     # parsing user arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("testbed", help="The name of the current testbed")
+    parser.add_argument("-d", "--duration", help="Duration of the experiment", type=int, default=30)
     parser.add_argument("-e", "--expid", help="The experiment id", type=int, default=None)
     parser.add_argument("-l", "--local", help="Run the experiment locally", action="store_true")
     args = parser.parse_args()
@@ -259,7 +258,7 @@ def main():
         )
     else:
         if args.expid is None:
-            expid = submit_experiment(args.testbed, duration)
+            expid = submit_experiment(args.testbed, args.duration)
             # get the content
             print("Exp submited with id: %u" % expid)
         else:
