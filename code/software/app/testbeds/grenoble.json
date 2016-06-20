@@ -1,6 +1,7 @@
 {
-  "nodes":  [
+    "nodes":  [
         "m3-60.grenoble.iot-lab.info",
         "m3-61.grenoble.iot-lab.info"
-    ]
+    ],
+    "firmware": "03oos_mercator_iot-lab_M3.elf"
 }

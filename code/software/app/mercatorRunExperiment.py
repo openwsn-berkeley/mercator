@@ -24,6 +24,11 @@ from iotlabcli import experiment
 
 #============================ body ============================================
 
+FIRMWARE_PATH   = "../../firmware/"
+DATASET_PATH    = "../../../datasets/"
+
+#============================ body ============================================
+
 class MercatorRunExperiment(object):
 
     FREQUENCIES    = [n+11 for n in range(16)]   # frequencies to measure on, in IEEE notation
@@ -53,8 +58,12 @@ class MercatorRunExperiment(object):
                 print "DELETED", s
                 del self.motes[s]
 
-        self.file            = open('../../../datasets/{0}-{1}_raw.csv'.format(self.site, datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")), 'w')
-        self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,pkctr,txnumpk,txpower,txifdur,txlength,txfillbyte\n')
+        self.file            = open('{0}datasets/{1}-{2}_raw.csv'.format(DATASET_PATH,
+                                    self.site,
+                                    datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")),
+                                    'w')
+        self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,'+
+                        'pkctr,txnumpk,txpower,txifdur,txlength,txfillbyte\n')
 
         # do experiments per frequency
         for freq in self.FREQUENCIES:
@@ -224,8 +233,9 @@ def submit_experiment(testbed_name, duration):
 
     # load the experiment
     tb_file     = open("testbeds/{0}.json".format(testbed_name))
-    nodes       = json.load(tb_file)["nodes"]
-    firmware    = "../../firmware/03oos_mercator_prog.elf"
+    tb_json     = json.load(tb_file)
+    nodes       = tb_json["nodes"]
+    firmware    = FIRMWARE_PATH + tb_json["firmware"]
     profile     = "mercator"
     resources   = [experiment.exp_resources(nodes, firmware, profile)]
 
