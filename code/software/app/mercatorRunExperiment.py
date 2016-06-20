@@ -10,7 +10,7 @@ if __name__=='__main__':
 
 #============================ imports =========================================
 
-import getopt
+import argparse
 import threading
 import subprocess
 import json
@@ -244,40 +244,26 @@ def submit_experiment(testbed_name, duration):
 
 def main():
 
-    expid           = None
-    user            = None
-    pwd             = None
-    testbed_name    = None
-    local           = False
     duration        = 20
-    try:
-        opts, args = getopt.getopt(
-                        sys.argv[1:],
-                        "he:t:l",
-                        ["expid=","testbed=","local"])
-    except getopt.GetoptError:
-        print 'mercatorRunExperiment.py -e <expid> -t <testbed_name>'
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print 'mercatorRunExperiment.py -e <expid> -t <testbed_name>'
-            sys.exit()
-        elif opt in ("-e", "--expid"):
-            expid = arg
-        elif opt in ("-t", "--testbed"):
-            testbed_name = arg
-        elif opt in ("-l", "--local"):
-            local = True
 
-    if (local):
+    # parsing user arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("testbed", help="The name of the current testbed")
+    parser.add_argument("-e", "--expid", help="The experiment id", type=int, default=None)
+    parser.add_argument("-l", "--local", help="Run the experiment locally", action="store_true")
+    args = parser.parse_args()
+
+    if args.local:
         MercatorRunExperiment(
             serialports = ['COM4','COM5','COM6']
         )
     else:
-        if expid is None:
-            expid = submit_experiment(testbed_name, duration)
+        if args.expid is None:
+            expid = submit_experiment(args.testbed, duration)
             # get the content
             print("Exp submited with id: %u" % expid)
+        else:
+            expid = args.expid
         (serialports, site) = get_motes(expid);
         MercatorRunExperiment(
             serialports = serialports,
