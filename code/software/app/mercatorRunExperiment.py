@@ -58,7 +58,7 @@ class MercatorRunExperiment(object):
                 print "DELETED", s
                 del self.motes[s]
 
-        self.file            = open('{0}datasets/{1}-{2}_raw.csv'.format(DATASET_PATH,
+        self.file            = open('{0}{1}-{2}_raw.csv'.format(DATASET_PATH,
                                     self.site,
                                     datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")),
                                     'w')
