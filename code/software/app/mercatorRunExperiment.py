@@ -230,6 +230,7 @@ def submit_experiment(testbed_name, duration):
     resources   = [experiment.exp_resources(nodes, firmware, profile)]
 
     # submit experiment
+    print "Submitting experiment."
     expid       = experiment.submit_experiment(
                     api, "mercatorExp", duration,
                     resources)["id"]
