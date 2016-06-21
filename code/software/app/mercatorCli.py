@@ -85,6 +85,8 @@ class MercatorCli(object):
 
         with self.dataLock:
             self.motes[serialport] = MoteHandler.MoteHandler(serialport,self._cb)
+            if not self.motes[serialport].isActive:
+                del self.motes[serialport]
 
     def _cli_list(self,params):
         output          = []
