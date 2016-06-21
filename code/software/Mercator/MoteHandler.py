@@ -207,21 +207,21 @@ class MoteHandler(threading.Thread):
             if   inputtype == d.TYPE_IND_TXDONE:
 
                 # parse input
-                [type] = \
+                [msg_type] = \
                 struct.unpack(">B", ''.join([chr(b) for b in inputBuf]))
 
                 # notify higher layer
                 self.cb(
                     serialport = self.serialport,
                     notif      = {
-                        'type':             type,
+                        'type':             msg_type,
                     }
                 )
 
             elif inputtype == d.TYPE_IND_RX:
 
                 # parse input
-                [type, length, rssi, flags, pkctr] = \
+                [msg_type, length, rssi, flags, pkctr] = \
                 struct.unpack(">BBbBH", ''.join([chr(b) for b in inputBuf]))
                 if flags & (1<<7) != 0:
                     crc = 1
@@ -237,7 +237,7 @@ class MoteHandler(threading.Thread):
                 self.cb(
                     serialport = self.serialport,
                     notif      = {
-                        'type':             type,
+                        'type':             msg_type,
                         'length':           length,
                         'rssi':             rssi,
                         'crc':              crc,
@@ -249,7 +249,7 @@ class MoteHandler(threading.Thread):
             elif inputtype == d.TYPE_RESP_ST:
 
                 # parse input
-                [type, status, numnotifications, m1, m2, m3, m4, m5, m6, m7, m8] = \
+                [msg_type, status, numnotifications, m1, m2, m3, m4, m5, m6, m7, m8] = \
                 struct.unpack(">BBHBBBBBBBB", ''.join([chr(b) for b in inputBuf]))
 
                 # remember this mote's MAC address
@@ -260,7 +260,7 @@ class MoteHandler(threading.Thread):
                 with self.dataLock:
                     # assert self.waitResponse
                     self.response = {
-                        'type':             type,
+                        'type':             msg_type,
                         'status':           status,
                         'numnotifications': numnotifications,
                         'mac':              (m1,m2,m3,m4,m5,m6,m7,m8),
