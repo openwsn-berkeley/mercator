@@ -10,7 +10,7 @@ import MercatorDefines as d
 
 class MoteHandler(threading.Thread):
 
-    _BAUDRATE                     = 115200
+    _BAUDRATE                     = 500000
     TIMEOUT_RESPONSE              = 10
 
     STAT_UARTNUMRXCRCOK           = 'uartNumRxCrcOk'
@@ -130,8 +130,7 @@ class MoteHandler(threading.Thread):
         self.waitResponseEvent.wait(self.TIMEOUT_RESPONSE)
 
         if not self.waitResponseEvent.isSet():
-            # raise SystemError('timeout when waiting for status')
-            print "---------------------------" + self.serialport
+            print "-----------timeout--------------" + self.serialport
             self.isActive = False
             return
 
