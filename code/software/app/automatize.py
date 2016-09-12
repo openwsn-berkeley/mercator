@@ -8,7 +8,7 @@ import os
 
 if __name__=='__main__':
     here = sys.path[0]
-    sys.path.insert(0, os.path.join(here,'..','Mercator'))
+    sys.path.insert(0, os.path.join(here,'..','lib'))
 
 #============================ imports =========================================
 
