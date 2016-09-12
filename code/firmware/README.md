@@ -1,8 +1,6 @@
 This folder contains the pre-compiled firmware to run on the IoT-LAB motes.
 
-More details at:
-
-    https://github.com/openwsn-berkeley/mercator/wiki/Mercator-Firmware
+More details in [the Mercator Firmware wiki page](https://github.com/openwsn-berkeley/mercator/wiki/Mercator-Firmware)
 
 ## Building the firmware
 
