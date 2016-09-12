@@ -257,7 +257,7 @@ def main():
     # parsing user arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("testbed", help="The name of the current testbed")
-    parser.add_argument("-d", "--duration", help="Duration of the experiment", type=int, default=30)
+    parser.add_argument("-d", "--duration", help="Duration of the experiment in munutes", type=int, default=30)
     parser.add_argument("-e", "--expid", help="The experiment id", type=int, default=None)
     parser.add_argument("-l", "--local", help="Run the experiment locally", action="store_true")
     args = parser.parse_args()
