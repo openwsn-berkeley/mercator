@@ -347,7 +347,8 @@
         "m3-373.grenoble.iot-lab.info",
         "m3-374.grenoble.iot-lab.info",
         "m3-375.grenoble.iot-lab.info",
-        "m3-376.grenoble.iot-lab.info"
+        "m3-376.grenoble.iot-lab.info",
+        "m3-377.grenoble.iot-lab.info"
     ],
     "firmware": "03oos_mercator_iot-lab_M3.elf"
 }
