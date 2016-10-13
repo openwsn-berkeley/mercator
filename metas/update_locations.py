@@ -38,6 +38,7 @@ for mote in jout["items"]:
 # write out
 
 with open('locations.json', 'w') as fp:
-    json.dump([{key:value}for key,value in results.iteritems()], fp, indent=4)
+    items = [{"location":key, "nodes":value} for key,value in results.iteritems()]
+    json.dump(items, fp, indent=4)
 
 #-----------------------------------------------------------------------------#
