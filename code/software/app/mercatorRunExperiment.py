@@ -26,6 +26,7 @@ from iotlabcli import experiment
 
 FIRMWARE_PATH   = "../../firmware/"
 DATASET_PATH    = "../../../datasets/"
+METAS_PATH      = "../../../metas/"
 
 #============================ body ============================================
 
@@ -216,7 +217,7 @@ def get_motes(expid):
 
     return (map(lambda x: x["network_address"].split('.')[0], data["items"]), data["items"][0]["network_address"].split('.')[1])
 
-def submit_experiment(testbed_name, duration):
+def submit_experiment(testbed_name, firmware, duration):
     """
     Reserve nodes in the given site.
     The function uses the json experiment file corresponding to the site.
@@ -232,10 +233,10 @@ def submit_experiment(testbed_name, duration):
     api         = iotlab.rest.Api(usr, pwd)
 
     # load the experiment
-    tb_file     = open("testbeds/{0}.json".format(testbed_name))
+    tb_file     = open("{0}states.json".format(METAS_PATH))
     tb_json     = json.load(tb_file)
-    nodes       = tb_json["nodes"]
-    firmware    = FIRMWARE_PATH + tb_json["firmware"]
+    nodes       = tb_json[testbed_name]
+    firmware    = FIRMWARE_PATH + firmware
     profile     = "mercator"
     resources   = [experiment.exp_resources(nodes, firmware, profile)]
 
@@ -257,6 +258,7 @@ def main():
     # parsing user arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("testbed", help="The name of the current testbed")
+    parser.add_argument("firmware", help="The firmware to flash", type=str)
     parser.add_argument("-d", "--duration", help="Duration of the experiment in munutes", type=int, default=30)
     parser.add_argument("-e", "--expid", help="The experiment id", type=int, default=None)
     parser.add_argument("-l", "--local", help="Run the experiment locally", action="store_true")
@@ -268,7 +270,7 @@ def main():
         )
     else:
         if args.expid is None:
-            expid = submit_experiment(args.testbed, args.duration)
+            expid = submit_experiment(args.testbed, args.firmware, args.duration)
             # get the content
             print("Exp submited with id: %u" % expid)
         else:
