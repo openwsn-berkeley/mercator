@@ -1,6 +1,7 @@
 import copy
 import threading
 import struct
+import time
 
 import serial
 import socket
@@ -289,6 +290,7 @@ class MoteHandler(threading.Thread):
                 self.serial.send(self.hdlc.hdlcify(dataToSend))
             else:
                 self.serial.write(self.hdlc.hdlcify(dataToSend))
+                time.sleep(0.01)
 
     #=== helpers
 
