@@ -12,7 +12,7 @@ import MercatorDefines as d
 class MoteHandler(threading.Thread):
 
     _BAUDRATE                     = 500000
-    TIMEOUT_RESPONSE              = 10
+    TIMEOUT_RESPONSE              = 3
 
     STAT_UARTNUMRXCRCOK           = 'uartNumRxCrcOk'
     STAT_UARTNUMRXCRCWRONG        = 'uartNumRxCrcWrong'
