@@ -290,7 +290,7 @@ class MoteHandler(threading.Thread):
                 self.serial.send(self.hdlc.hdlcify(dataToSend))
             else:
                 self.serial.write(self.hdlc.hdlcify(dataToSend))
-                time.sleep(0.01)
+            time.sleep(0.01)
 
     #=== helpers
 
