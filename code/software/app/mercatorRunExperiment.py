@@ -63,10 +63,10 @@ class MercatorRunExperiment(object):
 
         # connect to motes
         for s in serialports:
-            logging.debug("connected to {0}",s)
+            logging.debug("connected to {0}".format(s))
             self.motes[s]    = MoteHandler.MoteHandler(s,self._cb)
             if not self.motes[s].isActive:
-                logging.info("DELETED", s)
+                logging.info("DELETED {0}".format(s))
                 del self.motes[s]
 
         self.file            = open('{0}{1}-{2}_raw.csv'.format(DATASET_PATH,
