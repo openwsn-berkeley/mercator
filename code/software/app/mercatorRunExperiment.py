@@ -17,8 +17,12 @@ import json
 import shlex
 import time
 import datetime
+
+# Mercator
 import MoteHandler
 import MercatorDefines as d
+
+# IoT-lab
 import iotlabcli as iotlab
 from iotlabcli import experiment
 
