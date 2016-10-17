@@ -78,6 +78,7 @@ class MercatorRunExperiment(object):
 
         # do experiments per frequency
         for freq in self.FREQUENCIES:
+            logging.info("Current frequency: {0}", freq)
             self._doExperimentPerFrequency(freq)
 
         # print all OK
@@ -89,14 +90,16 @@ class MercatorRunExperiment(object):
 
     def _doExperimentPerFrequency(self,freq):
 
-        for transmitterPort in self.motes:
+        for counter, transmitterPort in enumerate(self.motes):
             self._doExperimentPerTransmitter(freq,transmitterPort)
+            if counter % (len(self.motes)/4) == 0:
+                logging.info("{0}/{1}".format(counter,len(self.motes)))
 
     def _doExperimentPerTransmitter(self,freq,transmitterPort):
 
         self.transmitterPort = transmitterPort
         self.freq            = freq
-        logging.info('freq={0} transmitterPort={1}'.format(freq,transmitterPort))
+        logging.debug('freq={0} transmitterPort={1}'.format(freq,transmitterPort))
 
         # switch all motes to idle
         for (sp,mh) in self.motes.items():
@@ -148,7 +151,7 @@ class MercatorRunExperiment(object):
         maxwaittime = 3*self.TXNUMPK*(self.TXIFDUR/1000.0)
         self.waitTxDone.wait(maxwaittime)
         if self.waitTxDone.isSet():
-            logging.info('done.')
+            logging.debug('done.')
         else:
             # raise SystemError('timeout when waiting for transmission to be done (no IND_TXDONE after {0}s)'.format(maxwaittime))
             return
