@@ -17,6 +17,7 @@ import json
 import shlex
 import time
 import datetime
+import logging.config
 
 # Mercator
 import MoteHandler
@@ -25,6 +26,10 @@ import MercatorDefines as d
 # IoT-lab
 import iotlabcli as iotlab
 from iotlabcli import experiment
+
+#============================ logging =========================================
+
+logging.config.fileConfig('logging.conf')
 
 #============================ body ============================================
 
