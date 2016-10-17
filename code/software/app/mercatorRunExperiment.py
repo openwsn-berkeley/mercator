@@ -99,7 +99,7 @@ class MercatorRunExperiment(object):
             # assert status['status'] == d.ST_IDLE
 
         # increment transaction counter
-        self.transctr += 1
+        self.transctr += 1 % 255
 
         # switch all motes to rx
         for (sp,mh) in self.motes.items():
