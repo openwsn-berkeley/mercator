@@ -17,6 +17,7 @@ import json
 import shlex
 import time
 import datetime
+import logging
 import logging.config
 
 # Mercator
@@ -65,7 +66,7 @@ class MercatorRunExperiment(object):
             print s
             self.motes[s]    = MoteHandler.MoteHandler(s,self._cb)
             if not self.motes[s].isActive:
-                print "DELETED", s
+                logging.info("DELETED", s)
                 del self.motes[s]
 
         self.file            = open('{0}{1}-{2}_raw.csv'.format(DATASET_PATH,
@@ -95,11 +96,11 @@ class MercatorRunExperiment(object):
 
         self.transmitterPort = transmitterPort
         self.freq            = freq
-        print 'freq={0} transmitterPort={1}'.format(freq,transmitterPort)
+        logging.info('freq={0} transmitterPort={1}'.format(freq,transmitterPort))
 
         # switch all motes to idle
         for (sp,mh) in self.motes.items():
-            print '    switch {0} to idle'.format(sp)
+            logging.debug('    switch {0} to idle'.format(sp))
             mh.send_REQ_IDLE()
 
         # check state, assert that all are idle
@@ -112,7 +113,7 @@ class MercatorRunExperiment(object):
 
         # switch all motes to rx
         for (sp,mh) in self.motes.items():
-            print '    switch {0} to RX'.format(sp)
+            logging.debug('    switch {0} to RX'.format(sp))
             mh.send_REQ_RX(
                 frequency         = freq,
                 srcmac            = self.motes[transmitterPort].getMac(),
@@ -127,7 +128,7 @@ class MercatorRunExperiment(object):
             # assert status['status'] == d.ST_RX
 
         # switch tx mote to tx
-        print '    switch {0} to TX'.format(transmitterPort)
+        logging.debug('    switch {0} to TX'.format(transmitterPort))
 
         with self.dataLock:
             self.waitTxDone       = threading.Event()
@@ -147,7 +148,7 @@ class MercatorRunExperiment(object):
         maxwaittime = 3*self.TXNUMPK*(self.TXIFDUR/1000.0)
         self.waitTxDone.wait(maxwaittime)
         if self.waitTxDone.isSet():
-            print 'done.'
+            logging.info('done.')
         else:
             # raise SystemError('timeout when waiting for transmission to be done (no IND_TXDONE after {0}s)'.format(maxwaittime))
             return
@@ -250,12 +251,12 @@ def submit_experiment(testbed_name, firmware, duration):
     resources   = [experiment.exp_resources(nodes, firmware, profile)]
 
     # submit experiment
-    print "Submitting experiment."
+    logging.info("Submitting experiment.")
     expid       = experiment.submit_experiment(
                     api, "mercatorExp", duration,
                     resources)["id"]
 
-    print "Waiting for experiment to be running."
+    logging.info("Waiting for experiment to be running.")
     experiment.wait_experiment(api, expid)
 
     return expid
@@ -281,7 +282,7 @@ def main():
         if args.expid is None:
             expid = submit_experiment(args.testbed, args.firmware, args.duration)
             # get the content
-            print("Exp submited with id: %u" % expid)
+            logging.info("Exp submited with id: %u" % expid)
         else:
             expid = args.expid
         (serialports, site) = get_motes(expid);
