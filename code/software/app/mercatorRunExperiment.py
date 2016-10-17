@@ -38,7 +38,7 @@ class MercatorRunExperiment(object):
     TXNUMPK        = 10                          # number of packets per transaction
     TXIFDUR        = 100                         # inter-frame duration, in ms
     TXLENGTH       = 100                         # number of bytes (PHY payload) in a frame
-    TXFILLBYTE     = 10                          # padding byte
+    TXFILLBYTE     = 0x0a                        # padding byte
 
     def __init__(self,serialports,site="local"):
 
@@ -179,7 +179,8 @@ class MercatorRunExperiment(object):
                 txpower    = self.TXPOWER
                 txifdur    = self.TXIFDUR
                 txlength   = self.TXLENGTH
-                txfillbyte = self.TXFILLBYTE
+                tfb_raw    = hex(self.TXFILLBYTE).split('x')
+                txfillbyte = "{0}x{1}".format(tfb_raw[0], tfb_raw[1].zfill(2))
                 # if (crc == 1 and expected == 1):
                 self.file.write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}\n".format(
                         timestamp,
