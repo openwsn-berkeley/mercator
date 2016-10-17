@@ -78,7 +78,7 @@ class MercatorRunExperiment(object):
 
         # do experiments per frequency
         for freq in self.FREQUENCIES:
-            logging.info("Current frequency: {0}", freq)
+            logging.info("Current frequency: {0}".format(freq))
             self._doExperimentPerFrequency(freq)
 
         # print all OK
