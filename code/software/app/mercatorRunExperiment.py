@@ -95,7 +95,7 @@ class MercatorRunExperiment(object):
             self._doExperimentPerTransmitter(freq,transmitterPort)
             if counter % (len(self.motes)/4) == 0:
                 logging.info("{0}/{1}".format(counter,len(self.motes)))
-            time.sleep(TXITDUR)
+            time.sleep(self.TXITDUR/1000.0)
 
     def _doExperimentPerTransmitter(self,freq,transmitterPort):
 
