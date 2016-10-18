@@ -49,6 +49,7 @@ class MercatorRunExperiment(object):
     TXIFDUR        = 100                         # inter-frame duration, in ms
     TXLENGTH       = 100                         # number of bytes (PHY payload) in a frame
     TXFILLBYTE     = 0x0a                        # padding byte
+    TXITDUR        = 10                          # inter-transaction duration, in ms
 
     def __init__(self,serialports,site="local"):
 
@@ -94,6 +95,7 @@ class MercatorRunExperiment(object):
             self._doExperimentPerTransmitter(freq,transmitterPort)
             if counter % (len(self.motes)/4) == 0:
                 logging.info("{0}/{1}".format(counter,len(self.motes)))
+            time.sleep(TXITDUR)
 
     def _doExperimentPerTransmitter(self,freq,transmitterPort):
 
