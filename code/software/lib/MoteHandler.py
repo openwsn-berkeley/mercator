@@ -233,6 +233,9 @@ class MoteHandler(threading.Thread):
                 else:
                     expected = 0
 
+                if crc == 0 or expected == 0:
+                    pkctr = 0
+
                 # notify higher layer
                 self.cb(
                     serialport = self.serialport,
