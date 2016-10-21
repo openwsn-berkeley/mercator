@@ -279,10 +279,9 @@ def main():
     parser.add_argument("firmware", help="The firmware to flash", type=str)
     parser.add_argument("-d", "--duration", help="Duration of the experiment in munutes", type=int, default=30)
     parser.add_argument("-e", "--expid", help="The experiment id", type=int, default=None)
-    parser.add_argument("-l", "--local", help="Run the experiment locally", action="store_true")
     args = parser.parse_args()
 
-    if args.local:
+    if args.testbed == "local" :
         MercatorRunExperiment(
             serialports = ['/dev/ttyUSB1','/dev/ttyUSB3']
         )
