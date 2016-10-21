@@ -95,7 +95,7 @@ class MercatorRunExperiment(object):
 
         for counter, transmitterPort in enumerate(self.motes):
             self._doExperimentPerTransmitter(freq,transmitterPort)
-            if counter % (len(self.motes)/4) == 0:
+            if counter % (1+len(self.motes)/4) == 0:
                 logconsole.info("{0}/{1}".format(counter,len(self.motes)))
 
     def _doExperimentPerTransmitter(self,freq,transmitterPort):
