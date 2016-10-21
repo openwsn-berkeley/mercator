@@ -9,6 +9,8 @@ import json
 
 #-----------------------------------------------------------------------------#
 
+STATES = ["Busy","Alive"]
+
 # get IoTlab infos
 
 os.system("experiment-cli info -l > tmp.json")
@@ -21,7 +23,7 @@ os.remove("tmp.json")
 
 results = {}
 for mote in jout["items"]:
-    if mote["state"] == "Alive":
+    if mote["state"] in STATES:
         # create site if it does not exists
         if mote["site"] not in results.keys():
             results[mote["site"]] = []
