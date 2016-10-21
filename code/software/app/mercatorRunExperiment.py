@@ -32,6 +32,9 @@ from iotlabcli import experiment
 
 logging.config.fileConfig('logging.conf')
 
+logconsole  = logging.getLogger("console")
+logfile     = logging.getLogger("file")
+
 #============================ body ============================================
 
 FIRMWARE_PATH   = "../../firmware/"
@@ -63,10 +66,10 @@ class MercatorRunExperiment(object):
 
         # connect to motes
         for s in serialports:
-            logging.debug("connected to {0}".format(s))
+            logfile.debug("connected to {0}".format(s))
             self.motes[s]    = MoteHandler.MoteHandler(s,self._cb)
             if not self.motes[s].isActive:
-                logging.info("DELETED {0}".format(s))
+                logconsole.info("DELETED {0}".format(s))
                 del self.motes[s]
 
         self.file            = open('{0}{1}-{2}_raw.csv'.format(DATASET_PATH,
@@ -78,7 +81,7 @@ class MercatorRunExperiment(object):
 
         # do experiments per frequency
         for freq in self.FREQUENCIES:
-            logging.info("Current frequency: {0}".format(freq))
+            logconsole.info("Current frequency: {0}".format(freq))
             self._doExperimentPerFrequency(freq)
 
         # print all OK
@@ -93,17 +96,17 @@ class MercatorRunExperiment(object):
         for counter, transmitterPort in enumerate(self.motes):
             self._doExperimentPerTransmitter(freq,transmitterPort)
             if counter % (len(self.motes)/4) == 0:
-                logging.info("{0}/{1}".format(counter,len(self.motes)))
+                logconsole.info("{0}/{1}".format(counter,len(self.motes)))
 
     def _doExperimentPerTransmitter(self,freq,transmitterPort):
 
         self.transmitterPort = transmitterPort
         self.freq            = freq
-        logging.debug('freq={0} transmitterPort={1}'.format(freq,transmitterPort))
+        logfile.debug('freq={0} transmitterPort={1}'.format(freq,transmitterPort))
 
         # switch all motes to idle
         for (sp,mh) in self.motes.items():
-            logging.debug('    switch {0} to idle'.format(sp))
+            logfile.debug('    switch {0} to idle'.format(sp))
             mh.send_REQ_IDLE()
 
         # check state, assert that all are idle
@@ -116,7 +119,7 @@ class MercatorRunExperiment(object):
 
         # switch all motes to rx
         for (sp,mh) in self.motes.items():
-            logging.debug('    switch {0} to RX'.format(sp))
+            logfile.debug('    switch {0} to RX'.format(sp))
             mh.send_REQ_RX(
                 frequency         = freq,
                 srcmac            = self.motes[transmitterPort].getMac(),
@@ -131,7 +134,7 @@ class MercatorRunExperiment(object):
             # assert status['status'] == d.ST_RX
 
         # switch tx mote to tx
-        logging.debug('    switch {0} to TX'.format(transmitterPort))
+        logfile.debug('    switch {0} to TX'.format(transmitterPort))
 
         with self.dataLock:
             self.waitTxDone       = threading.Event()
@@ -151,7 +154,7 @@ class MercatorRunExperiment(object):
         maxwaittime = 3*self.TXNUMPK*(self.TXIFDUR/1000.0)
         self.waitTxDone.wait(maxwaittime)
         if self.waitTxDone.isSet():
-            logging.debug('done.')
+            logfile.debug('done.')
         else:
             # raise SystemError('timeout when waiting for transmission to be done (no IND_TXDONE after {0}s)'.format(maxwaittime))
             return
@@ -254,12 +257,12 @@ def submit_experiment(testbed_name, firmware, duration):
     resources   = [experiment.exp_resources(nodes, firmware, profile)]
 
     # submit experiment
-    logging.info("Submitting experiment.")
+    logconsole.info("Submitting experiment.")
     expid       = experiment.submit_experiment(
                     api, "mercatorExp", duration,
                     resources)["id"]
 
-    logging.info("Waiting for experiment to be running.")
+    logconsole.info("Waiting for experiment to be running.")
     experiment.wait_experiment(api, expid)
 
     return expid
@@ -279,13 +282,13 @@ def main():
 
     if args.local:
         MercatorRunExperiment(
-            serialports = ['COM4','COM5','COM6']
+            serialports = ['/dev/ttyUSB1','/dev/ttyUSB3']
         )
     else:
         if args.expid is None:
             expid = submit_experiment(args.testbed, args.firmware, args.duration)
             # get the content
-            logging.info("Exp submited with id: %u" % expid)
+            logconsole.info("Exp submited with id: %u" % expid)
         else:
             expid = args.expid
         (serialports, site) = get_motes(expid);
