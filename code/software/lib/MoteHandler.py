@@ -270,6 +270,20 @@ class MoteHandler(threading.Thread):
                     }
                     self.waitResponseEvent.set()
 
+            elif inputtype == d.TYPE_IND_UP:
+
+                # parse input
+                [msg_type] = \
+                struct.unpack(">B", ''.join([chr(b) for b in inputBuf]))
+
+                # notify higher layer
+                self.cb(
+                    serialport = self.serialport,
+                    notif      = {
+                        'type':             msg_type,
+                        }
+                    )
+
             else:
 
                 raise SystemError('unknown notification type {0}'.format(inputBuf[0]))

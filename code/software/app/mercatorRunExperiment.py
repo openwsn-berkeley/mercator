@@ -215,6 +215,8 @@ class MercatorRunExperiment(object):
                         txlength,
                         txfillbyte
                     ))
+            elif notif['type'] == d.TYPE_IND_UP:
+                logfile("Node %s restarted", d.formatMac(self.motes[serialport].getMac()));
 
     def _quitCallback(self):
         print "quitting!"
