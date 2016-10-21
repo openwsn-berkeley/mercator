@@ -112,7 +112,7 @@ class MercatorRunExperiment(object):
         # check state, assert that all are idle
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
-            # assert status['status'] == d.ST_IDLE
+            assert status['status'] == d.ST_IDLE
 
         # increment transaction counter
         self.transctr = (self.transctr + 1) % 255
@@ -131,7 +131,7 @@ class MercatorRunExperiment(object):
         # check state, assert that all are in rx mode
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
-            # assert status['status'] == d.ST_RX
+            assert status['status'] == d.ST_RX
 
         # switch tx mote to tx
         logfile.debug('    switch {0} to TX'.format(transmitterPort))
@@ -162,10 +162,10 @@ class MercatorRunExperiment(object):
         # check state, assert numnotifications is expected
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
-            # if sp==transmitterPort:
-                # assert status['status'] == d.ST_TXDONE
-            # else:
-                # assert status['status'] == d.ST_RX
+            if sp==transmitterPort:
+                assert status['status'] == d.ST_TXDONE
+            else:
+                assert status['status'] == d.ST_RX
 
     #======================== private =========================================
 
