@@ -104,6 +104,8 @@ class MoteHandler(threading.Thread):
 
                 self.lastRxByte = rxByte
 
+            self.serial.close()
+
     #======================== public ==========================================
 
     #=== stats
