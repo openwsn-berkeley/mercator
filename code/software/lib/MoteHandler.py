@@ -38,6 +38,7 @@ class MoteHandler(threading.Thread):
             if self.iotlab:
                 self.serial       = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
                 self.serial.connect((serialport, 20000))
+                self.serial.settimeout(TIMEOUT_RESPONSE)
             else:
                 self.serial  = serial.Serial(self.serialport,self._BAUDRATE)
         except Exception as err:
