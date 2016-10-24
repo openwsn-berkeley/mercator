@@ -112,7 +112,7 @@ class MercatorRunExperiment(object):
         # check state, assert that all are idle
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
-            assert "status" in status and status['status'] == d.ST_IDLE
+            assert status is not None and status['status'] == d.ST_IDLE
 
         # increment transaction counter
         self.transctr = (self.transctr + 1) % 255
@@ -131,7 +131,7 @@ class MercatorRunExperiment(object):
         # check state, assert that all are in rx mode
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
-            assert "status" in status and status['status'] == d.ST_RX
+            assert status is not None and status['status'] == d.ST_RX
 
         # switch tx mote to tx
         logfile.debug('    switch {0} to TX'.format(transmitterPort))
@@ -156,16 +156,16 @@ class MercatorRunExperiment(object):
         if self.waitTxDone.isSet():
             logfile.debug('done.')
         else:
-            raise SystemError('timeout when waiting for transmission to be done (no IND_TXDONE after {0}s)'.format(maxwaittime))
+            #raise SystemError('timeout when waiting for transmission to be done (no IND_TXDONE after {0}s)'.format(maxwaittime))
             return
 
         # check state, assert numnotifications is expected
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
             if sp==transmitterPort:
-                assert "status" in status and status['status'] == d.ST_TXDONE
+                assert status is not None and status['status'] == d.ST_TXDONE
             else:
-                assert "status" in status and status['status'] == d.ST_RX
+                assert status is not None and status['status'] == d.ST_RX
 
     #======================== private =========================================
 
