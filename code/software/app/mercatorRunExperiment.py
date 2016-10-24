@@ -235,7 +235,7 @@ def get_motes(expid):
 
     return (map(lambda x: x["network_address"].split('.')[0], data["items"]), data["items"][0]["network_address"].split('.')[1])
 
-def submit_experiment(testbed_name, firmware, duration):
+def submit_experiment(testbed_name, board, firmware, duration):
     """
     Reserve nodes in the given site.
     The function uses the json experiment file corresponding to the site.
@@ -253,7 +253,7 @@ def submit_experiment(testbed_name, firmware, duration):
     # load the experiment
     tb_file     = open("{0}states.json".format(METAS_PATH))
     tb_json     = json.load(tb_file)
-    nodes       = tb_json[testbed_name]
+    nodes       = [ x for x in tb_json[testbed_name] if board in x]
     firmware    = FIRMWARE_PATH + firmware
     profile     = "mercator"
     resources   = [experiment.exp_resources(nodes, firmware, profile)]
@@ -279,6 +279,7 @@ def main():
     parser.add_argument("firmware", help="The firmware to flash", type=str)
     parser.add_argument("-d", "--duration", help="Duration of the experiment in munutes", type=int, default=30)
     parser.add_argument("-e", "--expid", help="The experiment id", type=int, default=None)
+    parser.add_argument("-b", "--board", help="The type of board to use", type=str, default="m3")
     args = parser.parse_args()
 
     if args.testbed == "local" :
@@ -287,7 +288,7 @@ def main():
         )
     else:
         if args.expid is None:
-            expid = submit_experiment(args.testbed, args.firmware, args.duration)
+            expid = submit_experiment(args.testbed, args.board, args.firmware, args.duration)
             # get the content
             logconsole.info("Exp submited with id: %u" % expid)
         else:
