@@ -136,6 +136,7 @@ class MercatorRunExperiment(object):
             else:
                 mh.goOn = False
                 mh = MoteHandler.MoteHandler(s,self._cb)
+                logfile.debug("restarting node %s", sp)
 
         # switch tx mote to tx
         logfile.debug('    switch {0} to TX'.format(transmitterPort))
