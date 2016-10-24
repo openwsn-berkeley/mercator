@@ -133,7 +133,7 @@ class MercatorRunExperiment(object):
             status = mh.send_REQ_ST()
             if status is None or status['status'] == d.ST_RX:
                 mh.goOn = False
-                mh = MoteHandler.MoteHandler(s,self._cb)
+                mh = MoteHandler.MoteHandler(sp,self._cb)
                 logfile.debug("restarting node %s", sp)
 
         # switch tx mote to tx
