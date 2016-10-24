@@ -130,8 +130,12 @@ class MercatorRunExperiment(object):
 
         # check state, assert that all are in rx mode
         for (sp,mh) in self.motes.items():
-            status = mh.send_REQ_ST()
-            assert status is not None and status['status'] == d.ST_RX
+            if mh.isActive:
+                status = mh.send_REQ_ST()
+                assert status is not None and status['status'] == d.ST_RX
+            else:
+                mh.goOn = False
+                mh = MoteHandler.MoteHandler(s,self._cb)
 
         # switch tx mote to tx
         logfile.debug('    switch {0} to TX'.format(transmitterPort))
