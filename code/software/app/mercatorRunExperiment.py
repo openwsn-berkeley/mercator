@@ -130,10 +130,8 @@ class MercatorRunExperiment(object):
 
         # check state, assert that all are in rx mode
         for (sp,mh) in self.motes.items():
-            if mh.isActive:
-                status = mh.send_REQ_ST()
-                assert status is not None and status['status'] == d.ST_RX
-            else:
+            status = mh.send_REQ_ST()
+            if status is None or status['status'] == d.ST_RX:
                 mh.goOn = False
                 mh = MoteHandler.MoteHandler(s,self._cb)
                 logfile.debug("restarting node %s", sp)
