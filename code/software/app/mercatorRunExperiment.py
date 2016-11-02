@@ -271,6 +271,7 @@ def submit_experiment(testbed_name, board, firmware, duration):
                     api, "mercatorExp", duration,
                     resources)["id"]
 
+    logconsole.info("Experiment submited with id: %u" % expid)
     logconsole.info("Waiting for experiment to be running.")
     experiment.wait_experiment(api, expid)
 
@@ -296,8 +297,6 @@ def main():
     else:
         if args.expid is None:
             expid = submit_experiment(args.testbed, args.board, args.firmware, args.duration)
-            # get the content
-            logconsole.info("Exp submited with id: %u" % expid)
         else:
             expid = args.expid
         (serialports, site) = get_motes(expid);
