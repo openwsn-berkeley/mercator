@@ -7,6 +7,7 @@ TYPE_REQ_TX        = 4
 TYPE_IND_TXDONE    = 5
 TYPE_REQ_RX        = 6
 TYPE_IND_RX        = 7
+TYPE_IND_UP        = 8
 TYPE_ALL = [
     TYPE_REQ_ST,
     TYPE_RESP_ST,
@@ -14,7 +15,8 @@ TYPE_ALL = [
     TYPE_REQ_TX,
     TYPE_IND_TXDONE,
     TYPE_REQ_RX,
-    TYPE_IND_RX
+    TYPE_IND_RX,
+    TYPE_IND_UP
 ]
 
 def type_num2text(num):
@@ -32,6 +34,8 @@ def type_num2text(num):
         returnval = 'REQ_RX'
     elif num==TYPE_IND_RX:
         returnval = 'IND_RX'
+    elif num==TYPE_IND_UP:
+        returnval = 'IND_UP'
     else:
         returnval = '<unknown>'
     return returnval
