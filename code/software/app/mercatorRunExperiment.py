@@ -112,7 +112,8 @@ class MercatorRunExperiment(object):
         # check state, assert that all are idle
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
-            assert status is not None and status['status'] == d.ST_IDLE
+            if status is None or status['status'] != d.ST_IDLE:
+                logfile.warn('Node %s is not in IDLE state.', mh.mac)
 
         # increment transaction counter
         self.transctr = (self.transctr + 1) % 255
@@ -132,13 +133,7 @@ class MercatorRunExperiment(object):
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
             if status is None or status['status'] != d.ST_RX:
-                logfile.debug("restarting node %s", sp)
-                mh.goOn = False
-                mh.join()
-                mh = MoteHandler.MoteHandler(sp,self._cb)
-                logfile.debug("node restarted %s", sp)
-                status = mh.send_REQ_ST()
-                assert status is not None and status['status'] == d.ST_RX
+                logfile.warn('Node %s is not in RX state.', mh.mac)
 
         # switch tx mote to tx
         logfile.debug('    switch {0} to TX'.format(transmitterPort))
@@ -170,9 +165,11 @@ class MercatorRunExperiment(object):
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
             if sp==transmitterPort:
-                assert status is not None and status['status'] == d.ST_TXDONE
+                if status is None and status['status'] != d.ST_TXDONE:
+                    logfile.warn('Node %s is not in TXDONE state.', mh.mac)
             else:
-                assert status is not None and status['status'] == d.ST_RX
+                if status is not None and status['status'] != d.ST_RX:
+                    logfile.warn('Node %s is not in RX state.', mh.mac)
 
     #======================== private =========================================
 
