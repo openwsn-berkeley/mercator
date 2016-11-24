@@ -1,14 +1,31 @@
-[![Code Health](https://landscape.io/github/openwsn-berkeley/mercator/master/landscape.svg?style=flat)](https://landscape.io/github/openwsn-berkeley/mercator/master)
+# Mercator
 
-_You are watching the raw data. To visualize it: https://openwsn-berkeley.github.io/mercator/._
+This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.20-4.
 
-## Mercator: Dense Wireless Connectivity Datasets for the IoT
+## Development server
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-<img src="https://raw.githubusercontent.com/wiki/openwsn-berkeley/mercator/figures/mercator.jpg" align="left">
+## Code scaffolding
 
-**Mercator** is a collection of connectivity datasets gathered on the IoT-LAB sites. These datasets are:
-* **dense in time**, meaning the connectivity is continuously assessed over a long period of time; it allows one to see variation of connectivity over time.
-* **dense in space**, meaning the connectivity is assessed over hundreds of measurements points; it allows one to see how connectivity is affected by the location of transmitter and receivers.
-* **dense in frequency**, meaning the connectivity is assessed for each of the 16 IEEE802.15.4 frequencies; it allows one to see how connectivity is affected by the communication frequency.
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class`.
 
-Want to learn more? [See the wiki.](https://github.com/openwsn-berkeley/mercator/wiki)
+## Build
+
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+
+## Running unit tests
+
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+## Running end-to-end tests
+
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Before running the tests make sure you are serving the app via `ng serve`.
+
+## Deploying to Github Pages
+
+Run `ng github-pages:deploy` to deploy to Github Pages.
+
+## Further help
+
+To get more help on the `angular-cli` use `ng --help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).

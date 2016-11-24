@@ -1,3 +1,0 @@
-pyserial
-importlib
-iotlabcli==2.1.0
