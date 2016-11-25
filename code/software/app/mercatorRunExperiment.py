@@ -165,10 +165,10 @@ class MercatorRunExperiment(object):
         for (sp,mh) in self.motes.items():
             status = mh.send_REQ_ST()
             if sp==transmitterPort:
-                if status is None and status['status'] != d.ST_TXDONE:
+                if status is None or status['status'] != d.ST_TXDONE:
                     logfile.warn('Node %s is not in TXDONE state.', mh.mac)
             else:
-                if status is not None and status['status'] != d.ST_RX:
+                if status is not None or status['status'] != d.ST_RX:
                     logfile.warn('Node %s is not in RX state.', mh.mac)
 
     #======================== private =========================================
