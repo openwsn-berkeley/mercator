@@ -168,7 +168,7 @@ class MercatorRunExperiment(object):
                 if status is None or status['status'] != d.ST_TXDONE:
                     logfile.warn('Node %s is not in TXDONE state.', mh.mac)
             else:
-                if status is not None or status['status'] != d.ST_RX:
+                if status is None or status['status'] != d.ST_RX:
                     logfile.warn('Node %s is not in RX state.', mh.mac)
 
     #======================== private =========================================
@@ -289,7 +289,7 @@ def main():
 
     if args.testbed == "local" :
         MercatorRunExperiment(
-            serialports = ['/dev/ttyUSB1','/dev/ttyUSB3']
+            serialports = ['/dev/ttyUSB1','/dev/ttyUSB2']
         )
     else:
         if args.expid is None:
