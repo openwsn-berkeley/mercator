@@ -1,34 +1,35 @@
 #!/usr/bin/python
 
-import sys
 import threading
 import logging
-import binascii
 import time
 from   datetime import timedelta
+
 
 class NullLogHandler(logging.Handler):
     def emit(self, record):
         pass
 
+
 class OpenCli(threading.Thread):
-    '''
+    """
     \brief Thread which handles CLI commands entered by the user.
-    '''
+    """
 
     CMD_LEVEL_USER   = "user"
     CMD_LEVEL_SYSTEM = "system"
 
-    def __init__(self,appName,quit_cb):
+    def __init__(self, app_name, quit_cb):
 
         # slot params
-        self.appName         = appName
+        self.appName         = app_name
         self.quit_cb         = quit_cb
 
         # local variables
         self.commandLock     = threading.Lock()
         self.commands        = []
         self.goOn            = True
+        self.startTime       = 0
 
         # logging
         self.log             = logging.getLogger('OpenCli')
@@ -42,34 +43,34 @@ class OpenCli(threading.Thread):
         self.name            = 'OpenCli'
 
         # register system commands (user commands registers by child object)
-        self._registerCommand_internal(
+        self._register_command_internal(
                 self.CMD_LEVEL_SYSTEM,
                 'help',
                 'h',
                 'print this menu',
                 [],
-                self._handleHelp)
-        self._registerCommand_internal(
+                self._handle_help)
+        self._register_command_internal(
                 self.CMD_LEVEL_SYSTEM,
                 'info',
                 'i',
                 'information about this application',
                 [],
-                self._handleInfo)
-        self._registerCommand_internal(
+                self._handle_info)
+        self._register_command_internal(
                 self.CMD_LEVEL_SYSTEM,
                 'quit',
                 'q',
                 'quit this application',
                 [],
-                self._handleQuit)
-        self._registerCommand_internal(
+                self._handle_quit)
+        self._register_command_internal(
                 self.CMD_LEVEL_SYSTEM,
                 'uptime',
                 'ut',
                 'how long this application has been running',
                 [],
-                self._handleUptime)
+                self._handle_uptime)
 
     def run(self):
         banner  = []
@@ -96,12 +97,12 @@ class OpenCli(threading.Thread):
             self.log.debug('Following command entered:'+params)
 
             params = params.split()
-            if len(params)<1:
+            if len(params) < 1:
                 continue
 
-            if len(params)==2 and params[1]=='?':
-                if not self._printUsageFromName(params[0]):
-                    if not self._printUsageFromAlias(params[0]):
+            if len(params) == 2 and params[1] == '?':
+                if not self._print_usage_from_name(params[0]):
+                    if not self._print_usage_from_alias(params[0]):
                         print ' unknown command or alias \''+params[0]+'\''
                 continue
 
@@ -109,44 +110,44 @@ class OpenCli(threading.Thread):
             found = False
             self.commandLock.acquire()
             for command in self.commands:
-                if command['name']==params[0] or command['alias']==params[0]:
+                if command['name'] == params[0] or command['alias'] == params[0]:
                     found = True
-                    cmdParams     = command['params']
-                    cmdCallback   = command['callback']
+                    cmd_params     = command['params']
+                    cmd_callback   = command['callback']
                     break
             self.commandLock.release()
 
             # call its callback or print error message
             if found:
-                if len(params[1:])==len(cmdParams):
-                    cmdCallback(params[1:])
+                if len(params[1:]) == len(cmd_params):
+                    cmd_callback(params[1:])
                 else:
-                    if not self._printUsageFromName(params[0]):
-                        self._printUsageFromAlias(params[0])
+                    if not self._print_usage_from_name(params[0]):
+                        self._print_usage_from_alias(params[0])
             else:
                 print ' unknown command or alias \''+params[0]+'\''
 
     #======================== public ==========================================
 
-    def registerCommand(self,name,alias,description,params,callback):
+    def register_command(self, name, alias, description, params, callback):
 
-        self._registerCommand_internal(self.CMD_LEVEL_USER,
-                                       name,
-                                       alias,
-                                       description,
-                                       params,
-                                       callback)
+        self._register_command_internal(self.CMD_LEVEL_USER,
+                                        name,
+                                        alias,
+                                        description,
+                                        params,
+                                        callback)
 
     #======================== private =========================================
 
-    def _registerCommand_internal(self,cmdLevel,name,alias,description,params,callback):
+    def _register_command_internal(self, cmd_level, name, alias, description, params, callback):
 
-        if self._doesCommandExist(name):
+        if self._does_command_exist(name):
             raise SystemError("command {0} already exists".format(name))
 
         self.commandLock.acquire()
         self.commands.append({
-                                'cmdLevel':      cmdLevel,
+                                'cmd_level':      cmd_level,
                                 'name':          name,
                                 'alias':         alias,
                                 'description':   description,
@@ -155,46 +156,46 @@ class OpenCli(threading.Thread):
                              })
         self.commandLock.release()
 
-    def _printUsageFromName(self,commandname):
-        return self._printUsage(commandname,'name')
+    def _print_usage_from_name(self, commandname):
+        return self._print_usage(commandname, 'name')
 
-    def _printUsageFromAlias(self,commandalias):
-        return self._printUsage(commandalias,'alias')
+    def _print_usage_from_alias(self, commandalias):
+        return self._print_usage(commandalias, 'alias')
 
-    def _printUsage(self,name,paramType):
+    def _print_usage(self, name, param_type):
 
-        usageString = None
+        usage_string = None
 
         self.commandLock.acquire()
         for command in self.commands:
-            if command[paramType]==name:
-                usageString  = []
-                usageString += ['usage: {0}'.format(name)]
-                usageString += [" <{0}>".format(p) for p in command['params']]
-                usageString  = ''.join(usageString)
+            if command[param_type] == name:
+                usage_string  = []
+                usage_string += ['usage: {0}'.format(name)]
+                usage_string += [" <{0}>".format(p) for p in command['params']]
+                usage_string  = ''.join(usage_string)
         self.commandLock.release()
 
-        if usageString:
-            print usageString
+        if usage_string:
+            print usage_string
             return True
         else:
             return False
 
-    def _doesCommandExist(self,cmdName):
+    def _does_command_exist(self, cmd_name):
 
-        returnVal = False
+        return_val = False
 
         self.commandLock.acquire()
         for cmd in self.commands:
-            if cmd['name']==cmdName:
-                returnVal = True
+            if cmd['name'] == cmd_name:
+                return_val = True
         self.commandLock.release()
 
-        return returnVal
+        return return_val
 
     #=== command handlers (system commands only, a child object creates more)
 
-    def _handleHelp(self,params):
+    def _handle_help(self):
         output  = []
         output += ['Available commands:']
 
@@ -207,7 +208,7 @@ class OpenCli(threading.Thread):
 
         print '\n'.join(output)
 
-    def _handleInfo(self,params):
+    def _handle_info(self):
         output  = []
         output += ['General status of the application']
         output += ['']
@@ -221,39 +222,37 @@ class OpenCli(threading.Thread):
 
         print '\n'.join(output)
 
-    def _handleQuit(self,params):
+    def _handle_quit(self):
 
         # call the quit callback
         self.quit_cb()
 
-        # kill this thead
+        # kill this thread
         self.goOn = False
 
-    def _handleUptime(self,params):
+    def _handle_uptime(self):
 
-        upTime = timedelta(seconds=time.time()-self.startTime)
+        up_time = timedelta(seconds=time.time()-self.startTime)
 
         print 'Running since {0} ({1} ago)'.format(
-                time.strftime("%m/%d/%Y %H:%M:%S",time.localtime(self.startTime)),
-                upTime)
+                time.strftime("%m/%d/%Y %H:%M:%S", time.localtime(self.startTime)),
+                up_time)
 
-
-    #======================== helpers =========================================
 
 ###############################################################################
 
-if __name__=='__main__':
+if __name__ == '__main__':
 
-    def quitCallback():
+    def quit_callback():
         print "quitting!"
 
-    def echoCallback(params):
+    def echo_callback(params):
         print "echo {0}!".format(params)
 
-    cli = OpenCli("Standalone Sample App",quitCallback)
-    cli.registerCommand('echo',
+    cli = OpenCli("Standalone Sample App", quit_callback)
+    cli.register_command('echo',
                         'e',
                         'echoes the first param',
-                        ['string to echo'],
-                        echoCallback)
+                         ['string to echo'],
+                         echo_callback)
     cli.start()

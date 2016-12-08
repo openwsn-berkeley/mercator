@@ -4,9 +4,9 @@
 
 import os
 import sys
-if __name__=='__main__':
+if __name__ == '__main__':
     here = sys.path[0]
-    sys.path.insert(0, os.path.join(here,'..','lib'))
+    sys.path.insert(0, os.path.join(here, '..', 'lib'))
 
 #============================ imports =========================================
 
@@ -18,6 +18,7 @@ import MercatorDefines as d
 
 #============================ body ============================================
 
+
 class MercatorCli(object):
 
     ALL = 'all'
@@ -27,43 +28,43 @@ class MercatorCli(object):
         self.dataLock   = threading.Lock()
         self.motes      = {}
 
-        cli             = OpenCli.OpenCli("Mercator CLI",self._quitCallback)
-        cli.registerCommand(
+        cli             = OpenCli.OpenCli("Mercator CLI", self._quit_callback)
+        cli.register_command(
             'connect',
             'c',
             'connect to a mote',
             ['serialport'],
             self._cli_connect
         )
-        cli.registerCommand(
+        cli.register_command(
             'list',
             'l',
             'list motes',
             [],
             self._cli_list
         )
-        cli.registerCommand(
+        cli.register_command(
             'state',
             'st',
             'request state',
             ['serialport'],
             self._cli_state
         )
-        cli.registerCommand(
+        cli.register_command(
             'idle',
             'id',
             'switch radio off',
             ['serialport'],
             self._cli_idle
         )
-        cli.registerCommand(
+        cli.register_command(
             'tx',
             'tx',
             'transmit a number of packets',
             ['serialport'],
             self._cli_tx
         )
-        cli.registerCommand(
+        cli.register_command(
             'rx',
             'rx',
             'start receiving',
@@ -76,7 +77,7 @@ class MercatorCli(object):
 
     #======================== cli handlers ====================================
 
-    def _cli_connect(self,params):
+    def _cli_connect(self, params):
         serialport = params[0]
 
         if serialport in self.motes:
@@ -84,11 +85,11 @@ class MercatorCli(object):
             return
 
         with self.dataLock:
-            self.motes[serialport] = MoteHandler.MoteHandler(serialport,self._cb)
+            self.motes[serialport] = MoteHandler.MoteHandler(serialport, self._cb)
             if not self.motes[serialport].isActive:
                 del self.motes[serialport]
 
-    def _cli_list(self,params):
+    def _cli_list(self):
         output          = []
         with self.dataLock:
             output     += ['connected to {0} motes:'.format(len(self.motes))]
@@ -96,10 +97,10 @@ class MercatorCli(object):
         output          = '\n'.join(output)
         print output
 
-    def _cli_state(self,params):
+    def _cli_state(self, params):
         serialport = params[0]
 
-        if serialport==self.ALL:
+        if serialport == self.ALL:
             serialports = self.motes.keys()
         else:
             if serialport not in self.motes.keys()+[self.ALL]:
@@ -111,10 +112,10 @@ class MercatorCli(object):
             for s in serialports:
                 print self.motes[s].send_REQ_ST()
 
-    def _cli_idle(self,params):
+    def _cli_idle(self, params):
         serialport = params[0]
 
-        if serialport==self.ALL:
+        if serialport == self.ALL:
             serialports = self.motes.keys()
         else:
             if serialport not in self.motes.keys()+[self.ALL]:
@@ -126,7 +127,7 @@ class MercatorCli(object):
             for s in serialports:
                 self.motes[s].send_REQ_IDLE()
 
-    def _cli_tx(self,params):
+    def _cli_tx(self, params):
         serialport = params[0]
 
         if serialport not in self.motes:
@@ -144,10 +145,10 @@ class MercatorCli(object):
                 txfillbyte   = 0x0b,
             )
 
-    def _cli_rx(self,params):
+    def _cli_rx(self, params):
         serialport = params[0]
 
-        if serialport==self.ALL:
+        if serialport == self.ALL:
             serialports = self.motes.keys()
         else:
             if serialport not in self.motes.keys()+[self.ALL]:
@@ -159,7 +160,7 @@ class MercatorCli(object):
             for s in serialports:
                 self.motes[s].send_REQ_RX(
                     frequency    = 0x14,
-                    srcmac       = [0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88],
+                    srcmac       = [0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88],
                     transctr     = 0x0a,
                     txlength     = 100,
                     txfillbyte   = 0x0b,
@@ -167,32 +168,33 @@ class MercatorCli(object):
 
     #======================== private =========================================
 
-    def _cb(self,serialport,notif):
+    def _cb(self, serialport, notif):
         output               = []
         output              += [' - {0}'.format(serialport)]
-        if isinstance(notif,dict):
+        if isinstance(notif, dict):
             if 'type' in notif:
                 output      += ['    . type             : {0}'.format(d.type_num2text(notif['type']))]
             if 'status' in notif:
                 output      += ['    . status           : {0}'.format(d.status_num2text(notif['status']))]
             if 'mac' in notif:
-                output      += ['    . mac              : {0}'.format(d.formatMac(notif['mac']))]
-            for (k,v) in notif.items():
-                if k not in ['type','status','mac']:
-                    output  += ['    . {0:<17}: {1}'.format(k,v)]
+                output      += ['    . mac              : {0}'.format(d.format_mac(notif['mac']))]
+            for (k, v) in notif.items():
+                if k not in ['type', 'status', 'mac']:
+                    output  += ['    . {0:<17}: {1}'.format(k, v)]
         else:
             output          += ['  {0}'.format(notif)]
         output              += ['']
         output               = '\n'.join(output)
         print output
 
-    def _quitCallback(self):
+    def _quit_callback(self):
         print "quitting!"
 
 #============================ main ============================================
 
+
 def main():
     MercatorCli()
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()

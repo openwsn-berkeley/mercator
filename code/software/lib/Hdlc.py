@@ -1,6 +1,7 @@
 class HdlcException(Exception):
     pass
 
+
 class Hdlc(object):
 
     HDLC_FLAG              = '\x7e'
@@ -47,69 +48,69 @@ class Hdlc(object):
 
     #============================ public ======================================
 
-    def hdlcify(self,inBuf):
-        '''
+    def hdlcify(self, in_buf):
+        """
         Build an hdlc frame.
 
         Use 0x00 for both addr byte, and control byte.
-        '''
+        """
 
         # make copy of input
-        outBuf     = inBuf[:]
+        out_buf     = in_buf[:]
 
         # calculate CRC
         crc        = self.HDLC_CRCINIT
-        for b in outBuf:
-            crc    = self._crcIteration(crc,b)
+        for b in out_buf:
+            crc    = self._crc_iteration(crc, b)
         crc        = 0xffff-crc
 
         # append CRC
-        outBuf     = outBuf + chr(crc & 0xff) + chr((crc & 0xff00) >> 8)
+        out_buf     = out_buf + chr(crc & 0xff) + chr((crc & 0xff00) >> 8)
 
         # stuff bytes
-        outBuf     = outBuf.replace(self.HDLC_ESCAPE, self.HDLC_ESCAPE+self.HDLC_ESCAPE_ESCAPED)
-        outBuf     = outBuf.replace(self.HDLC_FLAG,   self.HDLC_ESCAPE+self.HDLC_FLAG_ESCAPED)
+        out_buf     = out_buf.replace(self.HDLC_ESCAPE, self.HDLC_ESCAPE+self.HDLC_ESCAPE_ESCAPED)
+        out_buf     = out_buf.replace(self.HDLC_FLAG,   self.HDLC_ESCAPE+self.HDLC_FLAG_ESCAPED)
 
         # add flags
-        outBuf     = self.HDLC_FLAG + outBuf + self.HDLC_FLAG
+        out_buf     = self.HDLC_FLAG + out_buf + self.HDLC_FLAG
 
-        return outBuf
+        return out_buf
 
-    def dehdlcify(self,inBuf):
-        '''
+    def dehdlcify(self, in_buf):
+        """
         Parse an hdlc frame.
 
         :returns: the extracted frame, or -1 if wrong checksum
-        '''
-        assert inBuf[ 0]==self.HDLC_FLAG
-        assert inBuf[-1]==self.HDLC_FLAG
+        """
+        assert in_buf[ 0] == self.HDLC_FLAG
+        assert in_buf[-1] == self.HDLC_FLAG
 
         # make copy of input
-        outBuf     = inBuf[:]
+        out_buf     = in_buf[:]
 
         # remove flags
-        outBuf     = outBuf[1:-1]
+        out_buf     = out_buf[1:-1]
 
         # unstuff
-        outBuf     = outBuf.replace(self.HDLC_ESCAPE+self.HDLC_FLAG_ESCAPED,   self.HDLC_FLAG)
-        outBuf     = outBuf.replace(self.HDLC_ESCAPE+self.HDLC_ESCAPE_ESCAPED, self.HDLC_ESCAPE)
+        out_buf     = out_buf.replace(self.HDLC_ESCAPE+self.HDLC_FLAG_ESCAPED,   self.HDLC_FLAG)
+        out_buf     = out_buf.replace(self.HDLC_ESCAPE+self.HDLC_ESCAPE_ESCAPED, self.HDLC_ESCAPE)
 
-        if len(outBuf)<2:
+        if len(out_buf) < 2:
             raise HdlcException('packet too short')
 
         # check CRC
         crc        = self.HDLC_CRCINIT
-        for b in outBuf:
-            crc    = self._crcIteration(crc,b)
-        if crc!=self.HDLC_CRCGOOD:
-           raise HdlcException('wrong CRC')
+        for b in out_buf:
+            crc    = self._crc_iteration(crc, b)
+        if crc != self.HDLC_CRCGOOD:
+            raise HdlcException('wrong CRC')
 
         # remove CRC
-        outBuf     = outBuf[:-2] # remove CRC
+        out_buf     = out_buf[:-2]  # remove CRC
 
-        return outBuf
+        return out_buf
 
     #============================ private =====================================
 
-    def _crcIteration(self,crc,b):
-        return (crc>>8)^self.FCS16TAB[((crc^(ord(b))) & 0xff)]
+    def _crc_iteration(self, crc, b):
+        return (crc >> 8) ^ self.FCS16TAB[((crc ^ (ord(b))) & 0xff)]
