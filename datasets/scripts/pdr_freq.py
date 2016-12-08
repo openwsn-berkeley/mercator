@@ -53,8 +53,8 @@ def main():
     df_emitter = df[df.srcmac == args.emitter]
     grouped = df_emitter.groupby(df_emitter["frequency"])
     sizes = grouped.size()
-
-    result = pd.Series(sizes*100/((nbr_of_nodes-1)*nbr_of_pkts), sizes.index)
+    ser = pd.Series(sizes*100/((nbr_of_nodes-1)*nbr_of_pkts), sizes.index)
+    result = ser.to_frame(name="pdr")
 
     # write result
 
