@@ -63,10 +63,10 @@ class MercatorRunExperiment(object):
 
         # connect to motes
         for s in serialports:
-            logfile.debug("connected to {0}".format(s))
+            logfile.debug("connected to %s", s)
             self.motes[s]    = MoteHandler.MoteHandler(s, self._cb)
             if not self.motes[s].isActive:
-                logconsole.info("DELETED {0}".format(s))
+                logconsole.info("DELETED %s", s)
                 del self.motes[s]
 
         self.file            = open('{0}{1}-{2}_raw.csv'.format(DATASET_PATH,
@@ -78,7 +78,7 @@ class MercatorRunExperiment(object):
 
         # do experiments per frequency
         for freq in self.FREQUENCIES:
-            logconsole.info("Current frequency: {0}".format(freq))
+            logconsole.info("Current frequency: %s", freq)
             self._do_experiment_per_frequency(freq)
 
         # print all OK
@@ -93,17 +93,17 @@ class MercatorRunExperiment(object):
         for counter, transmitterPort in enumerate(self.motes):
             self._do_experiment_per_transmitter(freq, transmitterPort)
             if counter % (1+len(self.motes)/4) == 0:
-                logconsole.info("{0}/{1}".format(counter, len(self.motes)))
+                logconsole.info("%d/%d", counter, len(self.motes))
 
     def _do_experiment_per_transmitter(self, freq, transmitter_port):
 
         self.transmitterPort = transmitter_port
         self.freq            = freq
-        logfile.debug('freq={0} transmitter_port={1}'.format(freq, transmitter_port))
+        logfile.debug('freq=%s transmitter_port=%s', freq, transmitter_port)
 
         # switch all motes to idle
         for (sp, mh) in self.motes.items():
-            logfile.debug('    switch {0} to idle'.format(sp))
+            logfile.debug('    switch %s to idle', sp)
             mh.send_REQ_IDLE()
 
         # check state, assert that all are idle
@@ -117,7 +117,7 @@ class MercatorRunExperiment(object):
 
         # switch all motes to rx
         for (sp, mh) in self.motes.items():
-            logfile.debug('    switch {0} to RX'.format(sp))
+            logfile.debug('    switch %s to RX', sp)
             mh.send_REQ_RX(
                 frequency         = freq,
                 srcmac            = self.motes[transmitter_port].get_mac(),
@@ -133,7 +133,7 @@ class MercatorRunExperiment(object):
                 logfile.warn('Node %s is not in RX state.', mh.mac)
 
         # switch tx mote to tx
-        logfile.debug('    switch {0} to TX'.format(transmitter_port))
+        logfile.debug('    switch %s to TX', transmitter_port)
 
         with self.dataLock:
             self.waitTxDone       = threading.Event()
@@ -271,7 +271,7 @@ def submit_experiment(testbed_name, board, firmware, duration):
                     api, "mercatorExp", duration,
                     resources)["id"]
 
-    logconsole.info("Experiment submited with id: %u" % expid)
+    logconsole.info("Experiment submited with id: %u", expid)
     logconsole.info("Waiting for experiment to be running.")
     experiment.wait_experiment(api, expid)
 
