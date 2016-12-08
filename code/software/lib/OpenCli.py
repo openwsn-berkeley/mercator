@@ -29,6 +29,7 @@ class OpenCli(threading.Thread):
         self.commandLock     = threading.Lock()
         self.commands        = []
         self.goOn            = True
+        self.startTime       = 0
 
         # logging
         self.log             = logging.getLogger('OpenCli')
