@@ -19,7 +19,7 @@ class MoteHandler(threading.Thread):
     STAT_UARTNUMRXCRCWRONG        = 'uartNumRxCrcWrong'
     STAT_UARTNUMTX                = 'uartNumTx'
 
-    def __init__(self,serialport,cb=None):
+    def __init__(self, serialport, cb=None):
 
         self.serialport           = serialport
         self.cb                   = cb
@@ -36,15 +36,15 @@ class MoteHandler(threading.Thread):
         self.isActive             = True
         self.response             = None
         self._iotlab              = False
-        self._resetStats()
+        self._reset_stats()
         try:
             if self.iotlab:
-                self.serial       = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                self.serial       = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.serial.connect((serialport, 20000))
             else:
-                self.serial  = serial.Serial(self.serialport,self._BAUDRATE)
+                self.serial  = serial.Serial(self.serialport, self._BAUDRATE)
         except Exception as err:
-            msg = 'could not connect to {0}, reason: {1}'.format(serialport,err)
+            msg = 'could not connect to {0}, reason: {1}'.format(serialport, err)
             print msg
             raise SystemError(msg)
 
@@ -66,46 +66,46 @@ class MoteHandler(threading.Thread):
         while self.goOn:
 
             if self.iotlab:
-                rxByte = self.serial.recv(1)
+                rx_byte = self.serial.recv(1)
             else:
-                rxByte = self.serial.read(1)
+                rx_byte = self.serial.read(1)
 
             with self.dataLock:
                 if      (
-                            (not self.busyReceiving)             and
-                            self.lastRxByte==self.hdlc.HDLC_FLAG and
-                            rxByte!=self.hdlc.HDLC_FLAG
+                            (not self.busyReceiving)               and
+                            self.lastRxByte == self.hdlc.HDLC_FLAG and
+                            rx_byte != self.hdlc.HDLC_FLAG
                         ):
                     # start of frame
 
                     self.busyReceiving       = True
                     self.inputBuf            = self.hdlc.HDLC_FLAG
-                    self.inputBuf           += rxByte
+                    self.inputBuf           += rx_byte
                 elif    (
-                            self.busyReceiving                   and
-                            rxByte!=self.hdlc.HDLC_FLAG
+                            self.busyReceiving                     and
+                            rx_byte != self.hdlc.HDLC_FLAG
                         ):
                     # middle of frame
 
-                    self.inputBuf           += rxByte
+                    self.inputBuf           += rx_byte
                 elif    (
-                            self.busyReceiving                   and
-                            rxByte==self.hdlc.HDLC_FLAG
+                            self.busyReceiving                     and
+                            rx_byte == self.hdlc.HDLC_FLAG
                         ):
                     # end of frame
 
                     self.busyReceiving       = False
-                    self.inputBuf           += rxByte
+                    self.inputBuf           += rx_byte
 
                     try:
                         self.inputBuf        = self.hdlc.dehdlcify(self.inputBuf)
-                    except Hdlc.HdlcException as err:
+                    except Hdlc.HdlcException:
                         self.stats[self.STAT_UARTNUMRXCRCWRONG] += 1
                     else:
                         self.stats[self.STAT_UARTNUMRXCRCOK] += 1
-                        self._handle_inputBuf([ord(b) for b in self.inputBuf])
+                        self._handle_inputbuf([ord(b) for b in self.inputBuf])
 
-                self.lastRxByte = rxByte
+                self.lastRxByte = rx_byte
 
         self.serial.close()
 
@@ -113,7 +113,7 @@ class MoteHandler(threading.Thread):
 
     #=== stats
 
-    def getStats(self):
+    def get_stats(self):
         with self.dataLock:
             return copy.deepcopy(self.stats)
 
@@ -143,10 +143,10 @@ class MoteHandler(threading.Thread):
         with self.dataLock:
             self.waitResponse          = False
             self.waitResponseEvent     = False
-            returnVal = copy.deepcopy(self.response)
+            return_val = copy.deepcopy(self.response)
             self.response              = None
 
-        return returnVal
+        return return_val
 
     def send_REQ_IDLE(self):
         self._send(
@@ -156,7 +156,7 @@ class MoteHandler(threading.Thread):
             )
         )
 
-    def send_REQ_TX(self,frequency,txpower,transctr,txnumpk,txifdur,txlength,txfillbyte):
+    def send_REQ_TX(self, frequency, txpower, transctr, txnumpk, txifdur, txlength, txfillbyte):
         self._send(
             struct.pack(
                 '>BBbBHHBB',
@@ -171,21 +171,21 @@ class MoteHandler(threading.Thread):
             )
         )
 
-    def send_REQ_RX(self,frequency,srcmac,transctr,txlength,txfillbyte):
-        [m0,m1,m2,m3,m4,m5,m6,m7] = srcmac
+    def send_REQ_RX(self, frequency, srcmac, transctr, txlength, txfillbyte):
+        [m0, m1, m2, m3, m4, m5, m6, m7] = srcmac
         self._send(
             struct.pack(
                 '>BBBBBBBBBBBBB',
                 d.TYPE_REQ_RX,
                 frequency,
-                m0,m1,m2,m3,m4,m5,m6,m7,
+                m0, m1, m2, m3, m4, m5, m6, m7,
                 transctr,
                 txlength,
                 txfillbyte,
             )
         )
 
-    def getMac(self):
+    def get_mac(self):
         with self.dataLock:
             return self.mac
 
@@ -193,7 +193,7 @@ class MoteHandler(threading.Thread):
 
     #=== stats
 
-    def _resetStats(self):
+    def _reset_stats(self):
         with self.dataLock:
             self.stats = {
                 self.STAT_UARTNUMRXCRCOK       : 0,
@@ -203,17 +203,17 @@ class MoteHandler(threading.Thread):
 
     #=== serial rx
 
-    def _handle_inputBuf(self,inputBuf):
+    def _handle_inputbuf(self, input_buf):
 
         try:
 
-            inputtype = inputBuf[0]
+            inputtype = input_buf[0]
 
             if   inputtype == d.TYPE_IND_TXDONE:
 
                 # parse input
                 [msg_type] = \
-                struct.unpack(">B", ''.join([chr(b) for b in inputBuf]))
+                    struct.unpack(">B", ''.join([chr(b) for b in input_buf]))
 
                 # notify higher layer
                 self.cb(
@@ -227,13 +227,13 @@ class MoteHandler(threading.Thread):
 
                 # parse input
                 [msg_type, length, rssi, flags, pkctr] = \
-                struct.unpack(">BBbBH", ''.join([chr(b) for b in inputBuf]))
-                if flags & (1<<7) != 0:
+                    struct.unpack(">BBbBH", ''.join([chr(b) for b in input_buf]))
+                if flags & (1 << 7) != 0:
                     crc = 1
                 else:
                     crc = 0
 
-                if flags & (1<<6) != 0:
+                if flags & (1 << 6) != 0:
                     expected = 1
                 else:
                     expected = 0
@@ -258,11 +258,11 @@ class MoteHandler(threading.Thread):
 
                 # parse input
                 [msg_type, status, numnotifications, m1, m2, m3, m4, m5, m6, m7, m8] = \
-                struct.unpack(">BBHBBBBBBBB", ''.join([chr(b) for b in inputBuf]))
+                    struct.unpack(">BBHBBBBBBBB", ''.join([chr(b) for b in input_buf]))
 
                 # remember this mote's MAC address
                 with self.dataLock:
-                    self.mac = (m1,m2,m3,m4,m5,m6,m7,m8)
+                    self.mac = (m1, m2, m3, m4, m5, m6, m7, m8)
 
                 # send response as return code
                 with self.dataLock:
@@ -271,7 +271,7 @@ class MoteHandler(threading.Thread):
                         'type':             msg_type,
                         'status':           status,
                         'numnotifications': numnotifications,
-                        'mac':              (m1,m2,m3,m4,m5,m6,m7,m8),
+                        'mac':              (m1, m2, m3, m4, m5, m6, m7, m8),
                     }
                     self.waitResponseEvent.set()
 
@@ -279,7 +279,7 @@ class MoteHandler(threading.Thread):
 
                 # parse input
                 [msg_type] = \
-                struct.unpack(">B", ''.join([chr(b) for b in inputBuf]))
+                    struct.unpack(">B", ''.join([chr(b) for b in input_buf]))
 
                 # notify higher layer
                 self.cb(
@@ -291,7 +291,7 @@ class MoteHandler(threading.Thread):
 
             else:
 
-                raise SystemError('unknown notification type {0}'.format(inputBuf[0]))
+                raise SystemError('unknown notification type {0}'.format(input_buf[0]))
 
         except Exception as err:
 
@@ -304,11 +304,11 @@ class MoteHandler(threading.Thread):
 
     #=== serial tx
 
-    def _send(self,dataToSend):
+    def _send(self, data_to_send):
         with self.dataLock:
             self.stats[self.STAT_UARTNUMTX] += 1
         with self.serialLock:
-            hdlc_data = self.hdlc.hdlcify(dataToSend)
+            hdlc_data = self.hdlc.hdlcify(data_to_send)
 
             if self.iotlab:
                 self.serial.send(hdlc_data)

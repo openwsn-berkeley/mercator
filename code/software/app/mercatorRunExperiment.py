@@ -4,20 +4,16 @@
 
 import os
 import sys
-if __name__=='__main__':
+if __name__ == '__main__':
     here = sys.path[0]
-    sys.path.insert(0, os.path.join(here,'..','lib'))
+    sys.path.insert(0, os.path.join(here, '..', 'lib'))
 
 #============================ imports =========================================
 
 import argparse
 import threading
-import subprocess
 import json
-import shlex
-import time
 import datetime
-import logging
 import logging.config
 
 # Mercator
@@ -43,6 +39,7 @@ METAS_PATH      = "../../../metas/"
 
 #============================ body ============================================
 
+
 class MercatorRunExperiment(object):
 
     FREQUENCIES    = [n+11 for n in range(16)]   # frequencies to measure on, in IEEE notation
@@ -53,7 +50,7 @@ class MercatorRunExperiment(object):
     TXLENGTH       = 100                         # number of bytes (PHY payload) in a frame
     TXFILLBYTE     = 0x0a                        # padding byte
 
-    def __init__(self,serialports,site="local"):
+    def __init__(self, serialports, site="local"):
 
         # local variables
         self.dataLock        = threading.Lock()
@@ -67,7 +64,7 @@ class MercatorRunExperiment(object):
         # connect to motes
         for s in serialports:
             logfile.debug("connected to {0}".format(s))
-            self.motes[s]    = MoteHandler.MoteHandler(s,self._cb)
+            self.motes[s]    = MoteHandler.MoteHandler(s, self._cb)
             if not self.motes[s].isActive:
                 logconsole.info("DELETED {0}".format(s))
                 del self.motes[s]
@@ -76,13 +73,13 @@ class MercatorRunExperiment(object):
                                     self.site,
                                     datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")),
                                     'w')
-        self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,'+
+        self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,' +
                         'pkctr,txnumpk,txpower,txifdur,txlength,txfillbyte\n')
 
         # do experiments per frequency
         for freq in self.FREQUENCIES:
             logconsole.info("Current frequency: {0}".format(freq))
-            self._doExperimentPerFrequency(freq)
+            self._do_experiment_per_frequency(freq)
 
         # print all OK
         raw_input('\nExperiment ended normally. Press Enter to close.')
@@ -91,26 +88,26 @@ class MercatorRunExperiment(object):
 
     #======================== cli handlers ====================================
 
-    def _doExperimentPerFrequency(self,freq):
+    def _do_experiment_per_frequency(self, freq):
 
         for counter, transmitterPort in enumerate(self.motes):
-            self._doExperimentPerTransmitter(freq,transmitterPort)
+            self._do_experiment_per_transmitter(freq, transmitterPort)
             if counter % (1+len(self.motes)/4) == 0:
-                logconsole.info("{0}/{1}".format(counter,len(self.motes)))
+                logconsole.info("{0}/{1}".format(counter, len(self.motes)))
 
-    def _doExperimentPerTransmitter(self,freq,transmitterPort):
+    def _do_experiment_per_transmitter(self, freq, transmitter_port):
 
-        self.transmitterPort = transmitterPort
+        self.transmitterPort = transmitter_port
         self.freq            = freq
-        logfile.debug('freq={0} transmitterPort={1}'.format(freq,transmitterPort))
+        logfile.debug('freq={0} transmitter_port={1}'.format(freq, transmitter_port))
 
         # switch all motes to idle
-        for (sp,mh) in self.motes.items():
+        for (sp, mh) in self.motes.items():
             logfile.debug('    switch {0} to idle'.format(sp))
             mh.send_REQ_IDLE()
 
         # check state, assert that all are idle
-        for (sp,mh) in self.motes.items():
+        for (sp, mh) in self.motes.items():
             status = mh.send_REQ_ST()
             if status is None or status['status'] != d.ST_IDLE:
                 logfile.warn('Node %s is not in IDLE state.', mh.mac)
@@ -119,30 +116,30 @@ class MercatorRunExperiment(object):
         self.transctr = (self.transctr + 1) % 255
 
         # switch all motes to rx
-        for (sp,mh) in self.motes.items():
+        for (sp, mh) in self.motes.items():
             logfile.debug('    switch {0} to RX'.format(sp))
             mh.send_REQ_RX(
                 frequency         = freq,
-                srcmac            = self.motes[transmitterPort].getMac(),
+                srcmac            = self.motes[transmitter_port].get_mac(),
                 transctr          = self.transctr,
                 txlength          = self.TXLENGTH,
                 txfillbyte        = self.TXFILLBYTE,
             )
 
         # check state, assert that all are in rx mode
-        for (sp,mh) in self.motes.items():
+        for (sp, mh) in self.motes.items():
             status = mh.send_REQ_ST()
             if status is None or status['status'] != d.ST_RX:
                 logfile.warn('Node %s is not in RX state.', mh.mac)
 
         # switch tx mote to tx
-        logfile.debug('    switch {0} to TX'.format(transmitterPort))
+        logfile.debug('    switch {0} to TX'.format(transmitter_port))
 
         with self.dataLock:
             self.waitTxDone       = threading.Event()
             self.isTransmitting   = True
 
-        self.motes[transmitterPort].send_REQ_TX(
+        self.motes[transmitter_port].send_REQ_TX(
             frequency             = freq,
             txpower               = self.TXPOWER,
             transctr              = self.transctr,
@@ -158,13 +155,14 @@ class MercatorRunExperiment(object):
         if self.waitTxDone.isSet():
             logfile.debug('done.')
         else:
-            #raise SystemError('timeout when waiting for transmission to be done (no IND_TXDONE after {0}s)'.format(maxwaittime))
+            #raise SystemError('timeout when waiting for transmission
+            # to be done (no IND_TXDONE after {0}s)'.format(maxwaittime))
             return
 
         # check state, assert numnotifications is expected
-        for (sp,mh) in self.motes.items():
+        for (sp, mh) in self.motes.items():
             status = mh.send_REQ_ST()
-            if sp==transmitterPort:
+            if sp == transmitter_port:
                 if status is None or status['status'] != d.ST_TXDONE:
                     logfile.warn('Node %s is not in TXDONE state.', mh.mac)
             else:
@@ -173,9 +171,9 @@ class MercatorRunExperiment(object):
 
     #======================== private =========================================
 
-    def _cb(self,serialport,notif):
+    def _cb(self, serialport, notif):
 
-        if isinstance(notif,dict):
+        if isinstance(notif, dict):
             if   notif['type'] == d.TYPE_RESP_ST:
                 print 'state {0}'.format(serialport)
             elif notif['type'] == d.TYPE_IND_TXDONE:
@@ -186,13 +184,13 @@ class MercatorRunExperiment(object):
             elif notif['type'] == d.TYPE_IND_RX:
                 # print '.', # TODO: log to file
                 timestamp  = datetime.datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
-                mac        = d.formatMac(self.motes[serialport].getMac());
+                mac        = d.format_mac(self.motes[serialport].get_mac())
                 frequency  = self.freq
                 length     = notif['length']
                 rssi       = notif['rssi']
                 crc        = notif['crc']
                 expected   = notif['expected']
-                srcmac     = d.formatMac(self.motes[self.transmitterPort].getMac());
+                srcmac     = d.format_mac(self.motes[self.transmitterPort].get_mac())
                 transctr   = self.transctr
                 pkctr      = notif['pkctr']
                 txnumpk    = self.TXNUMPK
@@ -220,12 +218,13 @@ class MercatorRunExperiment(object):
                         txfillbyte
                     ))
             elif notif['type'] == d.TYPE_IND_UP:
-                logfile.debug("Node %s restarted", d.formatMac(self.motes[serialport].getMac()));
+                logfile.debug("Node %s restarted", d.format_mac(self.motes[serialport].get_mac()))
 
-    def _quitCallback(self):
+    def _quit_callback(self):
         print "quitting!"
 
 #=========================== helpers ==========================================
+
 
 def get_motes(expid):
     # use the file created by auth-cli command
@@ -237,7 +236,9 @@ def get_motes(expid):
     # get experiment resources
     data = experiment.get_experiment(api, expid, 'resources')
 
-    return (map(lambda x: x["network_address"].split('.')[0], data["items"]), data["items"][0]["network_address"].split('.')[1])
+    return (map(lambda x: x["network_address"].split('.')[0], data["items"]),
+            data["items"][0]["network_address"].split('.')[1])
+
 
 def submit_experiment(testbed_name, board, firmware, duration):
     """
@@ -259,7 +260,7 @@ def submit_experiment(testbed_name, board, firmware, duration):
     # load the experiment
     tb_file     = open("{0}states.json".format(METAS_PATH))
     tb_json     = json.load(tb_file)
-    nodes       = [ x for x in tb_json[testbed_name] if board in x]
+    nodes       = [x for x in tb_json[testbed_name] if board in x]
     firmware    = FIRMWARE_PATH + firmware
     profile     = "mercator"
     resources   = [experiment.exp_resources(nodes, firmware, profile)]
@@ -278,6 +279,7 @@ def submit_experiment(testbed_name, board, firmware, duration):
 
 #============================ main ============================================
 
+
 def main():
 
     # parsing user arguments
@@ -289,21 +291,21 @@ def main():
     parser.add_argument("-b", "--board", help="The type of board to use", type=str, default="m3")
     args = parser.parse_args()
 
-    if args.testbed == "local" :
+    if args.testbed == "local":
         MercatorRunExperiment(
-            serialports = ['/dev/ttyUSB1','/dev/ttyUSB2']
+            serialports = ['/dev/ttyUSB1', '/dev/ttyUSB3']
         )
     else:
         if args.expid is None:
             expid = submit_experiment(args.testbed, args.board, args.firmware, args.duration)
         else:
             expid = args.expid
-        (serialports, site) = get_motes(expid);
+        (serialports, site) = get_motes(expid)
         MercatorRunExperiment(
             serialports = serialports,
             site = site
         )
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()
 
