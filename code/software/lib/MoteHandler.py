@@ -9,6 +9,7 @@ import socket
 import Hdlc
 import MercatorDefines as d
 
+
 class MoteHandler(threading.Thread):
 
     _BAUDRATE                     = 500000
@@ -33,6 +34,8 @@ class MoteHandler(threading.Thread):
         self.waitResponse         = None
         self.waitResponseEvent    = None
         self.isActive             = True
+        self.response             = None
+        self._iotlab              = False
         self._resetStats()
         try:
             if self.iotlab:
@@ -305,20 +308,18 @@ class MoteHandler(threading.Thread):
         with self.dataLock:
             self.stats[self.STAT_UARTNUMTX] += 1
         with self.serialLock:
+            hdlc_data = self.hdlc.hdlcify(dataToSend)
+
             if self.iotlab:
-                self.serial.send(self.hdlc.hdlcify(dataToSend))
+                self.serial.send(hdlc_data)
             else:
-                self.serial.write(self.hdlc.hdlcify(dataToSend))
+                self.serial.write(hdlc_data)
                 time.sleep(0.01)
 
     #=== helpers
 
     @property
     def iotlab(self):
-        if hasattr(self, '_iotlab'):
-            return self._iotlab
-
-        # assert self.serialport
         if   self.serialport.lower().startswith('com') or self.serialport.count('tty'):
             self._iotlab = False
         else:
