@@ -243,6 +243,8 @@ def submit_experiment(testbed_name, board, firmware, duration):
     """
     Reserve nodes in the given site.
     The function uses the json experiment file corresponding to the site.
+    :param str firmware: the name of the firmware as it is in the code/firmware/ folder
+    :param str board: the type of board (ex: m3)
     :param str testbed_name: The name of the testbed (ex: grenoble)
     :param int duration: The duration of the experiment in minutes
     :return: The id of the experiment
