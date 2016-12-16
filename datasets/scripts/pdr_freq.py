@@ -31,7 +31,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("testbed", help="The name of the testbed data to process", type=str)
-    parser.add_argument("emitter", help="The emitting node", type=str)
+    parser.add_argument("-e", "--emitter", help="The emitting node", type=str)
     args = parser.parse_args()
 
     # load the dataset
@@ -48,17 +48,26 @@ def main():
     nbr_of_nodes = len(df.groupby(df["mac"]))
     nbr_of_pkts = df["txnumpk"].iloc[0]
 
+    # select emitters
+
+    if args.emitter:
+        list_emmitters = [args.emitter]
+    else:
+        list_emmitters = df["srcmac"].drop_duplicates().tolist()
+
     # compute result
 
-    df_emitter = df[df.srcmac == args.emitter]
-    grouped = df_emitter.groupby(df_emitter["frequency"])
-    sizes = grouped.size()
-    ser = pd.Series(sizes*100/((nbr_of_nodes-1)*nbr_of_pkts), sizes.index)
-    result = ser.to_frame(name="pdr")
+    for emitter in list_emmitters:
+        print emitter
+        df_emitter = df[df.srcmac == emitter]
+        grouped = df_emitter.groupby(df_emitter["frequency"])
+        sizes = grouped.size()
+        ser = pd.Series(sizes*100/((nbr_of_nodes-1)*nbr_of_pkts), sizes.index)
+        result = ser.to_frame(name="pdr")
 
-    # write result
+        # write result
 
-    result.to_csv("{0}/{1}/{2}.csv".format(OUT_PATH, args.testbed, args.emitter))
+        result.to_csv("{0}/{1}/{2}.csv".format(OUT_PATH, args.testbed, emitter))
 
 if __name__ == '__main__':
     main()
