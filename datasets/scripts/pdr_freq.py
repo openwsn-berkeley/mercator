@@ -36,7 +36,7 @@ def main():
 
     # load the dataset
 
-    df = pd.read_csv("{0}/{1}.csv".format(RAW_PATH, args.testbed))\
+    df = pd.read_csv("{0}/{1}.csv".format(RAW_PATH, args.testbed))
 
     # remove wrong values
 
@@ -45,8 +45,8 @@ def main():
 
     # get number of nodes and number of packet per transmission
 
-    nbr_of_nodes = len(df.groupby(df["mac"]))
-    nbr_of_pkts = df["txnumpk"].iloc[0]
+    node_count = len(df.groupby(df["mac"]))
+    tx_count = df["txnumpk"].iloc[0]
 
     # select emitters
 
@@ -58,11 +58,11 @@ def main():
     # compute result
 
     for emitter in list_emmitters:
-        print emitter
         df_emitter = df[df.srcmac == emitter]
         grouped = df_emitter.groupby(df_emitter["frequency"])
-        sizes = grouped.size()
-        ser = pd.Series(sizes*100/((nbr_of_nodes-1)*nbr_of_pkts), sizes.index)
+        rx_count = grouped.size()
+        frequencies = grouped.size().index
+        ser = pd.Series(rx_count*100/((node_count-1)*tx_count), frequencies)
         result = ser.to_frame(name="pdr")
 
         # write result
