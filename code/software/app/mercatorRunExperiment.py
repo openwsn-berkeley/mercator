@@ -30,6 +30,8 @@ logging.config.fileConfig('logging.conf')
 
 logconsole  = logging.getLogger("console")
 logfile     = logging.getLogger("file")
+root_logger = logging.getLogger()
+root_logger.disabled = True
 
 #============================ body ============================================
 
