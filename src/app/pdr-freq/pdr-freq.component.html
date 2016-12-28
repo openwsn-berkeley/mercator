@@ -1,0 +1,21 @@
+<div id="site_list">
+
+  <select #site>
+    <option></option>
+    <option *ngFor="let site of sites" (click)="getExps(site)">
+      {{site}}
+    </option>
+  </select>
+  <select #exp>
+      <option *ngFor="let exp of exps" (click)="getMacs(site.value,exp)">
+        {{exp}}
+      </option>
+  </select>
+  <select>
+      <option *ngFor="let mac of macs" (click)="readCSV(site.value,exp.value,mac)">
+        {{mac}}
+      </option>
+  </select>
+</div>
+
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
