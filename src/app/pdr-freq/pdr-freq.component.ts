@@ -3,6 +3,7 @@ import { Http, Response } from '@angular/http';
 declare var jQuery:any;
 import { GithubService } from '../github.service';
 import {Observable} from 'rxjs/Observable';
+declare var CanvasJS: any;
 
 @Component({
   selector: 'app-pdr-freq',
@@ -77,7 +78,7 @@ export class PdrFreqComponent implements OnInit {
         },
         data: [
         {
-            type: "column", //change type to bar, line, area, pie, etc
+            type: "column",
             dataPoints: [
             ]
         }
