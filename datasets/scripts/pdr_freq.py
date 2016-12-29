@@ -67,7 +67,7 @@ def main():
 
         # write result
 
-        result.to_csv("{0}/{1}/pdr_freq/{2}.csv".format(OUT_PATH, args.testbed, emitter))
+        result.to_csv("{0}/{1}/pdr_freq/one_to_many/{2}.csv".format(OUT_PATH, args.testbed, emitter))
 
 if __name__ == '__main__':
     main()
