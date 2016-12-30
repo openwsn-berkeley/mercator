@@ -19,10 +19,22 @@ export class GithubService {
     return this._http.get(url)
               .map((r: Response) => r.json());
   }
-  getMacs(site,exp){
-    var url = this.b_url+"/"+site+"/"+exp+"?ref=develop";
+  getTypes(site){
+    var url = this.b_url+"/"+site+"/pdr_freq?ref=develop";
+    return this._http.get(url)
+      .map((r: Response) => r.json());
+  }
+  getMacs(site,exp,type){
+    var url = this.b_url+"/"+site+"/"+exp+"/"+type+"?ref=develop";
     return this._http.get(url)
               .map((r: Response) => r.json());
   }
+
+  download_url(url){
+
+  return this._http.get(url).map((r: Response) => r.text());
+}
+
+
 
 }

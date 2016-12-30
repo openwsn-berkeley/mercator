@@ -1,0 +1,30 @@
+<div class="title-bar">
+  <h1 class="title-bar-title">
+    <span class="d-ib">PDR {{site}}</span>
+
+
+  </h1>
+
+</div>
+
+
+
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="demo-form-wrapper">
+      <form class="form form-horizontal">
+        <div class="form-group form-group-lg">
+
+          <div class="col-sm-4" *ngFor="let type of types" >
+            <div class="input-with-icon">
+
+
+              <a class="btn btn-success"  [routerLink]="[type.name]"  >{{type.name.replace("_"," ")}}</a>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

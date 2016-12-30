@@ -1,21 +1,31 @@
-<div id="site_list">
 
-  <select #site>
-    <option></option>
-    <option *ngFor="let site of sites" (click)="getExps(site)">
-      {{site}}
-    </option>
-  </select>
-  <select #exp>
-      <option *ngFor="let exp of exps" (click)="getMacs(site.value,exp)">
-        {{exp}}
+<div class="title-bar">
+  <h1 class="title-bar-title">
+    <span class="d-ib">PDR {{site}} experiments macs</span>
+    <select class="form-control"  (change)="readCSV($event.target.value)" >
+      <option *ngFor="let mac of macs">
+        {{mac.name}}
       </option>
-  </select>
-  <select>
-      <option *ngFor="let mac of macs" (click)="readCSV(site.value,exp.value,mac)">
-        {{mac}}
-      </option>
-  </select>
+    </select>
+
+  </h1>
+
 </div>
 
-<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+
+
+
+<div>
+  <div style="display: block">
+    <canvas baseChart
+            [datasets]="barChartData"
+            [labels]="barChartLabels"
+            [options]="barChartOptions"
+            [legend]="barChartLegend"
+            [chartType]="barChartType"
+            (chartHover)="chartHovered($event)"
+            (chartClick)="chartClicked($event)"></canvas>
+  </div>
+  <button (click)="randomize()">Update</button>
+</div>
