@@ -1,11 +1,7 @@
 This folder contains:
 
-* a raw dataset file per experiment, of the format `<site>-<timestamp>_raw.csv`.
-* a pre-processed dataset directory per experiment, of the format `<site>-<timestamp>/`.
-* `datasets.csv`, which lists the dataset files.
-* `preprocess.py` which preprocesses the data by
-    * generating a `<site>-<timestamp>/` folder for each `<site>-<timestamp>_raw.csv` file.
-    * generating a `datasets.csv`.
+* a raw dataset file per site, of the format `raw/<site>.csv`.
+* a pre-processed dataset directory per site, of the format `processed/<site>/`.
 
 Each raw dataset file corresponds to one experiment. In an experiment, each mote sends packets while all the others listen. The experiment is driven is such a way that only one motes sends at a given time, and that all the other motes listen to the same channel. A record (line) is written each time a mote receives a packet.
 
