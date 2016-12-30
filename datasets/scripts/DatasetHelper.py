@@ -1,6 +1,6 @@
 class DatasetHelper(object):
 
-    def __init__(self, df, testbed):
+    def __init__(self, df, testbed=None):
         self.node_count = None
         self.tx_count = None
         self.testbed = testbed

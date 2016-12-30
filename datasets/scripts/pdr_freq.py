@@ -83,14 +83,15 @@ def one_to_one(df, dtsh):
     # compute result
 
     for emitter in list_emitters:
-        df_emitter = df[df.srcmac == emitter]
+        df_emitter = df[df.srcmac == emitter].copy()
+        dtsh_emt = DatasetHelper(df_emitter)
         group_rcv = df_emitter.groupby(df_emitter["mac"])
 
         for receiver,df_receiver in group_rcv:
             group_freq = df_receiver.groupby(df_receiver["frequency"])
             rx_count = group_freq.size()
             frequencies = group_freq.size().index
-            ser = pd.Series(rx_count * 100 / ((dtsh.node_count - 1) * dtsh.tx_count), frequencies)
+            ser = pd.Series(rx_count * 100 / dtsh_emt.tx_count, frequencies)
             result = ser.to_frame(name="pdr")
 
             # write result
