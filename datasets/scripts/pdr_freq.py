@@ -17,6 +17,7 @@
 import os
 import argparse
 import pandas as pd
+import json
 
 from DatasetHelper import DatasetHelper
 
@@ -65,14 +66,22 @@ def one_to_many(df, dtsh, emitter=None):
         df_emitter = df[df.srcmac == emitter]
         grouped = df_emitter.groupby(df_emitter["frequency"])
         rx_count = grouped.size()
-        frequencies = grouped.size().index
-        ser = pd.Series(rx_count*100/((dtsh.node_count-1)*dtsh.tx_count), frequencies)
-        result = ser.to_frame(name="pdr")
+        frequencies = grouped.size().index.tolist()
+        pdr = (rx_count*100/((dtsh.node_count-1)*dtsh.tx_count)).tolist()
 
         # write result
 
-        result.to_csv("{0}/{1}/pdr_freq/one_to_many/{2}.csv".format(OUT_PATH, dtsh.testbed, emitter))
-
+        path = "{0}/{1}/rssi_freq/one_to_many/".format(OUT_PATH, dtsh.testbed)
+        if not os.path.exists(path):
+            os.makedirs(path)
+        json_data = {
+              "x": map(str, frequencies),
+              "y": pdr,
+              "xtitle": "Channels",
+              "ytitle": "PDR"
+        }
+        with open(path + "{0}.json".format(emitter), 'w') as output_file:
+            json.dump(json_data, output_file)
 
 def one_to_one(df, dtsh):
 
@@ -87,19 +96,26 @@ def one_to_one(df, dtsh):
         dtsh_emt = DatasetHelper(df_emitter)
         group_rcv = df_emitter.groupby(df_emitter["mac"])
 
-        for receiver,df_receiver in group_rcv:
+        for receiver, df_receiver in group_rcv:
             group_freq = df_receiver.groupby(df_receiver["frequency"])
             rx_count = group_freq.size()
-            frequencies = group_freq.size().index
-            ser = pd.Series(rx_count * 100 / dtsh_emt.tx_count, frequencies)
-            result = ser.to_frame(name="pdr")
+            frequencies = group_freq.size().index.tolist()
+            pdr = (rx_count * 100 / dtsh_emt.tx_count).tolist()
 
             # write result
 
             path = "{0}/{1}/pdr_freq/one_to_one/{2}/".format(OUT_PATH, dtsh.testbed, emitter)
             if not os.path.exists(path):
                 os.makedirs(path)
-            result.to_csv(path+"{0}.csv".format(receiver))
+            json_data = {
+                "x": map(str, frequencies),
+                "y": pdr,
+                "xtitle": "Channels",
+                "ytitle": "PDR"
+            }
+            with open(path + "{0}.json".format(receiver), 'w') as output_file:
+                json.dump(json_data, output_file)
+
 
 if __name__ == '__main__':
     main()

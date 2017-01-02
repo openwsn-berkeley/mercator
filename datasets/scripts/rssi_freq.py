@@ -7,16 +7,17 @@
 #   Y: the PDR
 #
 # The generated files are located:
-#   inside processed/site/pdr_freq/emitter.csv
+#   inside processed/site/pdr_freq/emitter.json
 
-# the format is csv (16 lines):
-#   frequency,pdr
+# the format is json:
+# {"pdr":{"11":98.5714285714,"12":98.4126984127,...,"26":98.4126984127}}
 
 #=============================== imports ======================================
 
 import os
 import argparse
 import pandas as pd
+import json
 
 from DatasetHelper import DatasetHelper
 
@@ -64,18 +65,24 @@ def one_to_many(df, dtsh, emitter=None):
     for emitter in list_emitters:
         df_emitter = df[df.srcmac == emitter]
         grouped = df_emitter.groupby(df_emitter["frequency"])
-        frequencies = grouped.size().index
+        frequencies = grouped.size().index.tolist()
         rx_count = grouped.size()
         sum_rssi = grouped.rssi.sum()
-        ser = pd.Series(sum_rssi/rx_count, frequencies)
-        result = ser.to_frame(name="avg_rssi")
+        avg_rssi = (sum_rssi / rx_count).values.tolist()
 
         # write result
 
         path = "{0}/{1}/rssi_freq/one_to_many/".format(OUT_PATH, dtsh.testbed)
         if not os.path.exists(path):
             os.makedirs(path)
-        result.to_csv(path+"{0}.csv".format(emitter))
+        json_data = {
+            "x": map(str, frequencies),
+            "y": avg_rssi,
+            "xtitle": "Channels",
+            "ytitle": "RSSI Average (dBm)"
+            }
+        with open(path + "{0}.json".format(emitter), 'w') as output_file:
+            json.dump(json_data, output_file)
 
 
 def one_to_one(df, dtsh):
@@ -93,17 +100,23 @@ def one_to_one(df, dtsh):
         for receiver, df_receiver in group_rcv:
             group_freq = df_receiver.groupby(df_receiver["frequency"])
             rx_count = group_freq.size()
-            frequencies = group_freq.size().index
+            frequencies = group_freq.size().index.tolist()
             sum_rssi = group_freq.rssi.sum()
-            ser = pd.Series(sum_rssi / rx_count, frequencies)
-            result = ser.to_frame(name="pdr")
+            avg_rssi = (sum_rssi / rx_count).values.tolist()
 
             # write result
 
             path = "{0}/{1}/rssi_freq/one_to_one/{2}/".format(OUT_PATH, dtsh.testbed, emitter)
             if not os.path.exists(path):
                 os.makedirs(path)
-            result.to_csv(path+"{0}.csv".format(receiver))
+            json_data = {
+                    "x": map(str,frequencies),
+                    "y": avg_rssi,
+                    "xtitle": "Channels",
+                    "ytitle": "RSSI Average"
+                    }
+            with open(path+"{0}.json".format(receiver), 'w') as output_file:
+                json.dump(json_data, output_file)
 
 if __name__ == '__main__':
     main()
