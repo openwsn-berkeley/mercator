@@ -32,7 +32,7 @@ export class GithubService {
 
   download_url(url){
 
-  return this._http.get(url).map((r: Response) => r.text());
+  return this._http.get(url).map((r: Response) => r.json());
 }
 
 

@@ -21,7 +21,7 @@ export class BarChartComponent implements OnInit {
 
   public barChartOptions: any = {
     scaleShowVerticalLines: false,
-    responsive: true
+    responsive: true,
   };
   public barChartLabels: string[] = [];
   public barChartType: string = 'bar';
@@ -54,7 +54,6 @@ export class BarChartComponent implements OnInit {
       let exp = params['pdr']
       this.barChartData[0]['label'] = exp
       this.gith.getMacs(site, 'pdr_freq', exp).subscribe((res: any) => {
-        //console.log(res)
         this.macs = res;
 
       });
@@ -76,13 +75,6 @@ export class BarChartComponent implements OnInit {
       this.exps = localexp;
     });
   }
-
-  /*
-   readCSV(mac){
-
-   console.log(mac,"ACA");
-
-   }*/
 
   processData(allText) {
     var allLinesArray = allText.split('\n');
@@ -112,22 +104,10 @@ export class BarChartComponent implements OnInit {
     this.route.params.subscribe(params => {
       let site = params['city']
       let exp = params['pdr']
-      let barChartData = this.barChartData;
-
 
       this.gith.download_url("https://raw.githubusercontent.com/openwsn-berkeley/mercator/develop/datasets/processed/" + site + "/pdr_freq/" + exp + "/" + mac).subscribe((res: any) => {
-        console.log(res)
-        let data = this.processData(res);
-        this.barChartLabels = data[0];
-        this.barChartData[0]['data'] = data[1];
-        let clone = JSON.parse(JSON.stringify(this.barChartData));
-
-        this.barChartData = clone;
-
-        console.log(this.barChartData);
-
-        //this.macs = res;
-
+          this.barChartLabels = res.x;
+          this.barChartData = [{data: res.y, label:res.ytitle}];
       });
     })
   }

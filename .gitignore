@@ -16,6 +16,8 @@
 .c9/
 *.launch
 .settings/
+*.js
+*.pyc
 
 # misc
 /.sass-cache
