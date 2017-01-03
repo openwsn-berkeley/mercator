@@ -8,6 +8,8 @@ This folder contains:
 
 Each raw dataset file corresponds to one experiment. In an experiment, each mote sends packets while all the others listen. The experiment is driven is such a way that only one motes sends at a given time, and that all the other motes listen to the same channel. A record (line) is written each time a mote receives a packet.
 
+## Raw dataset format
+
 A raw dataset file is a CSV file with the following columns:
 
 column name  | description
@@ -27,3 +29,22 @@ column name  | description
 `txifdur`    | Number of millisecond the transmitter is configured to wait between the beginning of each packet.
 `txlength`   | Length, in bytes, of each transmitted packet.
 `txfillbyte` | Byte the transmitter uses to fill the packet, in hexadecimal. Example: `0x0a`.
+
+## Pre-processed dataset format
+
+A pre-processed dataset file is a JSON file with the folloging fields:
+```
+  `x`      | a list of x coordinates
+  `y`      | a list of y coordinates
+  `xtitle` | the title of the x axis
+  `ytitle` | the title of the y axis
+```
+
+Example:
+```
+{
+  "x": ["11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26"],
+  "y": [-57.289855072463766, -57.16290322580645, -57.35322580645161, -57.998387096774195, -57.88244766505636, -57.45645161290322, -58.57419354838709, -59.19838709677419, -59.62258064516129, -59.748387096774195, -59.53225806451613, -59.58957654723127, -59.0258064516129, -58.59324758842444, -59.06774193548387, -59.174193548387095],
+  "xtitle": "Frequencies",
+  "ytitle": "RSSI average"}
+```
