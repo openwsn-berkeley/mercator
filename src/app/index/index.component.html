@@ -1,3 +1,11 @@
-<p>
-  index works!
-</p>
+<select #site *ngFor="let folder of tree; let level = index">
+  <option></option>
+  <option *ngFor="let file of folder" (click)="getFiles(level,file)">
+    {{file}}
+  </option>
+</select>
+
+<div #chartContainer>
+
+</div>
+
