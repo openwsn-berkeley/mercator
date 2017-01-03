@@ -21,7 +21,7 @@ export class PdrComponent {
 
       this.site=params['city'];
 
-      this.gith.getTypes(params['city']).subscribe((res: any) => {
+      this.gith.getTypes(params['city'],"pdr").subscribe((res: any) => {
         this.types = res;
       });
 
