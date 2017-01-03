@@ -41,25 +41,24 @@ export class BarChartComponent implements OnInit {
 
 
   constructor(private route: ActivatedRoute, private gith: GithubService) {
-    this.name = "test";
-
-
-    this.gith = gith;
 
     this.route.params.subscribe(params => {
 
       let site = params['city'];
       this.site = site;
-      let exp = params['pdr'];
+      let exp = params['exp'];
+      let x2x = params['x2x'];
       this.barChartData[0]['label'] = exp;
-      this.gith.getMacs(site, 'pdr_freq', exp).subscribe((res: any) => {
-        this.macs = res;
 
+      if (params['mac']){
+        this.readJSON(params['mac'])
+      }
+
+      this.gith.getMacs(site, exp, x2x).subscribe((res: any) => {
+        this.macs = res;
       });
 
     });
-
-
   }
 
   ngOnInit() {
@@ -78,9 +77,10 @@ export class BarChartComponent implements OnInit {
   readJSON(mac) {
     this.route.params.subscribe(params => {
       let site = params['city'];
-      let exp = params['pdr'];
-
-      this.gith.download_url("https://raw.githubusercontent.com/openwsn-berkeley/mercator/develop/datasets/processed/" + site + "/pdr_freq/" + exp + "/" + mac).subscribe((res: any) => {
+      let exp = params['exp'];
+      let x2x = params['x2x'];
+      let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/develop/datasets/processed/";
+      this.gith.download_url( url + "/" + site + "/" + exp + "/" + x2x + "/" + mac + "?ref=develop").subscribe((res: any) => {
           this.barChartLabels = res.x;
           this.barChartData = [{data: res.y, label:res.ytitle}];
       });

@@ -5,12 +5,12 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class GithubService {
 
-  private b_url = "https://api.github.com/repos/openwsn-berkeley/mercator/contents/datasets/processed"
+  public b_url = "https://api.github.com/repos/openwsn-berkeley/mercator/contents/datasets/processed";
 
   constructor(private _http: Http) { }
 
   getSites(){
-    var url = this.b_url+"?ref=develop"
+    var url = this.b_url+"?ref=develop";
     return this._http.get(url)
               .map((r: Response) => r.json());
   }
@@ -19,8 +19,8 @@ export class GithubService {
     return this._http.get(url)
               .map((r: Response) => r.json());
   }
-  getTypes(site){
-    var url = this.b_url+"/"+site+"/pdr_freq?ref=develop";
+  getTypes(site,exp){
+    var url = this.b_url+"/"+site+"/"+exp+"?ref=develop";
     return this._http.get(url)
       .map((r: Response) => r.json());
   }
@@ -29,11 +29,9 @@ export class GithubService {
     return this._http.get(url)
               .map((r: Response) => r.json());
   }
-
   download_url(url){
-
-  return this._http.get(url).map((r: Response) => r.json());
-}
+    return this._http.get(url).map((r: Response) => r.json());
+  }
 
 
 

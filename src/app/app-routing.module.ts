@@ -16,8 +16,9 @@ import { PdrComponent } from './pdr/pdr.component';
 const routes: Routes = [
   { path: '', component: IndexComponent  },
   { path: 'city/:city/pdr',  component: PdrComponent },
-  { path: 'city/:city/pdr/:pdr',  component: BarChartComponent },
-
+  { path: 'city/pdr/:pdr', component: BarChartComponent },
+  { path: ':city/:exp/:x2x',  component: BarChartComponent },
+  { path: ':city/:exp/:x2x/:mac',  component: BarChartComponent }
 ];
 
 @NgModule({
