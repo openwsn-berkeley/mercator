@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import {ActivatedRoute} from "@angular/router";
-declare var jQuery:any;
 import { GithubService } from '../github.service';
 import {Observable} from 'rxjs/Observable';
 declare var CanvasJS: any;
 
 @Component({
-  selector: 'app-pdr-freq',
-  templateUrl: './pdr-freq.component.html',
-  styleUrls: ['./pdr-freq.component.css']
+  selector: 'app-barchart',
+  templateUrl: './barchart.component.html',
+  styleUrls: ['./barchart.component.css']
 })
 
-export class PdrFreqComponent implements OnInit {
+export class BarChartComponent implements OnInit {
 
   name: string;
   sites: string[];
