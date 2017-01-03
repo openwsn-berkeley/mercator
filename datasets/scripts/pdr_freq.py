@@ -71,7 +71,7 @@ def one_to_many(df, dtsh, emitter=None):
 
         # write result
 
-        path = "{0}/{1}/rssi_freq/one_to_many/".format(OUT_PATH, dtsh.testbed)
+        path = "{0}/{1}/pdr_freq/one_to_many/".format(OUT_PATH, dtsh.testbed)
         if not os.path.exists(path):
             os.makedirs(path)
         json_data = {
