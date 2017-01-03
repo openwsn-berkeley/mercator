@@ -29,6 +29,11 @@ export class GithubService {
     return this._http.get(url)
               .map((r: Response) => r.json());
   }
+
+  getFiles(url){
+    return this._http.get(this.b_url+"/"+url+"?ref=develop").map((r: Response) => r.json());
+  }
+
   download_url(url){
     return this._http.get(url).map((r: Response) => r.json());
   }
