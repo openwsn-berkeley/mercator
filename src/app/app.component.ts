@@ -1,8 +1,6 @@
 import { Component,OnInit } from '@angular/core';
 import { GithubService } from './github.service';
 
-
-declare var jQuery:any;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -22,18 +20,7 @@ export class AppComponent  implements  OnInit {
 
       this.sites=res;
 
-
-/*
-      System.import('assets/js/application').then(refToLoadedModule => {
-        refToLoadedModule.init(); });
-
-
- */
-
     });
-
-
-
   }
 
   ngOnInit() {}

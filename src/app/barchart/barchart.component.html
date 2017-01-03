@@ -2,7 +2,7 @@
 <div class="title-bar">
   <h1 class="title-bar-title">
     <span class="d-ib">PDR {{site}} experiments macs</span>
-    <select class="form-control"  (change)="readCSV($event.target.value)" >
+    <select class="form-control"  (change)="readJSON($event.target.value)" >
       <option *ngFor="let mac of macs">
         {{mac.name}}
       </option>

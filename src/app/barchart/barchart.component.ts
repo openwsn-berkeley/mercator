@@ -3,7 +3,6 @@ import { Http, Response } from '@angular/http';
 import {ActivatedRoute} from "@angular/router";
 import { GithubService } from '../github.service';
 import {Observable} from 'rxjs/Observable';
-declare var CanvasJS: any;
 
 @Component({
   selector: 'app-barchart',
@@ -49,10 +48,10 @@ export class BarChartComponent implements OnInit {
 
     this.route.params.subscribe(params => {
 
-      let site = params['city']
+      let site = params['city'];
       this.site = site;
-      let exp = params['pdr']
-      this.barChartData[0]['label'] = exp
+      let exp = params['pdr'];
+      this.barChartData[0]['label'] = exp;
       this.gith.getMacs(site, 'pdr_freq', exp).subscribe((res: any) => {
         this.macs = res;
 
@@ -76,34 +75,10 @@ export class BarChartComponent implements OnInit {
     });
   }
 
-  processData(allText) {
-    var allLinesArray = allText.split('\n');
-    if (allLinesArray.length > 0) {
-      var dataPoints = [];
-      let barChartLabels = [];
-      let barChartData = [];
-      for (var i = 1; i <= allLinesArray.length - 1; i++) {
-        var rowData = allLinesArray[i].split(',');
-        console.log(rowData);
-        if (rowData && rowData.length > 1) {
-          barChartLabels.push(rowData[0]);
-          barChartData.push(rowData[1]);
-
-        }
-        //dataPoints.push({ label: rowData[0], y: parseInt(rowData[1]) });
-
-
-      }
-      return [barChartLabels, barChartData]
-
-    }
-  }
-
-
-  readCSV(mac) {
+  readJSON(mac) {
     this.route.params.subscribe(params => {
-      let site = params['city']
-      let exp = params['pdr']
+      let site = params['city'];
+      let exp = params['pdr'];
 
       this.gith.download_url("https://raw.githubusercontent.com/openwsn-berkeley/mercator/develop/datasets/processed/" + site + "/pdr_freq/" + exp + "/" + mac).subscribe((res: any) => {
           this.barChartLabels = res.x;
