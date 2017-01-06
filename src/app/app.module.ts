@@ -11,13 +11,15 @@ import { IndexComponent } from './index/index.component';
 import { PdrComponent } from './pdr/pdr.component';
 
 import { ChartsModule } from 'ng2-charts/ng2-charts';
+import { MotemapComponent } from './motemap/motemap.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BarChartComponent,
     IndexComponent,
-    PdrComponent
+    PdrComponent,
+    MotemapComponent
   ],
   imports: [
     BrowserModule,
