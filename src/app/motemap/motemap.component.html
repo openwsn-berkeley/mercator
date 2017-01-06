@@ -1,3 +1,11 @@
-<p>
-  motemap works!
-</p>
+<svg id="motemap" viewBox="-1 -1 10 15" preserveAspectRatio="xMidYMid meet">
+  <circle *ngFor="let circle of circles; let i=index" (click)="boom(i, circle.msg)"
+              [attr.cx]="circle.x"
+              [attr.cy]="circle.y"
+              [attr.r]="0.2"
+              [attr.fill]="circle.color"/>
+</svg>
+<div id="graph">
+  <h1>{{src_mac}}</h1>
+  <app-barchart [input_url]="input_url"></app-barchart>
+</div>

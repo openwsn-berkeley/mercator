@@ -1,8 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import {ActivatedRoute} from "@angular/router";
+import {Component, OnChanges, Input} from '@angular/core';
 import { GithubService } from '../github.service';
-import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-barchart',
@@ -10,13 +7,13 @@ import {Observable} from 'rxjs/Observable';
   styleUrls: ['./barchart.component.css']
 })
 
-export class BarChartComponent implements OnInit {
+export class BarChartComponent implements OnChanges {
 
-  name: string;
-  sites: string[];
-  site = "";
-  exps: string[];
-  macs = [];
+  @Input() input_url;
+
+  ngOnChanges(){
+    this.load_graph();
+  };
 
   public barChartOptions: any = {
     scaleShowVerticalLines: false,
@@ -30,61 +27,16 @@ export class BarChartComponent implements OnInit {
     {data: [], label: ''},
   ];
 
-  // events
-  public chartClicked(e: any): void {
-    //console.log(e);
-  }
+  constructor(private gith: GithubService) {}
 
-  public chartHovered(e: any): void {
-    //console.log(e);
-  }
-
-
-  constructor(private route: ActivatedRoute, private gith: GithubService) {
-
-    this.route.params.subscribe(params => {
-
-      let site = params['city'];
-      this.site = site;
-      let exp = params['exp'];
-      let x2x = params['x2x'];
-      this.barChartData[0]['label'] = exp;
-
-      if (params['mac']){
-        this.readJSON(params['mac'])
-      }
-
-      this.gith.getMacs(site, exp, x2x).subscribe((res: any) => {
-        this.macs = res;
+  load_graph() {
+    let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/develop/datasets/processed/";
+    if (this.input_url != "") {
+      this.gith.download_url(url + this.input_url).subscribe((res: any) => {
+        this.barChartLabels = res.x;
+        this.barChartData = [{data: res.y, label: res.ytitle}];
       });
-
-    });
-  }
-
-  ngOnInit() {
-  }
-
-  getExps(site) {
-    this.gith.getExps(site).subscribe((res: any) => {
-      var localexp = [];
-      res.forEach(function (item) {
-        localexp.push(item.name);
-      });
-      this.exps = localexp;
-    });
-  }
-
-  readJSON(mac) {
-    this.route.params.subscribe(params => {
-      let site = params['city'];
-      let exp = params['exp'];
-      let x2x = params['x2x'];
-      let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/develop/datasets/processed/";
-      this.gith.download_url( url + "/" + site + "/" + exp + "/" + x2x + "/" + mac + "?ref=develop").subscribe((res: any) => {
-          this.barChartLabels = res.x;
-          this.barChartData = [{data: res.y, label:res.ytitle}];
-      });
-    })
+    }
   }
 }
 

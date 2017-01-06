@@ -1,27 +1,11 @@
-
-<div class="title-bar">
-  <h1 class="title-bar-title">
-    <span class="d-ib">PDR {{site}} experiments macs</span>
-    <select class="form-control"  (change)="readJSON($event.target.value)" >
-      <option></option>
-      <option *ngFor="let mac of macs">
-        {{mac.name}}
-      </option>
-    </select>
-
-  </h1>
-
+<div style="display: block">
+  <canvas baseChart
+          [datasets]="barChartData"
+          [labels]="barChartLabels"
+          [options]="barChartOptions"
+          [legend]="barChartLegend"
+          [chartType]="barChartType"
+          (chartHover)="chartHovered($event)"
+          (chartClick)="chartClicked($event)"></canvas>
 </div>
 
-<div>
-  <div style="display: block">
-    <canvas baseChart
-            [datasets]="barChartData"
-            [labels]="barChartLabels"
-            [options]="barChartOptions"
-            [legend]="barChartLegend"
-            [chartType]="barChartType"
-            (chartHover)="chartHovered($event)"
-            (chartClick)="chartClicked($event)"></canvas>
-  </div>
-</div>

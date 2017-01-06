@@ -1,0 +1,9 @@
+#motemap{
+  display: inline-block;
+  width:48%;
+}
+#graph{
+  display: inline-block;
+  width:48%;
+  vertical-align: top;
+}
