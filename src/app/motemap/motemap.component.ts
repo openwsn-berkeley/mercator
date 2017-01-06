@@ -11,8 +11,10 @@ export class MotemapComponent implements AfterViewInit {
   context:CanvasRenderingContext2D;
 
   circles = [];
+  site = "strasbourg";
+  exp = "pdr_freq";
   src_mac = "";
-  input_url = "";
+  dst_mac_list = [];
 
   @ViewChild("myCanvas") myCanvas;
 
@@ -36,11 +38,25 @@ export class MotemapComponent implements AfterViewInit {
   ngAfterViewInit() { }
 
   boom(circle_id, msg){
-    this.src_mac = msg;
-    this.circles.forEach(function(item){
-      item.color = "black";
-    });
-    this.circles[circle_id].color = "red";
-    this.input_url = "strasbourg/pdr_freq/one_to_many/" + msg + ".json";
+    if (this.src_mac == "") {
+      // new src mac
+      this.src_mac = msg;
+      this.circles.forEach(function (item) {
+        item.color = "black";
+      });
+      this.circles[circle_id].color = "red";
+    } else if (this.src_mac == msg){
+      // cancel src mac
+      this.circles.forEach(function (item) {
+        item.color = "black";
+      });
+      this.dst_mac_list = [];
+      this.src_mac = "";
+    } else {
+      // new dst_mac
+      this.dst_mac_list.push(msg);
+      this.dst_mac_list = this.dst_mac_list.slice();
+      this.circles[circle_id].color = "green";
+    }
   }
 }

@@ -9,7 +9,10 @@ import { GithubService } from '../github.service';
 
 export class BarChartComponent implements OnChanges {
 
-  @Input() input_url;
+  @Input() site;
+  @Input() exp;
+  @Input() src_mac;
+  @Input() dst_mac_list;
 
   ngOnChanges(){
     this.load_graph();
@@ -31,11 +34,15 @@ export class BarChartComponent implements OnChanges {
 
   load_graph() {
     let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/develop/datasets/processed/";
-    if (this.input_url != "") {
-      this.gith.download_url(url + this.input_url).subscribe((res: any) => {
-        this.barChartLabels = res.x;
-        this.barChartData = [{data: res.y, label: res.ytitle}];
-      });
+    this.barChartData = [{data: [], label: ''}];
+    if (this.dst_mac_list.length > 0) {
+      for (let i=0; i<this.dst_mac_list.length; i++) {
+        this.gith.download_url(url + this.site + "/" + this.exp + "/one_to_one/" + this.src_mac + "/" + this.dst_mac_list[i] + ".json").subscribe((res: any) => {
+          this.barChartLabels = res.x;
+          this.barChartData.push({data: res.y, label: res.ytitle});
+          console.log(this.barChartData)
+        });
+      };
     }
   }
 }
