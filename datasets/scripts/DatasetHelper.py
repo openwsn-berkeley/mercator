@@ -8,7 +8,7 @@ class DatasetHelper(object):
         # remove wrong values
 
         df.drop_duplicates(inplace=True)
-        df = df[(df.crc == 1) & (df.expected == 1)]
+        self.data = df[(df.crc == 1) & (df.expected == 1)]
 
         # extract dataset properties
 
