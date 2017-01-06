@@ -10,11 +10,13 @@ import { BarChartComponent } from './barchart/barchart.component';
 import { IndexComponent } from './index/index.component';
 
 import { PdrComponent } from './pdr/pdr.component';
+import { MotemapComponent } from './motemap/motemap.component';
 
 
 
 const routes: Routes = [
   { path: '', component: IndexComponent  },
+  { path: 'motemap', component: MotemapComponent  },
   { path: 'city/:city/pdr',  component: PdrComponent },
   { path: 'city/pdr/:pdr', component: BarChartComponent },
   { path: ':city/:exp/:x2x',  component: BarChartComponent },
