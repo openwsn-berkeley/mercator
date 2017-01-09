@@ -70,7 +70,7 @@ class MercatorRunExperiment(object):
             logfile.debug("connecting to %s", ser_port)
 
             try:
-                if 1==0:
+                if site != "local":
                     ser = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     ser.connect((ser_port, 20000))
                 else:
@@ -80,8 +80,14 @@ class MercatorRunExperiment(object):
                 raise SystemError(msg)
 
             logfile.debug("reading %s address", ser_port)
-            addr = ser.readline() # remove unfinished line
-            addr = ser.readline().rstrip('\r\n')
+            addr = ""
+            if site != "local":
+                while ser.recv(1) != '\r\n' : pass
+                addr = ser.recv(23)
+            else:
+                addr = ser.readline() # remove unfinished line
+                addr = ser.readline().rstrip('\r\n')
+
             print "{0},{1}".format(addr, ser_port)
 
         # print all OK
