@@ -62,6 +62,7 @@ class MercatorRunExperiment(object):
         self.isTransmitting  = False
         self.site            = site
         self.transmitterPort = ""
+        address_list    = []
 
         # connect to motes
         for ser_port in serialports:
@@ -82,13 +83,24 @@ class MercatorRunExperiment(object):
             logfile.debug("reading %s address", ser_port)
             addr = ""
             if site != "local":
-                while ser.recv(1) != '\r\n' : pass
-                addr = ser.recv(23)
+                goOn = True
+                while len(addr)<23:
+                    c = ser.recv(1)
+                    if (c != '\n') and (c != '\r') and (ord(c) < 103):
+                        addr += c
+                    elif c == '\n':
+                        goOn = False
             else:
                 addr = ser.readline() # remove unfinished line
                 addr = ser.readline().rstrip('\r\n')
 
-            print "{0},{1}".format(addr, ser_port)
+            address_list.append((addr,ser_port))
+            logconsole.info("{0},{1}".format(addr, ser_port))
+
+        address_list.sort(key=lambda tup: tup[1])
+        with open("mac_list.csv",'w') as f:
+            for address in address_list:
+              f.write("{0},{1}\n".format(address[0],address[1]))
 
         # print all OK
         raw_input('\nExperiment ended normally. Press Enter to close.')
