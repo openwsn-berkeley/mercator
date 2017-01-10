@@ -6,39 +6,53 @@
 
 import os
 import json
+import csv
 
 #-----------------------------------------------------------------------------#
 
-# get IoTlab infos
+site_list = ["strasbourg"]
 
-os.system("experiment-cli info -l > tmp.json")
-jout = ""
-with open('tmp.json') as data_file:
-    jout = json.load(data_file)
-os.remove("tmp.json")
+for site in site_list:
+    os.system("experiment-cli info -l --site {0} > tmp.json".format(site))
+    jout = ""
+    with open('tmp.json') as data_file:
+        jout = json.load(data_file)
+    os.remove("tmp.json")
 
-# parse results
+    # get motes eui64
 
-results = {}
-for mote in jout["items"]:
-    if mote["state"] == "Alive":
-        # create site if it does not exists
-        if mote["site"] not in results.keys():
-            results[mote["site"]] = []
+    mac_list = []
+    path = "{0}_eui64.csv".format(site)
+    if os.path.isfile(path):
+        with open(path, 'r') as f:
+            reader = csv.reader(f)
+            mac_list = list(reader)
 
-        # add mote to site
-        res_mote = {
-            "network_address": mote["network_address"],
-            "x": mote["x"],
-            "y": mote["y"],
-            "z": mote["z"],
-            }
-        results[mote["site"]].append(res_mote)
+    # parse results
 
-# write out
+    results = []
+    for mote in jout["items"]:
+        if mote["state"] == "Alive" and mote["mobile"] == 0:
+            # remove useless fields
+            del mote["mobile"]
+            del mote["mobility_type"]
+            del mote["site"]
+            del mote["uid"]
 
-with open('locations.json', 'w') as fp:
-    items = [{"location":key, "nodes":value} for key,value in results.iteritems()]
-    json.dump(items, fp, indent=4)
+            # get mote eui64
+            hostname = mote["network_address"].split(".")[0]
+            for mac in mac_list:
+                if hostname == mac[1]:
+                    mote["mac"] = mac[0]
+                    break
+
+            # add mote to site
+            res_mote = mote
+            results.append(res_mote)
+
+    # write out
+
+    with open('{0}.json'.format(site), 'w') as fp:
+        json.dump(results, fp, indent=4)
 
 #-----------------------------------------------------------------------------#
