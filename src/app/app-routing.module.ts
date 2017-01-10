@@ -15,12 +15,8 @@ import { MotemapComponent } from './motemap/motemap.component';
 
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', component: MotemapComponent  },
-  { path: 'motemap', component: MotemapComponent  },
-  { path: 'site/:site', component: MotemapComponent  },
-  { path: 'city/pdr/:pdr', component: BarChartComponent },
-  { path: ':city/:exp/:x2x',  component: BarChartComponent },
-  { path: ':city/:exp/:x2x/:mac',  component: BarChartComponent }
+  { path: '', pathMatch: 'full', component: IndexComponent  },
+  { path: 'site/:site', component: MotemapComponent  }
 ];
 
 @NgModule({
