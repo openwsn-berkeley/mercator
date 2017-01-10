@@ -32,6 +32,15 @@ export class BarChartComponent implements OnChanges {
 
   constructor(private gith: GithubService) {}
 
+  // events
+  public chartClicked(e: any): void {
+    //console.log(e);
+  }
+
+  public chartHovered(e: any): void {
+    //console.log(e);
+  }
+
   load_graph() {
     let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/develop/datasets/processed/";
     this.barChartData = [{data: [], label: ''}];

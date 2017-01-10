@@ -15,9 +15,9 @@ import { MotemapComponent } from './motemap/motemap.component';
 
 
 const routes: Routes = [
-  { path: '', component: MotemapComponent  },
+  { path: '', pathMatch: 'full', component: MotemapComponent  },
   { path: 'motemap', component: MotemapComponent  },
-  { path: 'city/:city/pdr',  component: PdrComponent },
+  { path: 'site/:site', component: MotemapComponent  },
   { path: 'city/pdr/:pdr', component: BarChartComponent },
   { path: ':city/:exp/:x2x',  component: BarChartComponent },
   { path: ':city/:exp/:x2x/:mac',  component: BarChartComponent }
