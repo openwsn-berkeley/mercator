@@ -86,10 +86,11 @@ class MercatorRunExperiment(object):
                 goOn = True
                 while len(addr)<23:
                     c = ser.recv(1)
-                    if (c != '\n') and (c != '\r') and (ord(c) < 103):
-                        addr += c
-                    elif c == '\n':
-                        goOn = False
+                    if len(c) > 0:
+                        if (c != '\n') and (c != '\r') and (ord(c) < 103):
+                            addr += c
+                        elif c == '\n':
+                            goOn = False
             else:
                 addr = ser.readline() # remove unfinished line
                 addr = ser.readline().rstrip('\r\n')
