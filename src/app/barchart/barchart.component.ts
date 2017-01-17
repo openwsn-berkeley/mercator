@@ -10,6 +10,7 @@ import { GithubService } from '../github.service';
 export class BarChartComponent implements OnChanges {
 
   @Input() site;
+  @Input() date;
   @Input() exp;
   @Input() exp_type;
   @Input() src_mac;
@@ -24,7 +25,7 @@ export class BarChartComponent implements OnChanges {
     responsive: true,
   };
   public barChartLabels: string[] = [];
-  public barChartType: string = 'line';
+  public barChartType: string = 'bar';
   public barChartLegend: boolean = true;
 
   barChartData = [
@@ -50,6 +51,7 @@ export class BarChartComponent implements OnChanges {
         for (let i = 0; i < this.dst_mac_list.length; i++) {
           this.gith.download_url(url +
               this.site + "/" +
+              this.date + "/" +
               this.exp + "/" +
               this.exp_type + "/" +
               this.src_mac + "/" +
@@ -63,7 +65,12 @@ export class BarChartComponent implements OnChanges {
         ;
       }
     } else if (this.exp_type == "many_to_many"){
-      this.gith.download_url(url + this.site + "/" + this.exp + "/" + this.exp + ".json").subscribe((res: any) => {
+      this.gith.download_url(url +
+          this.site + "/"+
+          this.date + "/" +
+          this.exp + "/" +
+          this.exp + ".json"
+        ).subscribe((res: any) => {
         this.barChartLabels = res.x;
         this.barChartData.push({data: res.y, label: res.ytitle});
         console.log(this.barChartData)
