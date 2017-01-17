@@ -11,6 +11,7 @@ export class BarChartComponent implements OnChanges {
 
   @Input() site;
   @Input() exp;
+  @Input() exp_type;
   @Input() src_mac;
   @Input() dst_mac_list;
 
@@ -23,7 +24,7 @@ export class BarChartComponent implements OnChanges {
     responsive: true,
   };
   public barChartLabels: string[] = [];
-  public barChartType: string = 'bar';
+  public barChartType: string = 'line';
   public barChartLegend: boolean = true;
 
   barChartData = [
@@ -44,14 +45,29 @@ export class BarChartComponent implements OnChanges {
   load_graph() {
     let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/datasets/processed/";
     this.barChartData = [{data: [], label: ''}];
-    if (this.dst_mac_list.length > 0) {
-      for (let i=0; i<this.dst_mac_list.length; i++) {
-        this.gith.download_url(url + this.site + "/" + this.exp + "/one_to_one/" + this.src_mac + "/" + this.dst_mac_list[i] + ".json").subscribe((res: any) => {
-          this.barChartLabels = res.x;
-          this.barChartData.push({data: res.y, label: res.ytitle});
-          console.log(this.barChartData)
-        });
-      };
+    if (this.exp_type == "one_to_one") {
+      if (this.dst_mac_list.length > 0) {
+        for (let i = 0; i < this.dst_mac_list.length; i++) {
+          this.gith.download_url(url +
+              this.site + "/" +
+              this.exp + "/" +
+              this.exp_type + "/" +
+              this.src_mac + "/" +
+              this.dst_mac_list[i] + ".json"
+            ).subscribe((res: any) => {
+              this.barChartLabels = res.x;
+              this.barChartData.push({data: res.y, label: res.ytitle});
+              console.log(this.barChartData)
+            });
+        }
+        ;
+      }
+    } else if (this.exp_type == "many_to_many"){
+      this.gith.download_url(url + this.site + "/" + this.exp + "/" + this.exp + ".json").subscribe((res: any) => {
+        this.barChartLabels = res.x;
+        this.barChartData.push({data: res.y, label: res.ytitle});
+        console.log(this.barChartData)
+      });
     }
   }
 }

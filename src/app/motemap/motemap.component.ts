@@ -16,6 +16,7 @@ export class MotemapComponent implements AfterViewInit {
   circles = [];
   site = "";
   exp = "pdr_freq";
+  exp_type = "one_to_one";
   src_mac = "";
   dst_mac_list = [];
 
