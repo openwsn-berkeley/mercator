@@ -42,7 +42,7 @@ export class BarChartComponent implements OnChanges {
   }
 
   load_graph() {
-    let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/develop/datasets/processed/";
+    let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/datasets/processed/";
     this.barChartData = [{data: [], label: ''}];
     if (this.dst_mac_list.length > 0) {
       for (let i=0; i<this.dst_mac_list.length; i++) {

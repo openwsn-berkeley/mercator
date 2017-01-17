@@ -10,28 +10,28 @@ export class GithubService {
   constructor(private _http: Http) { }
 
   getSites(){
-    var url = this.b_url+"?ref=develop";
+    var url = this.b_url+"?ref=data";
     return this._http.get(url)
               .map((r: Response) => r.json());
   }
   getExps(site){
-    var url = this.b_url+"/"+site+"?ref=develop";
+    var url = this.b_url+"/"+site+"?ref=data";
     return this._http.get(url)
               .map((r: Response) => r.json());
   }
   getTypes(site,exp){
-    var url = this.b_url+"/"+site+"/"+exp+"?ref=develop";
+    var url = this.b_url+"/"+site+"/"+exp+"?ref=data";
     return this._http.get(url)
       .map((r: Response) => r.json());
   }
   getMacs(site,exp,type){
-    var url = this.b_url+"/"+site+"/"+exp+"/"+type+"?ref=develop";
+    var url = this.b_url+"/"+site+"/"+exp+"/"+type+"?ref=data";
     return this._http.get(url)
               .map((r: Response) => r.json());
   }
 
   getFiles(url){
-    return this._http.get(this.b_url+"/"+url+"?ref=develop").map((r: Response) => r.json());
+    return this._http.get(this.b_url+"/"+url+"?ref=data").map((r: Response) => r.json());
   }
 
   download_url(url){

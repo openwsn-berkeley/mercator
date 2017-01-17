@@ -30,7 +30,7 @@ export class MotemapComponent implements AfterViewInit {
       this.site=params['site'];
     });
 
-    let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/develop/metas/"+this.site+".json";
+    let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/metas/"+this.site+".json";
 
     this.gith.download_url(url).subscribe((res: any) => {
       res.forEach((node) => {
