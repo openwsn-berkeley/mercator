@@ -11,12 +11,14 @@ import { IndexComponent } from './index/index.component';
 
 import { PdrComponent } from './pdr/pdr.component';
 import { MotemapComponent } from './motemap/motemap.component';
+import {DatasetSelectorComponent} from "./dataset-selector/dataset-selector.component";
 
 
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: IndexComponent  },
-  { path: 'site/:site', component: MotemapComponent  }
+  { path: 'site/:site', component: MotemapComponent  },
+  { path: 'datasets', component: DatasetSelectorComponent  }
 ];
 
 @NgModule({

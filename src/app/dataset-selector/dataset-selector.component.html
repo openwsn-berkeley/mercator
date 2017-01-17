@@ -1,3 +1,26 @@
-<p>
-  dataset-selector works!
-</p>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Site</th>
+      <th>Duration (h)</th>
+      <th>#Nodes</th>
+      <th>#Channels</th>
+      <th>Tx/transaction</th>
+      <th>Inter-Tx duration (ms)</th>
+      <th>Tx size (bytes)</th>
+      <th>File Size (MB)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let dataset of dataset_list">
+      <td>{{dataset.site}}</td>
+      <td>{{dataset.duration}}</td>
+      <td>{{dataset.nb_nodes}}</td>
+      <td>{{dataset.nb_channels}}</td>
+      <td>{{dataset.tx_count}}</td>
+      <td>{{dataset.tx_ifdur}}</td>
+      <td>{{dataset.tx_length}}</td>
+      <td>{{dataset.file_size}}</td>
+    </tr>
+  </tbody>
+</table>
