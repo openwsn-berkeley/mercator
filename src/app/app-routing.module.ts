@@ -17,7 +17,7 @@ import {DatasetSelectorComponent} from "./dataset-selector/dataset-selector.comp
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: IndexComponent  },
-  { path: 'site/:site', component: MotemapComponent  },
+  { path: 'site/:site/:date', component: MotemapComponent  },
   { path: 'datasets', component: DatasetSelectorComponent  }
 ];
 

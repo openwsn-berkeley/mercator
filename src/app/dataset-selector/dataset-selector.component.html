@@ -2,6 +2,7 @@
   <thead>
     <tr>
       <th>Site</th>
+      <th>Date</th>
       <th>Duration (h)</th>
       <th>#Nodes</th>
       <th>#Channels</th>
@@ -12,8 +13,9 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let dataset of dataset_list">
+    <tr *ngFor="let dataset of dataset_list" (click)="redirect(dataset.site, dataset.date)">
       <td>{{dataset.site}}</td>
+      <td>{{dataset.date}}</td>
       <td>{{dataset.duration}}</td>
       <td>{{dataset.nb_nodes}}</td>
       <td>{{dataset.nb_channels}}</td>

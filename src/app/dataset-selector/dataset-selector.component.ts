@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {GithubService} from "../github.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-dataset-selector',
@@ -10,7 +11,7 @@ export class DatasetSelectorComponent implements OnInit {
 
   dataset_list = []
 
-  constructor(private gith:GithubService) { }
+  constructor(private gith:GithubService, private router: Router) { }
 
   ngOnInit() {
     this.gith.getSites().subscribe((res: any) => {
@@ -21,12 +22,16 @@ export class DatasetSelectorComponent implements OnInit {
               site.name + "/" + file.name +"/info.json";
             this.gith.download_url(url).subscribe((res2: any) => {
               res2.site=site.name;
-              res2.data=site.name;
+              res2.date=file.name;
               this.dataset_list.push(res2);
             });
           });
         });
       });
     });
+  }
+
+  redirect(site, date) {
+    this.router.navigate(["site", site, date]);
   }
 }
