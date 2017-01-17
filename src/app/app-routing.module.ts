@@ -5,20 +5,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AppComponent } from './app.component';
-import { BarChartComponent } from './barchart/barchart.component';
-import { IndexComponent } from './index/index.component';
-
-import { PdrComponent } from './pdr/pdr.component';
 import { MotemapComponent } from './motemap/motemap.component';
 import {DatasetSelectorComponent} from "./dataset-selector/dataset-selector.component";
 
 
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', component: IndexComponent  },
-  { path: 'site/:site/:date', component: MotemapComponent  },
-  { path: 'datasets', component: DatasetSelectorComponent  }
+  { path: '', pathMatch: 'full', component: DatasetSelectorComponent  },
+  { path: 'o2o/:site/:date/:exp', component: MotemapComponent  },
 ];
 
 @NgModule({

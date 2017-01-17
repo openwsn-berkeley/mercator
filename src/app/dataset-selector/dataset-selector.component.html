@@ -13,7 +13,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let dataset of dataset_list" (click)="redirect(dataset.site, dataset.date)">
+    <tr *ngFor="let dataset of dataset_list" (click)="get_exp_list(dataset.site, dataset.date)">
       <td>{{dataset.site}}</td>
       <td>{{dataset.date}}</td>
       <td>{{dataset.duration}}</td>
@@ -26,3 +26,23 @@
     </tr>
   </tbody>
 </table>
+
+<div class="row">
+  <div class='col-xs-3'>
+    <button *ngFor="let exp of exp_list"
+            type="button"
+            class="btn btn-info btn-block"
+            (click)="get_type_list(exp)">
+      {{exp}}
+    </button>
+  </div>
+
+  <div class='col-xs-3'>
+    <button *ngFor="let exptype of type_list"
+            type="button"
+            class="btn btn-info btn-block"
+            (click)="get_graph(exptype)">
+      {{exptype}}
+    </button>
+  </div>
+</div>

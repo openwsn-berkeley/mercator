@@ -14,13 +14,13 @@ export class GithubService {
     return this._http.get(url)
               .map((r: Response) => r.json());
   }
-  getExps(site){
-    var url = this.b_url+"/"+site+"?ref=data";
+  getExps(site, date){
+    var url = this.b_url + "/" + site + "/" + date + "?ref=data";
     return this._http.get(url)
               .map((r: Response) => r.json());
   }
-  getTypes(site,exp){
-    var url = this.b_url+"/"+site+"/"+exp+"?ref=data";
+  getTypes(site, date, exp){
+    var url = this.b_url + "/" + site + "/" + date + "/" + exp + "?ref=data";
     return this._http.get(url)
       .map((r: Response) => r.json());
   }

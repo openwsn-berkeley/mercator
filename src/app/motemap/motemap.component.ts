@@ -16,7 +16,7 @@ export class MotemapComponent implements AfterViewInit {
   circles = [];
   site = "";
   date = "";
-  exp = "pdr_freq";
+  exp = "";
   exp_type = "one_to_one";
   src_mac = "";
   dst_mac_list = [];
@@ -31,6 +31,7 @@ export class MotemapComponent implements AfterViewInit {
     this.route.params.subscribe(params => {
       this.site=params['site'];
       this.date=params['date'];
+      this.exp=params['exp'];
     });
 
     let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/metas/"+this.site+".json";

@@ -9,7 +9,12 @@ import {Router} from "@angular/router";
 })
 export class DatasetSelectorComponent implements OnInit {
 
-  dataset_list = []
+  dataset_list = [];
+  exp_list = [];
+  type_list = [];
+  curr_site = "";
+  curr_date = "";
+  curr_exp = "";
 
   constructor(private gith:GithubService, private router: Router) { }
 
@@ -31,7 +36,36 @@ export class DatasetSelectorComponent implements OnInit {
     });
   }
 
-  redirect(site, date) {
-    this.router.navigate(["site", site, date]);
+  get_exp_list(site, date) {
+    this.curr_site = site;
+    this.curr_date = date;
+    this.gith.getExps(site, date).subscribe((res: any) => {
+      this.exp_list = [];
+      res.forEach((exp) => {
+        if (exp.type == "dir") {
+          this.exp_list.push(exp.name)
+        }
+      });
+    });
+  }
+
+  get_type_list(exp){
+    this.curr_exp = exp;
+    this.gith.getTypes(this.curr_site, this.curr_date, exp).subscribe((res: any) => {
+      this.type_list = [];
+      res.forEach((exptype) => {
+        if (exptype.type == "dir") {
+          this.type_list.push(exptype.name)
+        }
+      });
+    });
+  }
+
+  get_graph(exptype){
+    if (exptype == "one_to_one"){
+      this.router.navigate(["o2o", this.curr_site, this.curr_date, this.curr_exp]);
+    } else if (exptype == "one_to_many"){
+
+    }
   }
 }
