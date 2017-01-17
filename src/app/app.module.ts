@@ -12,6 +12,7 @@ import { PdrComponent } from './pdr/pdr.component';
 
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 import { MotemapComponent } from './motemap/motemap.component';
+import { DatasetSelectorComponent } from './dataset-selector/dataset-selector.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { MotemapComponent } from './motemap/motemap.component';
     BarChartComponent,
     IndexComponent,
     PdrComponent,
-    MotemapComponent
+    MotemapComponent,
+    DatasetSelectorComponent
   ],
   imports: [
     BrowserModule,
