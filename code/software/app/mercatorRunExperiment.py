@@ -34,7 +34,7 @@ logfile     = logging.getLogger()  #root logger
 # =========================== constants =======================================
 
 FIRMWARE_PATH   = "../../firmware/"
-DATASET_PATH    = "../../../datasets/raw/"
+DATASET_PATH    = "./"
 METAS_PATH      = "../../../metas/"
 
 # =========================== body ============================================
