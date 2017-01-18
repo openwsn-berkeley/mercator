@@ -156,7 +156,7 @@ class MoteHandler(threading.Thread):
             )
         )
 
-    def send_REQ_TX(self, frequency, txpower, transctr, txnumpk, txifdur, txpksize, txfillbyte):
+    def send_REQ_TX(self, frequency, txpower, transctr, nbpackets, txifdur, txpksize, txfillbyte):
         self._send(
             struct.pack(
                 '>BBbBHHBB',
@@ -164,7 +164,7 @@ class MoteHandler(threading.Thread):
                 frequency,
                 txpower,
                 transctr,
-                txnumpk,
+                nbpackets,
                 txifdur,
                 txpksize,
                 txfillbyte,
