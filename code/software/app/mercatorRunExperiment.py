@@ -79,10 +79,10 @@ class MercatorRunExperiment(object):
         self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,' +
                         'pkctr,nbpackets,txpower,txifdur,txpksize,txfillbyte\n')
 
-        # do experiments per frequency
-        for freq in self.FREQUENCIES:
-            logconsole.info("Current frequency: %s", freq)
-            self._do_experiment_per_frequency(freq)
+        # start transaction
+        for self.transctr in range(0,self.nbtrans):
+            logconsole.info("Current transaction: %s", self.transctr)
+            self._do_transaction()
 
         # print all OK
         raw_input('\nExperiment ended normally. Press Enter to close.')
@@ -90,6 +90,12 @@ class MercatorRunExperiment(object):
     # ======================= public ==========================================
 
     # ======================= cli handlers ====================================
+
+    def _do_transaction(self):
+
+        for freq in self.FREQUENCIES:
+            logconsole.info("Current frequency: %s", freq)
+            self._do_experiment_per_frequency(freq)
 
     def _do_experiment_per_frequency(self, freq):
 
@@ -114,9 +120,6 @@ class MercatorRunExperiment(object):
             status = mh.send_REQ_ST()
             if status is None or status['status'] != d.ST_IDLE:
                 logfile.warn('Node %s is not in IDLE state.', mh.mac)
-
-        # increment transaction counter
-        self.transctr = (self.transctr + 1) % 255
 
         # switch all motes to rx
         for (sp, mh) in self.motes.items():
