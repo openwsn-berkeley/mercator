@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-#============================ adjust path =====================================
+# =========================== adjust path =====================================
 
 import os
 import sys
@@ -8,7 +8,7 @@ if __name__ == '__main__':
     here = sys.path[0]
     sys.path.insert(0, os.path.join(here, '..', 'lib'))
 
-#============================ imports =========================================
+# =========================== imports =========================================
 
 import argparse
 import threading
@@ -24,33 +24,33 @@ import MercatorDefines as d
 import iotlabcli as iotlab
 from iotlabcli import experiment
 
-#============================ logging =========================================
+# =========================== logging =========================================
 
 logging.config.fileConfig('logging.conf')
 
 logconsole  = logging.getLogger("console")
 logfile     = logging.getLogger()  #root logger
 
-#============================ body ============================================
+# =========================== constants =======================================
 
 FIRMWARE_PATH   = "../../firmware/"
-DATASET_PATH    = "../../../datasets/"
+DATASET_PATH    = "../../../datasets/raw/"
 METAS_PATH      = "../../../metas/"
 
-#============================ body ============================================
+# =========================== body ============================================
 
 
 class MercatorRunExperiment(object):
 
     FREQUENCIES    = [n+11 for n in range(16)]   # frequencies to measure on, in IEEE notation
     TXPOWER        = 0                           # dBm
-    NUMTRANS       = 5                           # number of transactions
-    TXNUMPK        = 10                          # number of packets per transaction
+    nbtrans        = 5                           # number of transactions
+    nbpackets      = 10                          # number of packets per transaction
     TXIFDUR        = 100                         # inter-frame duration, in ms
-    TXLENGTH       = 100                         # number of bytes (PHY payload) in a frame
+    txpksize       = 100                         # number of bytes (PHY payload) in a frame
     TXFILLBYTE     = 0x0a                        # padding byte
 
-    def __init__(self, serialports, site="local"):
+    def __init__(self, args, serialports, site="local"):
 
         # local variables
         self.dataLock        = threading.Lock()
@@ -60,6 +60,9 @@ class MercatorRunExperiment(object):
         self.site            = site
         self.freq            = self.FREQUENCIES[0]
         self.transmitterPort = ""
+        self.nbtrans         = args.nbtrans
+        self.nbpackets       = args.nbpackets
+        self.txpksize        = args.txpksize
 
         # connect to motes
         for s in serialports:
@@ -74,7 +77,7 @@ class MercatorRunExperiment(object):
                                     datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")),
                                     'w')
         self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,' +
-                        'pkctr,txnumpk,txpower,txifdur,txlength,txfillbyte\n')
+                        'pkctr,nbpackets,txpower,txifdur,txpksize,txfillbyte\n')
 
         # do experiments per frequency
         for freq in self.FREQUENCIES:
@@ -84,9 +87,9 @@ class MercatorRunExperiment(object):
         # print all OK
         raw_input('\nExperiment ended normally. Press Enter to close.')
         self.file.close()
-    #======================== public ==========================================
+    # ======================= public ==========================================
 
-    #======================== cli handlers ====================================
+    # ======================= cli handlers ====================================
 
     def _do_experiment_per_frequency(self, freq):
 
@@ -122,7 +125,7 @@ class MercatorRunExperiment(object):
                 frequency         = freq,
                 srcmac            = self.motes[transmitter_port].get_mac(),
                 transctr          = self.transctr,
-                txlength          = self.TXLENGTH,
+                txpksize          = self.txpksize,
                 txfillbyte        = self.TXFILLBYTE,
             )
 
@@ -143,14 +146,14 @@ class MercatorRunExperiment(object):
             frequency             = freq,
             txpower               = self.TXPOWER,
             transctr              = self.transctr,
-            txnumpk               = self.TXNUMPK,
+            nbpackets             = self.nbpackets,
             txifdur               = self.TXIFDUR,
-            txlength              = self.TXLENGTH,
+            txpksize              = self.txpksize,
             txfillbyte            = self.TXFILLBYTE,
         )
 
         # wait to be done
-        maxwaittime = 3*self.TXNUMPK*(self.TXIFDUR/1000.0)
+        maxwaittime = 3*self.nbpackets*(self.TXIFDUR/1000.0)
         self.waitTxDone.wait(maxwaittime)
         if self.waitTxDone.isSet():
             logfile.debug('done.')
@@ -169,7 +172,7 @@ class MercatorRunExperiment(object):
                 if status is None or status['status'] != d.ST_RX:
                     logfile.warn('Node %s is not in RX state.', mh.mac)
 
-    #======================== private =========================================
+    # ======================= private =========================================
 
     def _cb(self, serialport, notif):
 
@@ -193,10 +196,10 @@ class MercatorRunExperiment(object):
                 srcmac     = d.format_mac(self.motes[self.transmitterPort].get_mac())
                 transctr   = self.transctr
                 pkctr      = notif['pkctr']
-                txnumpk    = self.TXNUMPK
+                nbpackets  = self.nbpackets
                 txpower    = self.TXPOWER
                 txifdur    = self.TXIFDUR
-                txlength   = self.TXLENGTH
+                txpksize   = self.txpksize
                 tfb_raw    = hex(self.TXFILLBYTE).split('x')
                 txfillbyte = "{0}x{1}".format(tfb_raw[0], tfb_raw[1].zfill(2))
                 # if (crc == 1 and expected == 1):
@@ -211,10 +214,10 @@ class MercatorRunExperiment(object):
                         srcmac,
                         transctr,
                         pkctr,
-                        txnumpk,
+                        nbpackets,
                         txpower,
                         txifdur,
-                        txlength,
+                        txpksize,
                         txfillbyte
                     ))
             elif notif['type'] == d.TYPE_IND_UP:
@@ -223,7 +226,7 @@ class MercatorRunExperiment(object):
     def _quit_callback(self):
         print "quitting!"
 
-#=========================== helpers ==========================================
+# ========================== helpers ==========================================
 
 
 def get_motes(expid):
@@ -240,7 +243,7 @@ def get_motes(expid):
             data["items"][0]["network_address"].split('.')[1])
 
 
-def submit_experiment(testbed_name, board, firmware, duration, nb_nodes):
+def submit_experiment(args):
     """
     Reserve nodes in the given site.
     The function uses the json experiment file corresponding to the site.
@@ -248,6 +251,7 @@ def submit_experiment(testbed_name, board, firmware, duration, nb_nodes):
     :param str board: the type of board (ex: m3)
     :param str testbed_name: The name of the testbed (ex: grenoble)
     :param int duration: The duration of the experiment in minutes
+    :param int nbnodes: The number of nodes to use
     :return: The id of the experiment
     """
 
@@ -260,17 +264,17 @@ def submit_experiment(testbed_name, board, firmware, duration, nb_nodes):
     # load the experiment
     tb_file     = open("{0}states.json".format(METAS_PATH))
     tb_json     = json.load(tb_file)
-    nodes       = [x for x in tb_json[testbed_name] if board in x]
-    if nb_nodes != 0:
-        nodes   = nodes[0:nb_nodes]
-    firmware    = FIRMWARE_PATH + firmware
+    nodes       = [x for x in tb_json[args.testbed] if args.board in x]
+    if args.nbnodes != 0:
+        nodes   = nodes[0:args.nbnodes]
+    firmware    = FIRMWARE_PATH + args.firmware
     profile     = "mercator"
     resources   = [experiment.exp_resources(nodes, firmware, profile)]
 
     # submit experiment
     logconsole.info("Submitting experiment.")
     expid       = experiment.submit_experiment(
-                    api, "mercatorExp", duration,
+                    api, "mercatorExp", args.duration,
                     resources)["id"]
 
     logconsole.info("Experiment submited with id: %u", expid)
@@ -279,7 +283,7 @@ def submit_experiment(testbed_name, board, firmware, duration, nb_nodes):
 
     return expid
 
-#============================ main ============================================
+# =========================== main ============================================
 
 
 def main():
@@ -291,22 +295,27 @@ def main():
     parser.add_argument("-d", "--duration", help="Duration of the experiment in minutes", type=int, default=30)
     parser.add_argument("-e", "--expid", help="The experiment id", type=int, default=None)
     parser.add_argument("-b", "--board", help="The type of board to use", type=str, default="m3")
-    parser.add_argument("-n", "--nodes", help="The number of nodes to use (0=all)", type=int, default=0)
+    parser.add_argument("-n", "--nbnodes", help="The number of nodes to use (0=all)", type=int, default=0)
+    parser.add_argument("-p", "--nbpackets", help="The number of packet per transaction", type=int, default=10)
+    parser.add_argument("-t", "--nbtrans", help="The number of transaction", type=int, default=1)
+    parser.add_argument("-s", "--txpksize", help="The size of each packet in bytes", type=int, default=1)
     args = parser.parse_args()
 
     if args.testbed == "local":
         MercatorRunExperiment(
-            serialports = ['/dev/ttyUSB1', '/dev/ttyUSB3']
+            args = args,
+            serialports = ['/dev/ttyUSB1', '/dev/ttyUSB3'],
         )
     else:
         if args.expid is None:
-            expid = submit_experiment(args.testbed, args.board, args.firmware, args.duration, args.nodes)
+            expid = submit_experiment(args)
         else:
             expid = args.expid
         (serialports, site) = get_motes(expid)
         MercatorRunExperiment(
+            args = args,
             serialports = serialports,
-            site = site
+            site = site,
         )
 
 if __name__ == '__main__':
