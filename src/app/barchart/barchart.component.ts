@@ -52,7 +52,7 @@ export class BarChartComponent implements OnChanges {
       this.exp_type + "/" +
       "chart_config.json"
     ).subscribe((res: any) => {
-      this.barChartOptions = res.ChartOptions
+      this.barChartOptions = res.ChartOptions;
       console.log(res.ChartOptions)
     });
   }
@@ -64,18 +64,22 @@ export class BarChartComponent implements OnChanges {
     if (this.exp_type == "one_to_one") {
       if (this.dst_mac_list.length > 0) {
         for (let i = 0; i < this.dst_mac_list.length; i++) {
-          this.gith.download_url(url +
-              this.site + "/" +
-              this.date + "/" +
-              this.exp + "/" +
-              this.exp_type + "/" +
-              this.src_mac + "/" +
-              this.dst_mac_list[i] + ".json"
-            ).subscribe((res: any) => {
+          let url_args = [this.site, this.date, this.exp, this.exp_type, this.src_mac, this.dst_mac_list[i]];
+          if (this.exp == "pdr_time"){
+            this.gith.getFiles(url_args.join('/')).subscribe((res: any) => {
+              res.forEach((f) =>{
+                this.gith.download_url(url + url_args.join('/') + "/" + f.name).subscribe((res: any) => {
+                  this.barChartLabels = res.x;
+                  this.barChartData.push({data: res.y, label: res.ytitle});
+                });
+              });
+            });
+          } else {
+            this.gith.download_url(url + url_args.join('/') + ".json").subscribe((res: any) => {
               this.barChartLabels = res.x;
               this.barChartData.push({data: res.y, label: res.ytitle});
-              console.log(this.barChartData)
             });
+          }
         }
       }
     } else if (this.exp_type == "many_to_many"){
