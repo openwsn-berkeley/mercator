@@ -301,7 +301,7 @@ def main():
     parser.add_argument("-n", "--nbnodes", help="The number of nodes to use (0=all)", type=int, default=0)
     parser.add_argument("-p", "--nbpackets", help="The number of packet per transaction", type=int, default=10)
     parser.add_argument("-t", "--nbtrans", help="The number of transaction", type=int, default=1)
-    parser.add_argument("-s", "--txpksize", help="The size of each packet in bytes", type=int, default=1)
+    parser.add_argument("-s", "--txpksize", help="The size of each packet in bytes", type=int, default=100)
     args = parser.parse_args()
 
     if args.testbed == "local":
