@@ -139,9 +139,9 @@ class MercatorCli(object):
                 frequency    = 0x14,
                 txpower      = 0,
                 transctr     = 0x0a,
-                txnumpk      = 5,
+                nbpackets    = 5,
                 txifdur      = 1000,
-                txlength     = 100,
+                txpksize     = 100,
                 txfillbyte   = 0x0b,
             )
 
@@ -162,7 +162,7 @@ class MercatorCli(object):
                     frequency    = 0x14,
                     srcmac       = [0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88],
                     transctr     = 0x0a,
-                    txlength     = 100,
+                    txpksize     = 100,
                     txfillbyte   = 0x0b,
                 )
 
