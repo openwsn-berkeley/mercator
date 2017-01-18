@@ -53,7 +53,7 @@ export class BarChartComponent implements OnChanges {
       "chart_config.json"
     ).subscribe((res: any) => {
       this.barChartOptions = res.ChartOptions;
-      console.log(res.ChartOptions)
+      this.barChartType = res.ChartType;
     });
   }
 
