@@ -62,10 +62,6 @@ export class DatasetSelectorComponent implements OnInit {
   }
 
   get_graph(exptype){
-    if (exptype == "one_to_one"){
-      this.router.navigate(["o2o", this.curr_site, this.curr_date, this.curr_exp]);
-    } else if (exptype == "one_to_many"){
-
-    }
+    this.router.navigate(["motemap", this.curr_site, this.curr_date, this.curr_exp, exptype]);
   }
 }

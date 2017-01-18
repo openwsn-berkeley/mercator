@@ -12,7 +12,7 @@ import {DatasetSelectorComponent} from "./dataset-selector/dataset-selector.comp
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: DatasetSelectorComponent  },
-  { path: 'o2o/:site/:date/:exp', component: MotemapComponent  },
+  { path: 'motemap/:site/:date/:exp/:type', component: MotemapComponent  },
 ];
 
 @NgModule({

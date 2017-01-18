@@ -17,7 +17,7 @@ export class MotemapComponent implements AfterViewInit {
   site = "";
   date = "";
   exp = "";
-  exp_type = "one_to_one";
+  exp_type = "";
   src_mac = "";
   dst_mac_list = [];
 
@@ -32,6 +32,7 @@ export class MotemapComponent implements AfterViewInit {
       this.site=params['site'];
       this.date=params['date'];
       this.exp=params['exp'];
+      this.exp_type=params['type'];
     });
 
     let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/metas/"+this.site+".json";

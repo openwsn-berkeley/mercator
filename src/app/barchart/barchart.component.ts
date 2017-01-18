@@ -43,7 +43,22 @@ export class BarChartComponent implements OnChanges {
     //console.log(e);
   }
 
+  load_chart_config(){
+    let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/datasets/processed/";
+    this.gith.download_url(url +
+      this.site + "/" +
+      this.date + "/" +
+      this.exp + "/" +
+      this.exp_type + "/" +
+      "chart_config.json"
+    ).subscribe((res: any) => {
+      this.barChartOptions = res.ChartOptions
+      console.log(res.ChartOptions)
+    });
+  }
+
   load_graph() {
+    this.load_chart_config();
     let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/datasets/processed/";
     this.barChartData = [{data: [], label: ''}];
     if (this.exp_type == "one_to_one") {
@@ -62,7 +77,6 @@ export class BarChartComponent implements OnChanges {
               console.log(this.barChartData)
             });
         }
-        ;
       }
     } else if (this.exp_type == "many_to_many"){
       this.gith.download_url(url +
