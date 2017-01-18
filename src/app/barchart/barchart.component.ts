@@ -61,10 +61,11 @@ export class BarChartComponent implements OnChanges {
     this.load_chart_config();
     let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/datasets/processed/";
     this.barChartData = [{data: [], label: ''}];
+    let url_args = [this.site, this.date, this.exp, this.exp_type];
     if (this.exp_type == "one_to_one") {
       if (this.dst_mac_list.length > 0) {
         for (let i = 0; i < this.dst_mac_list.length; i++) {
-          let url_args = [this.site, this.date, this.exp, this.exp_type, this.src_mac, this.dst_mac_list[i]];
+          url_args.concat([this.src_mac, this.dst_mac_list[i]]);
           if (this.exp == "pdr_time"){
             this.gith.getFiles(url_args.join('/')).subscribe((res: any) => {
               res.forEach((f) =>{
@@ -83,11 +84,7 @@ export class BarChartComponent implements OnChanges {
         }
       }
     } else if (this.exp_type == "many_to_many"){
-      this.gith.download_url(url +
-          this.site + "/"+
-          this.date + "/" +
-          this.exp + "/" +
-          this.exp + ".json"
+      this.gith.download_url(url + url_args.join("/") + "/" + this.exp + ".json"
         ).subscribe((res: any) => {
         this.barChartLabels = res.x;
         this.barChartData.push({data: res.y, label: res.ytitle});
