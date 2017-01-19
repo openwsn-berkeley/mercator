@@ -252,7 +252,7 @@ def submit_experiment(args):
     The function uses the json experiment file corresponding to the site.
     :param str firmware: the name of the firmware as it is in the code/firmware/ folder
     :param str board: the type of board (ex: m3)
-    :param str testbed_name: The name of the testbed (ex: grenoble)
+    :param str testbed: The name of the testbed (ex: grenoble)
     :param int duration: The duration of the experiment in minutes
     :param int nbnodes: The number of nodes to use
     :return: The id of the experiment
@@ -265,14 +265,16 @@ def submit_experiment(args):
     api         = iotlab.rest.Api(usr, pwd)
 
     # load the experiment
-    tb_file     = open("{0}states.json".format(METAS_PATH))
-    tb_json     = json.load(tb_file)
-    nodes       = [x for x in tb_json[args.testbed] if args.board in x]
-    if args.nbnodes != 0:
-        nodes   = nodes[0:args.nbnodes]
     firmware    = FIRMWARE_PATH + args.firmware
     profile     = "mercator"
-    resources   = [experiment.exp_resources(nodes, firmware, profile)]
+    if args.nbnodes != 0:
+        if args.board == "m3": args.board = "m3:at86rf231"
+        nodes = experiment.AliasNodes(args.nbnodes, args.testbed, args.board, False)
+    else:
+        tb_file = open("{0}states.json".format(METAS_PATH))
+        tb_json = json.load(tb_file)
+        nodes = [x for x in tb_json[args.testbed] if args.board in x]
+    resources = [experiment.exp_resources(nodes, firmware, profile)]
 
     # submit experiment
     logconsole.info("Submitting experiment.")
