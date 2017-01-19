@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {GithubService} from "../github.service";
-import {Router} from "@angular/router";
+import {Router, ActivatedRoute, Params} from "@angular/router";
 
 @Component({
   selector: 'app-dataset-selector',
@@ -9,29 +9,43 @@ import {Router} from "@angular/router";
 })
 export class DatasetSelectorComponent implements OnInit {
 
-  dataset_list = [];
+  dataset_list;
   exp_list = [];
   type_list = [];
   curr_site = "";
   curr_date = "";
   curr_exp = "";
 
-  constructor(private gith:GithubService, private router: Router) { }
+  constructor(private gith:GithubService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
+    console.log("tioti")
+    // get route parameters
+    this.route.params.subscribe((params: Params) => {
+      if ("site" in params) {
+        this.curr_site = params['site'];
+      }
+      this.get_dataset_list();
+    });
+  }
+
+  get_dataset_list(){
+    this.dataset_list = [];
     this.gith.getSites().subscribe((res: any) => {
       res.forEach((site) => {
-        this.gith.getFiles(site.name).subscribe((res1: any) => {
-          res1.forEach((file) => {
-            let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/datasets/processed/" +
-              site.name + "/" + file.name +"/info.json";
-            this.gith.download_url(url).subscribe((res2: any) => {
-              res2.site=site.name;
-              res2.date=file.name;
-              this.dataset_list.push(res2);
+        if (this.curr_site == "" || this.curr_site == site.name) {
+          this.gith.getFiles(site.name).subscribe((res1: any) => {
+            res1.forEach((file) => {
+              let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/datasets/processed/" +
+                site.name + "/" + file.name + "/info.json";
+              this.gith.download_url(url).subscribe((res2: any) => {
+                res2.site = site.name;
+                res2.date = file.name;
+                this.dataset_list.push(res2);
+              });
             });
           });
-        });
+        }
       });
     });
   }

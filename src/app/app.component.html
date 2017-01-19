@@ -379,7 +379,7 @@
 
             <li class="sidenav-heading">Mercator</li>
             <li class="sidenav-item has-subnav"  *ngFor="let site of sites">
-              <a [routerLink]="['site',site.name]"  aria-haspopup="true">
+              <a [routerLink]="[site.name]"  aria-haspopup="true">
                 <span class="sidenav-icon icon icon-briefcase"></span>
                 <span class="sidenav-label">{{site.name}}</span>
               </a>
