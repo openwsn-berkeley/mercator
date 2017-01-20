@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import {Component, ViewChild, Input} from '@angular/core';
 import {AfterViewInit} from "@angular/core";
 import {GithubService} from "../github.service";
 import {ActivatedRoute} from "@angular/router";
@@ -11,13 +11,15 @@ import {ActivatedRoute} from "@angular/router";
 
 
 export class MotemapComponent implements AfterViewInit {
+
+  @Input() site;
+  @Input() date;
+  @Input() exp;
+  @Input() exp_type;
+
   context:CanvasRenderingContext2D;
 
   circles = [];
-  site = "";
-  date = "";
-  exp = "";
-  exp_type = "";
   src_mac = "";
   dst_mac_list = [];
 
@@ -25,9 +27,10 @@ export class MotemapComponent implements AfterViewInit {
 
   COLOR_DEFAULT = "black";
 
-  constructor(private gith:GithubService, private route: ActivatedRoute,){
-    let newcircles = [];
+  constructor(private gith:GithubService, private route: ActivatedRoute) {}
 
+  ngOnChanges() {
+    let newcircles = [];
     this.route.params.subscribe(params => {
       this.site=params['site'];
       this.date=params['date'];
