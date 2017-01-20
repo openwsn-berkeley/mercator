@@ -19,7 +19,6 @@ export class DatasetSelectorComponent implements OnInit {
   constructor(private gith:GithubService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    console.log("tioti")
     // get route parameters
     this.route.params.subscribe((params: Params) => {
       if ("site" in params) {

@@ -50,38 +50,52 @@ export class MotemapComponent implements AfterViewInit {
   ngAfterViewInit() { }
 
   boom(circle_id, msg) {
-    if (this.src_mac == "") {
+    if (this.exp_type == "one_to_one"){
+      if (this.src_mac == "") {
+        // new src mac
+        this.src_mac = msg;
+        this.circles.forEach((item) => {
+          item.color = this.COLOR_DEFAULT;
+        });
+        this.circles[circle_id].color = "red";
+      } else if (this.src_mac == msg) {
+        // cancel src mac
+        this.circles.forEach((item) => {
+          item.color = this.COLOR_DEFAULT;
+        });
+        this.dst_mac_list = [];
+        this.src_mac = "";
+      } else {
+        let found = -1;
+        for (let i=this.dst_mac_list.length-1; i>=0; i--) {
+          if (this.dst_mac_list[i] === msg) {
+            found = i;
+            break;
+          }
+        }
+        if (found != -1){
+            // cancel dst_mac
+            this.dst_mac_list.splice(found, 1);
+            this.circles[circle_id].color = this.COLOR_DEFAULT;
+        } else {
+          // new dst_mac
+          this.dst_mac_list.push(msg);
+          this.circles[circle_id].color = "green";
+        }
+        this.dst_mac_list = this.dst_mac_list.slice(); // update reference
+      }
+    } else if (this.exp_type == "one_to_many"){
+      // remove existing srcmac
+      this.circles.forEach((item) => {
+        item.color = this.COLOR_DEFAULT;
+      });
+
       // new src mac
       this.src_mac = msg;
       this.circles.forEach((item) => {
         item.color = this.COLOR_DEFAULT;
       });
       this.circles[circle_id].color = "red";
-    } else if (this.src_mac == msg) {
-      // cancel src mac
-      this.circles.forEach((item) => {
-        item.color = this.COLOR_DEFAULT;
-      });
-      this.dst_mac_list = [];
-      this.src_mac = "";
-    } else {
-      let found = -1;
-      for (let i=this.dst_mac_list.length-1; i>=0; i--) {
-        if (this.dst_mac_list[i] === msg) {
-          found = i;
-          break;
-        }
-      }
-      if (found != -1){
-          // cancel dst_mac
-          this.dst_mac_list.splice(found, 1);
-          this.circles[circle_id].color = this.COLOR_DEFAULT;
-      } else {
-        // new dst_mac
-        this.dst_mac_list.push(msg);
-        this.circles[circle_id].color = "green";
-      }
-      this.dst_mac_list = this.dst_mac_list.slice(); // update reference
     }
   }
 }
