@@ -23,6 +23,7 @@ export class DatasetSelectorComponent implements OnInit {
     this.route.params.subscribe((params: Params) => {
       if ("site" in params) {
         this.curr_site = params['site'];
+        this.exp_list = [];
       }
       this.get_dataset_list();
     });
