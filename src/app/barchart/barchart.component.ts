@@ -94,16 +94,16 @@ export class BarChartComponent implements OnChanges {
         if (this.exp == "pdr_time"){
           this.gith.getFiles(url_args_full.join('/')).subscribe((res: any) => {
             res.forEach((f) =>{
-              this.result.push(res);
+              this.gith.download_url(url + url_args_full.join('/') + "/" + f.name).subscribe((res: any) => {
+                this.result.push(res);
+                this.reload_chart();
+              });
             });
-            this.reload_chart();
-            console.log("test")
           });
         } else {
           this.gith.download_url(url + url_args_full.join('/') + ".json").subscribe((res: any) => {
             this.result.push(res);
             this.reload_chart();
-            console.log("test")
           });
         }
       }
