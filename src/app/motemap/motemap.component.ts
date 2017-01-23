@@ -1,4 +1,4 @@
-import {Component, ViewChild, Input} from '@angular/core';
+import {Component, ViewChild, Input, SimpleChanges} from '@angular/core';
 import {AfterViewInit} from "@angular/core";
 import {GithubService} from "../github.service";
 import {ActivatedRoute} from "@angular/router";
@@ -27,17 +27,15 @@ export class MotemapComponent implements AfterViewInit {
 
   COLOR_DEFAULT = "black";
 
-  constructor(private gith:GithubService, private route: ActivatedRoute) {}
-
-  ngOnChanges() {
-    let newcircles = [];
+  constructor(private gith:GithubService, private route: ActivatedRoute) {
     this.route.params.subscribe(params => {
       this.site=params['site'];
       this.date=params['date'];
       this.exp=params['exp'];
       this.exp_type=params['type'];
 
-      if ("site" in params && params["site"].currentValue != params["site"].previousValue){
+      if ("site" in params){
+        let newcircles = [];
         let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/metas/"+this.site+".json";
 
         this.gith.download_url(url).subscribe((res: any) => {
@@ -50,6 +48,13 @@ export class MotemapComponent implements AfterViewInit {
         this.circles = newcircles;
       }
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if ("exp" in changes || "exp_type" in changes){
+      this.src_mac = "";
+      this.dst_mac_list = [];
+    }
   }
 
   ngAfterViewInit() { }

@@ -15,10 +15,9 @@ export class DatasetSelectorComponent implements OnInit {
   site = "";
   date = "";
   exp = "";
+  exp_type = "";
 
-  constructor(private gith:GithubService, private router: Router, private route: ActivatedRoute) { }
-
-  ngOnInit() {
+  constructor(private gith:GithubService, private router: Router, private route: ActivatedRoute) {
     // get route parameters
     this.route.params.subscribe((params: Params) => {
       if ("site" in params) {
@@ -30,10 +29,13 @@ export class DatasetSelectorComponent implements OnInit {
           this.get_type_list(params['exp'])
         }
         this.exp_list = [];
+        this.type_list = [];
       }
       this.get_dataset_list();
     });
   }
+
+  ngOnInit() {}
 
   get_dataset_list(){
     this.dataset_list = [];
@@ -81,8 +83,8 @@ export class DatasetSelectorComponent implements OnInit {
     });
   }
 
-  get_graph(exptype){
-    let url = [this.site, this.date, this.exp, exptype];
-    this.router.navigate(url);
+  get_graph(exp_type){
+    let url = [this.site, this.date, this.exp, exp_type];
+    this.exp_type = exp_type;
   }
 }
