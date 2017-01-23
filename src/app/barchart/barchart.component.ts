@@ -33,7 +33,8 @@ export class BarChartComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges){
-    if ("exp_type" in changes) {
+    if ("exp_type" in changes && changes["exp_type"].currentValue != undefined) {
+      console.log(changes)
       this.load_chart_config();
     }
     this.load_graph();

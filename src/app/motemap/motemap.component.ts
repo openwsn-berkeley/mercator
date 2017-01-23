@@ -36,18 +36,20 @@ export class MotemapComponent implements AfterViewInit {
       this.date=params['date'];
       this.exp=params['exp'];
       this.exp_type=params['type'];
-    });
 
-    let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/metas/"+this.site+".json";
+      if ("site" in params && params["site"].currentValue != params["site"].previousValue){
+        let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/metas/"+this.site+".json";
 
-    this.gith.download_url(url).subscribe((res: any) => {
-      res.forEach((node) => {
-        if (node.mac) {
-          newcircles.push({x: node.x, y: node.y, msg: node.mac, color: this.COLOR_DEFAULT});
-        }
-      });
+        this.gith.download_url(url).subscribe((res: any) => {
+          res.forEach((node) => {
+            if (node.mac) {
+              newcircles.push({x: node.x, y: node.y, msg: node.mac, color: this.COLOR_DEFAULT});
+            }
+          });
+        });
+        this.circles = newcircles;
+      }
     });
-    this.circles = newcircles;
   }
 
   ngAfterViewInit() { }
