@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {GithubService} from "../github.service";
 import {Router, ActivatedRoute, Params} from "@angular/router";
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-dataset-selector',
@@ -17,7 +18,8 @@ export class DatasetSelectorComponent implements OnInit {
   exp = "";
   exp_type = "";
 
-  constructor(private gith:GithubService, private router: Router, private route: ActivatedRoute) {
+  constructor(private gith:GithubService, private router: Router,
+              private route: ActivatedRoute, private location: Location) {
     // get route parameters
     this.route.params.subscribe((params: Params) => {
       if ("site" in params) {
@@ -69,6 +71,8 @@ export class DatasetSelectorComponent implements OnInit {
         }
       });
     });
+    // update url
+    this.location.replaceState('/'+ site + '/' + date + '/')
   }
 
   get_type_list(exp){
@@ -81,6 +85,8 @@ export class DatasetSelectorComponent implements OnInit {
         }
       });
     });
+    // update url
+    this.location.replaceState('/'+ this.site + '/' + this.date + '/' + exp + '/')
   }
 
   get_graph(exp_type){
