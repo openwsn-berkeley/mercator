@@ -1,5 +1,5 @@
 <svg id="motemap" viewBox="-1 -1 22 30" preserveAspectRatio="xMidYMid meet">
-  <circle *ngFor="let circle of circles; let i=index" (click)="boom(i, circle.msg)"
+  <circle *ngFor="let circle of circles; let i=index" (click)="node_clicked(i, circle.msg)"
               [attr.cx]="circle.x"
               [attr.cy]="circle.y"
               [attr.r]="0.2"

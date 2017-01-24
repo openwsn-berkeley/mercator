@@ -12,11 +12,10 @@ export class DatasetSelectorComponent implements OnInit {
 
   dataset_list;
   exp_list = [];
-  type_list = [];
   site = "";
   date = "";
   exp = "";
-  exp_type = "";
+  exp_type = "many_to_many";
 
   constructor(private gith:GithubService, private router: Router,
               private route: ActivatedRoute, private location: Location) {
@@ -27,11 +26,7 @@ export class DatasetSelectorComponent implements OnInit {
         if ("date" in params) {
           this.get_exp_list(this.site, params['date']);
         }
-        if ("exp" in params) {
-          this.get_type_list(params['exp'])
-        }
         this.exp_list = [];
-        this.type_list = [];
       }
       this.get_dataset_list();
     });
@@ -75,22 +70,7 @@ export class DatasetSelectorComponent implements OnInit {
     this.location.replaceState('/'+ site + '/' + date + '/')
   }
 
-  get_type_list(exp){
+  set_exp(exp){
     this.exp = exp;
-    this.gith.getTypes(this.site, this.date, exp).subscribe((res: any) => {
-      this.type_list = [];
-      res.forEach((exptype) => {
-        if (exptype.type == "dir") {
-          this.type_list.push(exptype.name)
-        }
-      });
-    });
-    // update url
-    this.location.replaceState('/'+ this.site + '/' + this.date + '/' + exp + '/')
-  }
-
-  get_graph(exp_type){
-    let url = [this.site, this.date, this.exp, exp_type];
-    this.exp_type = exp_type;
   }
 }
