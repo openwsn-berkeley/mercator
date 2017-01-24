@@ -54,6 +54,9 @@ export class MotemapComponent implements AfterViewInit {
     if ("exp" in changes || "exp_type" in changes){
       this.src_mac = "";
       this.dst_mac_list = [];
+      this.circles.forEach((item) => {
+        item.color = this.COLOR_DEFAULT;
+      });
     }
   }
 
