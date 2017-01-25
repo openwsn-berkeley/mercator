@@ -52,7 +52,8 @@ export class BarChartComponent implements OnChanges {
 
   reload_chart(){
     this.chartDataList = [];
-    if (this.barChartOptions.scales.xAxes != undefined &&
+    let c = 0;
+    if (this.barChartOptions.scales.xAxes[0].type != undefined &&
         this.barChartOptions.scales.xAxes[0].type == "linear")
     {
       for (let key in this.result) {
@@ -64,11 +65,12 @@ export class BarChartComponent implements OnChanges {
               data_list.push({x: this.result[key][i].x[j], y: this.result[key][i].y[j]});
             }
             this.chartDataList.push([{data: data_list, label: this.result[key][i].label}]);
+            this.chartLabelsList[c] = this.result[key][i].x;
           }
         }
+        c++;
       }
     } else {
-      let c = 0;
       for (let key in this.result) {
         this.chartDataList[c] = [];
         this.chartLabelsList[c] = [];
@@ -100,7 +102,7 @@ export class BarChartComponent implements OnChanges {
     let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/datasets/processed/";
     let url_args = [this.site, this.date, this.exp, this.exp_type];
 
-    this.result = [];
+    this.result = {};
     if (this.exp_type == "one_to_one") {
       for (let i = 0; i < this.dst_mac_list.length; i++) {
         let url_args_full = url_args.concat(this.src_mac, this.dst_mac_list[i]);
