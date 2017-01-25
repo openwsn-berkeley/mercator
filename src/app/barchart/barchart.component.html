@@ -1,7 +1,7 @@
 <div style="display: block">
-  <canvas baseChart
-          [datasets]="barChartData"
-          [labels]="barChartLabels"
+  <canvas baseChart *ngFor="let chartData of chartDataList; let i=index"
+          [datasets]="chartData"
+          [labels]="chartLabelsList[i]"
           [options]="barChartOptions"
           [legend]="barChartLegend"
           [chartType]="barChartType"
