@@ -15,7 +15,7 @@ export class DatasetSelectorComponent implements OnInit {
   site = "";
   date = "";
   exp = "";
-  exp_type = "many_to_many";
+  exp_type = "";
 
   constructor(private gith:GithubService, private router: Router,
               private route: ActivatedRoute, private location: Location) {
@@ -72,5 +72,6 @@ export class DatasetSelectorComponent implements OnInit {
 
   set_exp(exp){
     this.exp = exp;
+    this.exp_type = "many_to_many";
   }
 }
