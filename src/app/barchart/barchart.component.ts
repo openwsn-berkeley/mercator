@@ -36,7 +36,7 @@ export class BarChartComponent implements OnChanges {
     if ("exp_type" in changes &&
       changes["exp_type"].currentValue != undefined &&
       changes["exp_type"].currentValue != "") {
-        //this.load_chart_config();
+        this.load_chart_config();
     }
     this.load_graph();
   };
@@ -63,7 +63,7 @@ export class BarChartComponent implements OnChanges {
             for (let j = 0; j < this.result[key][j].x.length; i++) {
               data_list.push({x: this.result[key][i].x[j], y: this.result[key][i].y[j]});
             }
-            this.chartDataList.push([{data: data_list, label: key}]);
+            this.chartDataList.push([{data: data_list, label: this.result[key][i].label}]);
           }
         }
       }
@@ -75,7 +75,7 @@ export class BarChartComponent implements OnChanges {
         for (let i = 0; i < this.result[key].length; i++) {
           this.chartDataList[c].push({
             data: this.result[key][i].y,
-            label: key
+            label: this.result[key][i].label
           });
           this.chartLabelsList[c] = this.result[key][i].x;
         }
@@ -109,7 +109,7 @@ export class BarChartComponent implements OnChanges {
           this.gith.getFiles(url_args_full.join('/')).subscribe((res: any) => {
             res.forEach((f, index) =>{
               this.gith.download_url(url + url_args_full.join('/') + "/" + f.name).subscribe((res: any) => {
-                this.result[this.dst_mac_list[i]].push(res);
+                this.result[this.src_mac].push(res);
                 this.reload_chart();
               });
             });
