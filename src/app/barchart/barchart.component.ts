@@ -22,11 +22,9 @@ export class BarChartComponent implements OnChanges {
     responsive: true,
     animation : false,
     scales: {},
-    showLines: false,
-    stacked: true
   };
   public chartLabelsList: string[][] = [[]];
-  public barChartType: string = 'line';
+  public barChartType: string = 'bar';
   public barChartLegend: boolean = true;
 
   chartDataList = [];
