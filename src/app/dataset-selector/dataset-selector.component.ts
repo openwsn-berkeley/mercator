@@ -73,5 +73,7 @@ export class DatasetSelectorComponent implements OnInit {
   set_exp(exp){
     this.exp = exp;
     this.exp_type = "many_to_many";
+    // update url
+    this.location.replaceState('/'+ this.site + '/' + this.date + '/' + exp + '/')
   }
 }
