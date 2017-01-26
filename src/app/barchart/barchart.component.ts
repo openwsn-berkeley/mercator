@@ -94,8 +94,9 @@ export class BarChartComponent implements OnChanges {
       (res) => {
         this.barChartOptions = Object.assign({}, this.barChartOptions, res.ChartOptions);
         this.barChartType = res.ChartType;
+        this.reload_chart()
       },
-      (error) => {console.log("Can not find chart option file.")}
+      (error) => {console.log("Can not find chart option file."), this.reload_chart()}
     );
   }
 
@@ -138,11 +139,13 @@ export class BarChartComponent implements OnChanges {
       }
     } else if (this.exp_type == "many_to_many"){
       this.gith.download_url(url + url_args.join("/") + "/" + this.exp + ".json"
-        ).subscribe((res: any) => {
-          this.result[this.exp] = [res];
-          this.reload_chart();
-      });
+        ).subscribe((res) => {
+            this.result[this.exp] = [res];
+            this.reload_chart()
+          }
+      );
     }
+    this.reload_chart()
   }
 }
 
