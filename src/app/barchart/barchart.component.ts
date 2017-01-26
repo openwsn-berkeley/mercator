@@ -1,5 +1,6 @@
 import {Component, OnChanges, Input, SimpleChanges} from '@angular/core';
 import { GithubService } from '../github.service';
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-barchart',
@@ -52,25 +53,25 @@ export class BarChartComponent implements OnChanges {
 
   reload_chart(){
     this.chartDataList = [];
-    let c = 0;
-    if (this.barChartOptions.scales.xAxes[0].type != undefined &&
-        this.barChartOptions.scales.xAxes[0].type == "linear")
+    if (
+      this.barChartOptions.scales.xAxes != undefined &&
+      this.barChartOptions.scales.xAxes[0].type != undefined &&
+      this.barChartOptions.scales.xAxes[0].type == "linear")
     {
       for (let key in this.result) {
-        for (let i; i < this.result[key].length; i++) {
+        for (let i = 0; i < this.result[key].length; i++) {
           if (this.result[key][i].x.length > 0) {
             // format graph data
             let data_list = [];
-            for (let j = 0; j < this.result[key][j].x.length; i++) {
+            for (let j = 0; j < this.result[key][i].x.length; j++) {
               data_list.push({x: this.result[key][i].x[j], y: this.result[key][i].y[j]});
             }
             this.chartDataList.push([{data: data_list, label: this.result[key][i].label}]);
-            this.chartLabelsList[c] = this.result[key][i].x;
           }
         }
-        c++;
       }
     } else {
+      let c = 0;
       for (let key in this.result) {
         this.chartDataList[c] = [];
         this.chartLabelsList[c] = [];
@@ -108,12 +109,16 @@ export class BarChartComponent implements OnChanges {
         let url_args_full = url_args.concat(this.src_mac, this.dst_mac_list[i]);
         this.result[this.src_mac] = [];
         if (this.exp.split("_").length == 3){
-          this.gith.getFiles(url_args_full.join('/')).subscribe((res: any) => {
-            res.forEach((f, index) =>{
-              this.gith.download_url(url + url_args_full.join('/') + "/" + f.name).subscribe((res: any) => {
-                this.result[this.src_mac].push(res);
-                this.reload_chart();
+          this.gith.getFiles(url_args_full.join('/')).subscribe((file_list: any) => {
+            let observArray = [];
+            file_list.forEach((file) =>{
+              observArray.push(this.gith.download_url(url + url_args_full.join('/') + "/" + file.name))
+            });
+            Observable.forkJoin(observArray).subscribe((contentList: any) => {
+              contentList.forEach((fileContent) => {
+                this.result[this.src_mac].push(fileContent);
               });
+              this.reload_chart();
             });
           });
         } else {
