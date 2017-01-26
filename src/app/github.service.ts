@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import 'rxjs/add/operator/map';
+import {Observable} from "rxjs";
 
 @Injectable()
 export class GithubService {
@@ -31,13 +32,27 @@ export class GithubService {
   }
 
   getFiles(url){
-    return this._http.get(this.b_url+"/"+url+"?ref=data").map((r: Response) => r.json());
+    return this._http
+      .get(this.b_url+"/"+url+"?ref=data")
+      .map(this.extractData)
+      .catch(this.handleError);
   }
 
   download_url(url){
-    return this._http.get(url).map((r: Response) => r.json());
+    return this._http
+      .get(url)
+      .map(this.extractData)
+      .catch(this.handleError);
   }
 
+  private extractData(res: Response) {
+    let body = res.json();
+    return body || { };
+  }
 
-
+  private handleError(error: Response){
+    let errMsg: string = "Could not get file";
+    console.log(errMsg);
+    return Observable.throw(errMsg)
+  }
 }
