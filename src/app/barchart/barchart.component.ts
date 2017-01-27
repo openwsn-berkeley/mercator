@@ -119,6 +119,13 @@ export class BarChartComponent implements OnChanges {
             file_list.forEach((file) =>{
               observArray.push(this.gith.download_url(url + url_args_full.join('/') + "/" + file.name))
             });
+            Observable.forkJoin(observArray).subscribe((contentList: any) => {
+              contentList.forEach((fileContent) => {
+                if (!(this.src_mac in this.result)){this.result[this.src_mac] = []}
+                this.result[this.src_mac].push(fileContent);
+              });
+              this.reload_chart();
+            });
           });
         } else {
           observArray.push(this.gith.download_url(url + url_args_full.join('/') + ".json"));
