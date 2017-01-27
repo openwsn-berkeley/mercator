@@ -25,6 +25,9 @@ export class DatasetSelectorComponent implements OnInit {
         this.site = params['site'];
         if ("date" in params) {
           this.get_exp_list(this.site, params['date']);
+          if ("exp" in params) {
+            this.set_exp(params['exp']);
+          }
         }
         this.exp_list = [];
       }
