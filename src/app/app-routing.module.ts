@@ -12,8 +12,7 @@ const routes: Routes = [
   { path: '', pathMatch: 'full', component: IndexComponent  },
   { path: ':site', component: DatasetSelectorComponent  },
   { path: ':site/:date', component: DatasetSelectorComponent  },
-  { path: ':site/:date/:exp', component: DatasetSelectorComponent  },
-  { path: ':site/:date/:exp/:type', component: DatasetSelectorComponent  },
+  { path: ':site/:date/:exp', component: DatasetSelectorComponent  }
 ];
 
 @NgModule({
