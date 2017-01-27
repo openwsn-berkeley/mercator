@@ -15,7 +15,6 @@ export class DatasetSelectorComponent implements OnInit {
   site = "";
   date = "";
   exp = "";
-  exp_type = "";
 
   constructor(private gith:GithubService, private router: Router,
               private route: ActivatedRoute, private location: Location) {
@@ -61,6 +60,7 @@ export class DatasetSelectorComponent implements OnInit {
   get_exp_list(site, date) {
     this.site = site;
     this.date = date;
+    this.exp = "";
     this.gith.getExps(site, date).subscribe((res: any) => {
       this.exp_list = [];
       res.forEach((exp) => {
@@ -73,9 +73,9 @@ export class DatasetSelectorComponent implements OnInit {
     this.location.replaceState('/'+ site + '/' + date + '/')
   }
 
-  set_exp(exp){
+  set_exp(exp,){
+    console.log("set exp")
     this.exp = exp;
-    this.exp_type = "many_to_many";
     // update url
     this.location.replaceState('/'+ this.site + '/' + this.date + '/' + exp + '/')
   }

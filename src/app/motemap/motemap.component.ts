@@ -15,7 +15,7 @@ export class MotemapComponent implements AfterViewInit {
   @Input() site;
   @Input() date;
   @Input() exp;
-  @Input() exp_type;
+  exp_type: string;
 
   context:CanvasRenderingContext2D;
 
@@ -28,33 +28,16 @@ export class MotemapComponent implements AfterViewInit {
   COLOR_ENABLED = "black";
   COLOR_DISABLED = "grey";
 
-  constructor(private gith:GithubService, private route: ActivatedRoute) {
-    this.route.params.subscribe(params => {
-      this.site=params['site'];
-      this.date=params['date'];
-      this.exp=params['exp'];
-      this.exp_type=params['type'];
-
-      if ("site" in params){
-        let newcircles = [];
-        let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/metas/"+this.site+".json";
-
-        this.gith.download_url(url).subscribe((res: any) => {
-          res.forEach((node) => {
-            if (node.mac) {
-              newcircles.push({x: node.x, y: node.y, msg: node.mac, color: this.COLOR_DISABLED});
-            }
-          });
-        });
-        this.circles = newcircles;
-      }
-    });
-  }
+  constructor(private gith:GithubService) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if ("exp" in changes || "exp_type" in changes){
+    if ("site" in changes){
+      this.draw_nodes();
+    }
+    if ("exp" in changes){
       this.src_mac = "";
       this.dst_mac_list = [];
+      this.exp_type = "many_to_many"
       this.circles.forEach((item) => {
         item.color = this.COLOR_ENABLED;
       });
@@ -62,6 +45,20 @@ export class MotemapComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() { }
+
+  draw_nodes(){
+    let newcircles = [];
+    let url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/data/metas/"+this.site+".json";
+
+    this.gith.download_url(url).subscribe((res: any) => {
+      res.forEach((node) => {
+        if (node.mac) {
+          newcircles.push({x: node.x, y: node.y, msg: node.mac, color: this.COLOR_DISABLED});
+        }
+      });
+    });
+    this.circles = newcircles;
+  }
 
   node_clicked(circle_id, msg) {
     if (this.src_mac == "") {
