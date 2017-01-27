@@ -74,7 +74,6 @@ export class DatasetSelectorComponent implements OnInit {
   }
 
   set_exp(exp,){
-    console.log("set exp")
     this.exp = exp;
     // update url
     this.location.replaceState('/'+ this.site + '/' + this.date + '/' + exp + '/')
