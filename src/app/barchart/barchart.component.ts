@@ -113,7 +113,6 @@ export class BarChartComponent implements OnChanges {
     if (this.exp_type == "one_to_one") {
       for (let i = 0; i < this.dst_mac_list.length; i++) {
         let url_args_full = url_args.concat(this.src_mac, this.dst_mac_list[i]);
-        this.result[this.src_mac] = [];
         if (this.exp.split("_").length == 3){
           this.gith.getFiles(url_args_full.join('/')).subscribe((file_list: any) => {
             let observArray = [];
@@ -122,6 +121,7 @@ export class BarChartComponent implements OnChanges {
             });
             Observable.forkJoin(observArray).subscribe((contentList: any) => {
               contentList.forEach((fileContent) => {
+                if (!(this.src_mac in this.result)){this.result[this.src_mac] = []}
                 this.result[this.src_mac].push(fileContent);
               });
               this.reload_chart();
@@ -129,6 +129,7 @@ export class BarChartComponent implements OnChanges {
           });
         } else {
           this.gith.download_url(url + url_args_full.join('/') + ".json").subscribe((res: any) => {
+            if (!(this.src_mac in this.result)){this.result[this.src_mac] = []}
             this.result[this.src_mac].push(res);
             this.reload_chart();
           });
