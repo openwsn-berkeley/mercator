@@ -25,7 +25,8 @@ export class MotemapComponent implements AfterViewInit {
 
   @ViewChild("myCanvas") myCanvas;
 
-  COLOR_DEFAULT = "black";
+  COLOR_ENABLED = "black";
+  COLOR_DISABLED = "grey";
 
   constructor(private gith:GithubService, private route: ActivatedRoute) {
     this.route.params.subscribe(params => {
@@ -41,7 +42,7 @@ export class MotemapComponent implements AfterViewInit {
         this.gith.download_url(url).subscribe((res: any) => {
           res.forEach((node) => {
             if (node.mac) {
-              newcircles.push({x: node.x, y: node.y, msg: node.mac, color: this.COLOR_DEFAULT});
+              newcircles.push({x: node.x, y: node.y, msg: node.mac, color: this.COLOR_DISABLED});
             }
           });
         });
@@ -55,7 +56,7 @@ export class MotemapComponent implements AfterViewInit {
       this.src_mac = "";
       this.dst_mac_list = [];
       this.circles.forEach((item) => {
-        item.color = this.COLOR_DEFAULT;
+        item.color = this.COLOR_ENABLED;
       });
     }
   }
@@ -67,14 +68,14 @@ export class MotemapComponent implements AfterViewInit {
       // new src mac
       this.src_mac = msg;
       this.circles.forEach((item) => {
-        item.color = this.COLOR_DEFAULT;
+        item.color = this.COLOR_ENABLED;
       });
       this.circles[circle_id].color = "red";
       this.exp_type = "one_to_many";
     } else if (this.src_mac == msg) {
       // cancel src mac
       this.circles.forEach((item) => {
-        item.color = this.COLOR_DEFAULT;
+        item.color = this.COLOR_ENABLED;
       });
       this.dst_mac_list = [];
       this.src_mac = "";
@@ -90,7 +91,7 @@ export class MotemapComponent implements AfterViewInit {
       if (found != -1){
           // cancel dst_mac
           this.dst_mac_list.splice(found, 1);
-          this.circles[circle_id].color = this.COLOR_DEFAULT;
+          this.circles[circle_id].color = this.COLOR_ENABLED;
       } else {
         // new dst_mac
         this.dst_mac_list.push(msg);
