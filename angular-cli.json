@@ -20,7 +20,10 @@
       "styles": [
         "styles.css"
       ],
-      "scripts": [],
+      "scripts": [
+        "../node_modules/chart.js/dist/Chart.bundle.min.js",
+        "../node_modules/chartjs-plugin-zoom/dist/chartjs-plugin-zoom.min.js"
+      ],
       "environments": {
         "source": "environments/environment.ts",
         "dev": "environments/environment.ts",
