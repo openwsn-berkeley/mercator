@@ -22,6 +22,10 @@ export class BarChartComponent implements OnChanges {
   public barChartOptions: any = {
     responsive: true,
     animation : false,
+    zoom: {
+        enabled: true,
+        mode: 'xy',
+    },
     scales: {},
   };
   public chartLabelsList: string[][] = [[]];
