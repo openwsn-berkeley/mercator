@@ -87,7 +87,7 @@ class MercatorRunExperiment(object):
                 while len(addr)<23:
                     c = ser.recv(1)
                     if len(c) > 0:
-                        if (c != '\n') and (c != '\r') and (ord(c) < 103):
+                        if (c != '\n') and (c != '\r') and (ord(c) != 0) and (ord(c) < 103):
                             addr += c
                         elif c == '\n':
                             goOn = False
