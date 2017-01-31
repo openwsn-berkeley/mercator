@@ -78,7 +78,7 @@ class MercatorRunExperiment(object):
                     ser  = serial.Serial(ser_port, self._BAUDRATE)
             except Exception as err:
                 msg = 'could not connect to {0}, reason: {1}'.format(ser_port, err)
-                raise SystemError(msg)
+                continue
 
             logfile.debug("reading %s address", ser_port)
             addr = ""
