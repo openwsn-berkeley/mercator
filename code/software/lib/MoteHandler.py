@@ -159,7 +159,7 @@ class MoteHandler(threading.Thread):
     def send_REQ_TX(self, frequency, txpower, transctr, nbpackets, txifdur, txpksize, txfillbyte):
         self._send(
             struct.pack(
-                '>BBbBHHBB',
+                '>BBbHHHBB',
                 d.TYPE_REQ_TX,
                 frequency,
                 txpower,
@@ -175,7 +175,7 @@ class MoteHandler(threading.Thread):
         [m0, m1, m2, m3, m4, m5, m6, m7] = srcmac
         self._send(
             struct.pack(
-                '>BBBBBBBBBBBBB',
+                '>BBBBBBBBBBHBB',
                 d.TYPE_REQ_RX,
                 frequency,
                 m0, m1, m2, m3, m4, m5, m6, m7,

@@ -138,7 +138,7 @@ class MercatorCli(object):
             self.motes[serialport].send_REQ_TX(
                 frequency    = 0x14,
                 txpower      = 0,
-                transctr     = 0x0a,
+                transctr     = 0x0a0a,
                 nbpackets    = 5,
                 txifdur      = 1000,
                 txpksize     = 100,
@@ -161,7 +161,7 @@ class MercatorCli(object):
                 self.motes[s].send_REQ_RX(
                     frequency    = 0x14,
                     srcmac       = [0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88],
-                    transctr     = 0x0a,
+                    transctr     = 0x0a0a,
                     txpksize     = 100,
                     txfillbyte   = 0x0b,
                 )
