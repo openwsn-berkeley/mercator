@@ -78,12 +78,12 @@ export class BarChartComponent implements OnChanges {
 
             // add avg data
             let avg_list = [];
-            if ("avg" in this.result[key][i]){
+            if ("avg" in this.result[key][i]) {
               for (let j = 0; j < this.result[key][i].avg.length; j++) {
                 avg_list.push(this.result[key][i].avg[j]);
               }
+              this.chartDataList[c].push({data: avg_list, label: "avg", showLine: true, fill: false});
             }
-            this.chartDataList[c].push({data: avg_list, label: "avg", showLine: true, fill: false});
           }
           else{
             this.chartDataList[c].push({
