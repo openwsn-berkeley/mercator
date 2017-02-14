@@ -1,3 +1,4 @@
+pandas
 pyserial
 importlib
 iotlabcli==2.2.0
