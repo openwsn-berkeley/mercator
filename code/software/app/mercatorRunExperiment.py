@@ -49,6 +49,7 @@ class MercatorRunExperiment(object):
     TXIFDUR        = 100                         # inter-frame duration, in ms
     txpksize       = 100                         # number of bytes (PHY payload) in a frame
     TXFILLBYTE     = 0x0a                        # padding byte
+    ITDUR          = 60                          # inter-transcation duration, in s
 
     def __init__(self, args, serialports, site="local"):
 
@@ -83,6 +84,7 @@ class MercatorRunExperiment(object):
         for self.transctr in range(0,self.nbtrans):
             logconsole.info("Current transaction: %s", self.transctr)
             self._do_transaction()
+            time.sleep(ITDUR)
 
         # print all OK
         raw_input('\nExperiment ended normally. Press Enter to close.')
