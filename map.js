@@ -84,7 +84,7 @@ function getExperiments(site) {
 function getExperimentInfos(site, experiment) {
   $.getJSON(raw_url + "data/datasets/processed/" + site + "/" + experiment + "/info.json",
     function(data) {
-      $("#side_pane #experiment_info").html("<pre>" + JSON.stringify(data, null, 2) + "</pre>");
+      $("#side_pane #experiment_info").html("<pre>" + JSON.stringify(data["globalgi"], null, 2) + "</pre>");
       $.each(data["paths"], function (key, path) {
         node1 = getMarker(site, path[0]["src"]);
         node2 = getMarker(site, path[0]["dst"]);
@@ -160,7 +160,7 @@ function addLine(lineCoordinates, jsonPath) {
   line.setMap(map);
   google.maps.event.addListener(line, 'click', (function (line) {
     return function (event) {
-      var content = "<pre>" + JSON.stringify(jsonPath["global"], null, 2) + "</pre>";
+      var content = "<pre>" + JSON.stringify(jsonPath, null, 2) + "</pre>";
       infoWindow.setPosition(event.latLng);
       infoWindow.setContent(content);
       infoWindow.open(map, line);
