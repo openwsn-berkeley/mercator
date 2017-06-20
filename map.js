@@ -160,7 +160,7 @@ function addLine(lineCoordinates, jsonPath) {
   line.setMap(map);
   google.maps.event.addListener(line, 'click', (function (line) {
     return function (event) {
-      var content = "<pre>" + JSON.stringify(jsonPath, null, 2) + "</pre>";
+      var content = "<pre>" + JSON.stringify(jsonPath["global"], null, 2) + "</pre>";
       infoWindow.setPosition(event.latLng);
       infoWindow.setContent(content);
       infoWindow.open(map, line);
