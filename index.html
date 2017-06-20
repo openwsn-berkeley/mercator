@@ -1,10 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
+  <meta charset="UTF-8">
+  <title>Mercator</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="static/markerclusterer.js"></script>
 </head>
 <body>
-$END$
+  <div id="map"></div>
+  <div id="side_pane">
+    <div id="site_name"><p></p></div>
+    <div id="experiment_list"></div>
+    <div id="experiment_info"></div>
+  </div>
+  <script src="map.js"></script>
+  <script async defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0kcsyOVp6D57t5oPm-GIBH4b_VrCqd9M&callback=initMap&libraries=geometry">
+  </script>
 </body>
 </html>
