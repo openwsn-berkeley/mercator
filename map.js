@@ -77,6 +77,9 @@ function getExperiments(site) {
       $("#side_pane #experiment_list" ).html(
         "<select onchange='getExperimentInfos(\"" + site + "\", this.value)'>" + items.join( "" ) + "</select>"
       );
+      // select and load last experiment
+      $('#side_pane #experiment_list option:last').prop('selected', true);
+      getExperimentInfos(site, $('#side_pane #experiment_list option:last').text())
     }
   )
 }
