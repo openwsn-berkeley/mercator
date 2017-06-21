@@ -137,7 +137,14 @@ function addMarker(latLng, jsonNode, site) {
     position: latLng,
     map: map,
     meta: jsonNode,
-    site: site
+    site: site,
+    icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 4,
+        strokeWeight: 2,
+        fillColor: "#ff5050",
+        fillOpacity: 1
+    }
   });
   google.maps.event.addListener(marker, 'click', (function (marker) {
     return function () {
