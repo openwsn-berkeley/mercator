@@ -82,6 +82,7 @@ function getExperiments(site) {
 }
 
 function getExperimentInfos(site, experiment) {
+  clearLines();
   $.getJSON(raw_url + "data/datasets/processed/" + site + "/" + experiment + "/info.json",
     function(data) {
       $("#side_pane #experiment_info").html("<pre>" + JSON.stringify(data["global"], null, 2) + "</pre>");
@@ -165,6 +166,7 @@ function addLine(lineCoordinates, jsonPath) {
     strokeWeight: 3
   });
   line.setMap(map);
+  lines.push(line);
   google.maps.event.addListener(line, 'click', (function (line) {
     return function (event) {
       var content = "<pre>" + JSON.stringify(jsonPath, null, 2) + "</pre>";
@@ -174,6 +176,12 @@ function addLine(lineCoordinates, jsonPath) {
     }
   })(line));
   return line;
+}
+
+function clearLines(){
+    for (var i=0; i<lines.length; i++){
+        lines[i].setMap(null);
+    }
 }
 
 function getLinkColor(pdr){
