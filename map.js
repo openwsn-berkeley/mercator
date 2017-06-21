@@ -117,7 +117,15 @@ function refreshMarkerCluster(){
     markerCluster.clearMarkers();
     markerCluster.addMarkers(markers)
   } else {
-    var mcOptions = {gridSize: 25, maxZoom: 10, imagePath: 'static/markerclusterer/m', averageCenter: false};
+    var clusterStyles = [
+      {
+          textColor: 'white',
+          url: 'static/markerclusterer/m1.png',
+          height: 40,
+          width: 40
+      }
+    ]
+    var mcOptions = {gridSize: 25, maxZoom: 10, styles: clusterStyles, averageCenter: false};
     markerCluster = new MarkerClusterer(map, markers, mcOptions);
   }
   google.maps.event.addListener(markerCluster, 'clusterclick', function(cluster) {
