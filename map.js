@@ -18,6 +18,10 @@ var markerCluster = null;
 var api_url = "https://api.github.com/repos/openwsn-berkeley/mercator/contents/datasets/processed";
 var raw_url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/";
 
+// MARKERS
+var DEFAULT_ICON = {};
+var ACTIVE_ICON = {};
+
 //----------------------- init ------------------------------------------------
 
 function initMap() {
@@ -29,6 +33,20 @@ function initMap() {
     mapTypeId: 'satellite',
     tilt: 0
   });
+
+  DEFAULT_ICON = {path: google.maps.SymbolPath.CIRCLE,
+        scale: 4,
+        strokeWeight: 2,
+        fillColor: "#5889ff",
+        fillOpacity: 1
+  };
+  ACTIVE_ICON = {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 4,
+        strokeWeight: 2,
+        fillColor: "#ff5050",
+        fillOpacity: 1
+  };
 
   infoWindow = new google.maps.InfoWindow();
   getSites();
@@ -52,14 +70,14 @@ function getSiteMeta(site) {
     function(data) {
     if (data["latitude"] != null) {
       var site_coordinates = {lat: parseFloat(data["latitude"]), lng: parseFloat(data["longitude"])};
-      markers.push(addMarker(site_coordinates, site, site));
+      addMarker(site_coordinates, site, site);
       $.each(data["nodes"], function (key, val) {
         if (val["archi"] == "m3:at86rf231") {
           node_coordinates = new google.maps.LatLng({
             lat: site_coordinates["lat"] + 0.00005 * parseFloat(val["x"]),
             lng: site_coordinates["lng"] + 0.00005 * parseFloat(val["y"])
           });
-          markers.push(addMarker(node_coordinates, val, site))
+          addMarker(node_coordinates, val, site)
         }
       });
       refreshMarkerCluster();
@@ -86,18 +104,23 @@ function getExperiments(site) {
 
 function getExperimentInfos(site, experiment) {
   clearLines();
+  resetMarkers();
   $.getJSON(raw_url + "data/datasets/processed/" + site + "/" + experiment + "/info.json",
     function(data) {
       $("#side_pane #experiment_info").html("<pre>" + JSON.stringify(data["global"], null, 2) + "</pre>");
       $.each(data["paths"], function (key, path) {
         node1 = getMarker(site, path[0]["src"]);
         node2 = getMarker(site, path[0]["dst"]);
-        if (node1 != "undefined" && node2 != "undefined"){
-          lineCoordinates = [
-            node1.getPosition(),
-            node2.getPosition()
-          ];
-          addLine(lineCoordinates, path)
+        if (node1 != undefined && node2 != undefined){
+            node1.setIcon(ACTIVE_ICON);
+            node1.setZIndex(10000);
+            node2.setIcon(ACTIVE_ICON);
+            node1.setZIndex(10000);
+            lineCoordinates = [
+                node1.getPosition(),
+                node2.getPosition()
+            ];
+            addLine(lineCoordinates, path)
         }
       });
     }
@@ -150,17 +173,12 @@ function addMarker(latLng, jsonNode, site) {
     map: map,
     meta: jsonNode,
     site: site,
-    icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 4,
-        strokeWeight: 2,
-        fillColor: "#ff5050",
-        fillOpacity: 1
-    }
+    icon: DEFAULT_ICON
   });
+  markers.push(marker);
   google.maps.event.addListener(marker, 'click', (function (marker) {
     return function () {
-      var content = "<pre>" + JSON.stringify(marker.meta, null, 2) + "</pre>";
+      var content = "<pre>" + JSON.stringify(this.meta, null, 2) + "</pre>";
       infoWindow.setContent(content);
       infoWindow.open(map, marker);
     }
@@ -192,6 +210,12 @@ function addLine(lineCoordinates, jsonPath) {
 function clearLines(){
     for (var i=0; i<lines.length; i++){
         lines[i].setMap(null);
+    }
+}
+function resetMarkers(){
+    for (var i=0; i<markers.length; i++){
+        markers[i].setIcon(DEFAULT_ICON);
+        markers[i].setZIndex(0);
     }
 }
 
