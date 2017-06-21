@@ -158,7 +158,7 @@ function addMarker(latLng, jsonNode, site) {
 }
 
 function addLine(lineCoordinates, jsonPath) {
-  var avgPDR = (jsonPath[0]["PDR"] + jsonPath[1]["PDR"])/2;
+  var avgPDR = (jsonPath[0]["PDR"]["average"] + jsonPath[1]["PDR"]["average"])/2;
   var line = new google.maps.Polyline({
     path: lineCoordinates,
     geodesic: true,
