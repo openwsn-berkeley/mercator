@@ -17,6 +17,7 @@ import datetime
 import logging.config
 import gzip
 import socket
+import time
 
 # Mercator
 import MoteHandler
@@ -51,7 +52,6 @@ class MercatorRunExperiment(object):
     TXIFDUR        = 100                         # inter-frame duration, in ms
     txpksize       = 100                         # number of bytes (PHY payload) in a frame
     TXFILLBYTE     = 0x0a                        # padding byte
-    ITDUR          = 60                          # inter-transcation duration, in s
 
     def __init__(self, args, serialports, site="local"):
 
@@ -66,6 +66,7 @@ class MercatorRunExperiment(object):
         self.nbtrans         = args.nbtrans
         self.nbpackets       = args.nbpackets
         self.txpksize        = args.txpksize
+        self.itduration      = args.itduration
 
         # connect to motes
         for s in serialports:
@@ -87,6 +88,7 @@ class MercatorRunExperiment(object):
             for self.transctr in range(0,self.nbtrans):
                 logconsole.info("Current transaction: %s", self.transctr)
                 self._do_transaction()
+                time.sleep(self.itduration)
         except (KeyboardInterrupt, socket.error):
             # print error
             print('\nExperiment ended before all transactions were done.')
@@ -313,6 +315,7 @@ def main():
     parser.add_argument("-p", "--nbpackets", help="The number of packet per transaction", type=int, default=10)
     parser.add_argument("-t", "--nbtrans", help="The number of transaction", type=int, default=1)
     parser.add_argument("-s", "--txpksize", help="The size of each packet in bytes", type=int, default=100)
+    parser.add_argument("-i", "--itduration", help="The time between transaction (s)", type=int, default=100)
     args = parser.parse_args()
 
     if args.testbed == "local":
