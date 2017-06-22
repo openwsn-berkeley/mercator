@@ -15,8 +15,8 @@ var sites = [];
 var markers = [];
 var lines = [];
 var markerCluster = null;
-var api_url = "https://api.github.com/repos/openwsn-berkeley/mercator/contents/datasets/processed";
-var raw_url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator/";
+var api_url = "https://api.github.com/repos/openwsn-berkeley/mercator_data/contents/datasets/processed";
+var raw_url = "https://raw.githubusercontent.com/openwsn-berkeley/mercator_data/";
 
 // MARKERS
 var DEFAULT_ICON = {};
@@ -55,7 +55,7 @@ function initMap() {
 //----------------------- helpers ---------------------------------------------
 
 function getSites() {
-    $.getJSON(api_url + "?ref=data",
+    $.getJSON(api_url,
       function(data) {
         $.each( data, function( key, val ) {
           site = val["name"];
@@ -66,7 +66,7 @@ function getSites() {
 }
 
 function getSiteMeta(site) {
-  $.getJSON(raw_url + "data/metas/" + site +  ".json",
+  $.getJSON(raw_url + "master/metas/" + site +  ".json",
     function(data) {
     if (data["latitude"] != null) {
       var site_coordinates = {lat: parseFloat(data["latitude"]), lng: parseFloat(data["longitude"])};
@@ -80,13 +80,27 @@ function getSiteMeta(site) {
           addMarker(node_coordinates, val, site)
         }
       });
+      var rectangle = new google.maps.Rectangle({
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+            map: map,
+            bounds: {
+                north: 33.685,
+                south: 33.671,
+                east: -116.234,
+                west: -116.251
+            }
+      });
       refreshMarkerCluster();
     }
   })
 }
 
 function getExperiments(site) {
-  $.getJSON(api_url + "/" + site +  "?ref=data",
+  $.getJSON(api_url + "/" + site ,
     function(data) {
       var items = [];
       $.each(data, function (key, experiment) {
@@ -105,7 +119,7 @@ function getExperiments(site) {
 function getExperimentInfos(site, experiment) {
   clearLines();
   resetMarkers();
-  $.getJSON(raw_url + "data/datasets/processed/" + site + "/" + experiment + "/info.json",
+  $.getJSON(raw_url + "master/datasets/processed/" + site + "/" + experiment,
     function(data) {
       $("#side_pane #experiment_info").html("<pre>" + JSON.stringify(data["global"], null, 2) + "</pre>");
       $.each(data["paths"], function (key, path) {
