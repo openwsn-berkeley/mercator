@@ -46,7 +46,6 @@ METAS_PATH      = "../../../metas/"
 class MercatorRunExperiment(object):
 
     FREQUENCIES    = [n+11 for n in range(16)]   # frequencies to measure on, in IEEE notation
-    TXPOWER        = 0                           # dBm
     nbtrans        = 5                           # number of transactions
     nbpackets      = 10                          # number of packets per transaction
     TXIFDUR        = 100                         # inter-frame duration, in ms
@@ -67,6 +66,7 @@ class MercatorRunExperiment(object):
         self.nbpackets       = args.nbpackets
         self.txpksize        = args.txpksize
         self.itduration      = args.itduration
+        self.txpower         = args.txpower
 
         # connect to motes
         for s in serialports:
@@ -158,7 +158,7 @@ class MercatorRunExperiment(object):
 
         self.motes[transmitter_port].send_REQ_TX(
             frequency             = freq,
-            txpower               = self.TXPOWER,
+            txpower               = self.txpower,
             transctr              = self.transctr,
             nbpackets             = self.nbpackets,
             txifdur               = self.TXIFDUR,
@@ -211,7 +211,7 @@ class MercatorRunExperiment(object):
                 transctr   = self.transctr
                 pkctr      = notif['pkctr']
                 nbpackets  = self.nbpackets
-                txpower    = self.TXPOWER
+                txpower    = self.txpower
                 txifdur    = self.TXIFDUR
                 txpksize   = self.txpksize
                 tfb_raw    = hex(self.TXFILLBYTE).split('x')
@@ -316,6 +316,7 @@ def main():
     parser.add_argument("-t", "--nbtrans", help="The number of transaction", type=int, default=1)
     parser.add_argument("-s", "--txpksize", help="The size of each packet in bytes", type=int, default=100)
     parser.add_argument("-i", "--itduration", help="The time between transaction (s)", type=int, default=100)
+    parser.add_argument("--txpower", help="The transmission power (dBm)", type=int, default=o)
     args = parser.parse_args()
 
     if args.testbed == "local":
