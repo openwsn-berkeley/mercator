@@ -316,7 +316,7 @@ def main():
     parser.add_argument("-t", "--nbtrans", help="The number of transaction", type=int, default=1)
     parser.add_argument("-s", "--txpksize", help="The size of each packet in bytes", type=int, default=100)
     parser.add_argument("-i", "--itduration", help="The time between transaction (s)", type=int, default=100)
-    parser.add_argument("--txpower", help="The transmission power (dBm)", type=int, default=o)
+    parser.add_argument("--txpower", help="The transmission power (dBm)", type=int, default=0)
     args = parser.parse_args()
 
     if args.testbed == "local":
