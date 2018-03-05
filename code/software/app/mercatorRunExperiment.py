@@ -312,7 +312,7 @@ def main():
     parser.add_argument("-e", "--expid", help="The experiment id", type=int, default=None)
     parser.add_argument("-b", "--board", help="The type of board to use", type=str, default="m3")
     parser.add_argument("-n", "--nbnodes", help="The number of nodes to use (0=all)", type=int, default=0)
-    parser.add_argument("-p", "--nbpackets", help="The number of packet per transaction", type=int, default=10)
+    parser.add_argument("-p", "--nbpackets", help="The number of packet per transaction", type=int, default=100)
     parser.add_argument("-t", "--nbtrans", help="The number of transaction", type=int, default=1)
     parser.add_argument("-s", "--txpksize", help="The size of each packet in bytes", type=int, default=100)
     parser.add_argument("-i", "--itduration", help="The time between transaction (s)", type=int, default=100)
