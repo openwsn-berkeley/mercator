@@ -48,7 +48,7 @@ class MercatorRunExperiment(object):
     TXPOWER        = 0                           # dBm
     nbtrans        = 5                           # number of transactions
     nbpackets      = 10                          # number of packets per transaction
-    TXIFDUR        = 100                         # inter-frame duration, in ms
+    TXIFDUR        = 10                          # inter-frame duration, in ms
     txpksize       = 100                         # number of bytes (PHY payload) in a frame
     TXFILLBYTE     = 0x0a                        # padding byte
 
