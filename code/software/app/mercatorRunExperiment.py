@@ -17,7 +17,6 @@ import datetime
 import logging.config
 import gzip
 import socket
-import time
 
 # Mercator
 import MoteHandler
@@ -46,10 +45,7 @@ METAS_PATH      = "../../../metas/"
 class MercatorRunExperiment(object):
 
     FREQUENCIES    = [n+11 for n in range(16)]   # frequencies to measure on, in IEEE notation
-    nbtrans        = 5                           # number of transactions
-    nbpackets      = 10                          # number of packets per transaction
     TXIFDUR        = 10                          # inter-frame duration, in ms
-    txpksize       = 100                         # number of bytes (PHY payload) in a frame
     TXFILLBYTE     = 0x0a                        # padding byte
 
     def __init__(self, args, serialports, site="local"):
@@ -75,16 +71,33 @@ class MercatorRunExperiment(object):
                 logconsole.info("DELETED %s", s)
                 del self.motes[s]
 
-        self.file            = gzip.open('{0}{1}-{2}_raw.csv.gz'.format(DATASET_PATH,
-                                    self.site,
-                                    datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")),
-                                    'wb')
-        self.file.write('timestamp,mac,frequency,length,rssi,crc,expected,srcmac,transctr,' +
-                        'pkctr,nbpackets,txpower,txifdur,txpksize,txfillbyte\n')
+        now = datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")
+        self.file = gzip.open('{0}{1}-{2}_raw.csv.gz'.format(DATASET_PATH,
+                                                             self.site,
+                                                             now),
+                              'wb')
+
+        # write settings
+        settings = {
+            "interframe_duration": self.TXIFDUR,
+            "fill_byte": self.TXFILLBYTE,
+            "tx_length": self.txpksize,
+            "tx_count": self.nbpackets,
+            "transaction_count": self.nbtrans,
+            "node_count": len(self.motes),
+            "site": self.site,
+            "channel_count": len(self.FREQUENCIES),
+            "start_date": now
+        }
+        json.dump(settings, self.file)
+
+        # write csv header
+        self.file.write('timestamp,src,dst,frequency,rssi,crc,expected,transctr,' +
+                        'pkctr,txpower\n')
 
         try:
             # start transactions
-            for self.transctr in range(0,self.nbtrans):
+            for self.transctr in range(0, self.nbtrans):
                 logconsole.info("Current transaction: %s", self.transctr)
                 self._do_transaction()
         except (KeyboardInterrupt, socket.error):
@@ -197,45 +210,34 @@ class MercatorRunExperiment(object):
                     self.isTransmitting   = False
                     self.waitTxDone.set()
             elif notif['type'] == d.TYPE_IND_RX:
-                # print '.', # TODO: log to file
                 timestamp  = datetime.datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
-                mac        = d.format_mac(self.motes[serialport].get_mac())
+                src        = d.format_mac(self.motes[self.transmitterPort].get_mac())
+                dst        = d.format_mac(self.motes[serialport].get_mac())
                 frequency  = self.freq
-                length     = notif['length']
                 rssi       = notif['rssi']
                 crc        = notif['crc']
                 expected   = notif['expected']
-                srcmac     = d.format_mac(self.motes[self.transmitterPort].get_mac())
                 transctr   = self.transctr
                 pkctr      = notif['pkctr']
-                nbpackets  = self.nbpackets
                 txpower    = self.txpower
-                txifdur    = self.TXIFDUR
-                txpksize   = self.txpksize
-                tfb_raw    = hex(self.TXFILLBYTE).split('x')
-                txfillbyte = "{0}x{1}".format(tfb_raw[0], tfb_raw[1].zfill(2))
-                # if (crc == 1 and expected == 1):
-                self.file.write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}\n".format(
+                self.file.write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}\n".format(
                         timestamp,
-                        mac,
+                        src,
+                        dst,
                         frequency,
-                        length,
                         rssi,
                         crc,
                         expected,
-                        srcmac,
                         transctr,
                         pkctr,
-                        nbpackets,
                         txpower,
-                        txifdur,
-                        txpksize,
-                        txfillbyte
                     ))
             elif notif['type'] == d.TYPE_IND_UP:
-                logfile.debug("Node %s restarted", d.format_mac(self.motes[serialport].get_mac()))
+                logfile.debug("Node %s restarted",
+                              d.format_mac(self.motes[serialport].get_mac()))
 
-    def _quit_callback(self):
+    @staticmethod
+    def _quit_callback():
         print "quitting!"
 
 # ========================== helpers ==========================================
@@ -277,8 +279,9 @@ def submit_experiment(args):
     firmware    = FIRMWARE_PATH + args.firmware
     profile     = "mercator"
     if args.nbnodes != 0:
-        if args.board == "m3": args.board = "m3:at86rf231"
-        nodes = experiment.AliasNodes(args.nbnodes, args.testbed, args.board, False)
+        if args.board == "m3":
+            args.board = "m3:at86rf231"
+        nodes = experiment.AliasNodes(args.nbnodes, args.testbed, args.board)
     else:
         tb_file = open("{0}states.json".format(METAS_PATH))
         tb_json = json.load(tb_file)
@@ -335,4 +338,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
