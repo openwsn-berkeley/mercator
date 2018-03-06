@@ -65,7 +65,6 @@ class MercatorRunExperiment(object):
         self.nbtrans         = args.nbtrans
         self.nbpackets       = args.nbpackets
         self.txpksize        = args.txpksize
-        self.itduration      = args.itduration
         self.txpower         = args.txpower
 
         # connect to motes
@@ -88,7 +87,6 @@ class MercatorRunExperiment(object):
             for self.transctr in range(0,self.nbtrans):
                 logconsole.info("Current transaction: %s", self.transctr)
                 self._do_transaction()
-                time.sleep(self.itduration)
         except (KeyboardInterrupt, socket.error):
             # print error
             print('\nExperiment ended before all transactions were done.')
@@ -315,7 +313,6 @@ def main():
     parser.add_argument("-p", "--nbpackets", help="The number of packet per transaction", type=int, default=100)
     parser.add_argument("-t", "--nbtrans", help="The number of transaction", type=int, default=1)
     parser.add_argument("-s", "--txpksize", help="The size of each packet in bytes", type=int, default=100)
-    parser.add_argument("-i", "--itduration", help="The time between transaction (s)", type=int, default=100)
     parser.add_argument("--txpower", help="The transmission power (dBm)", type=int, default=0)
     args = parser.parse_args()
 
