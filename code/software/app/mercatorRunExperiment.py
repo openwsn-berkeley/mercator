@@ -212,7 +212,7 @@ class MercatorRunExperiment(object):
                     self.isTransmitting   = False
                     self.waitTxDone.set()
             elif notif['type'] == d.TYPE_IND_RX:
-                timestamp  = datetime.datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
+                timestamp  = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S.%f")
                 src        = d.format_mac(self.motes[self.transmitterPort].get_mac())
                 dst        = d.format_mac(self.motes[serialport].get_mac())
                 frequency  = self.freq
