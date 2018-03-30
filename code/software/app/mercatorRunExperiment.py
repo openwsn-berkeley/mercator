@@ -87,13 +87,15 @@ class MercatorRunExperiment(object):
             "node_count": len(self.motes),
             "site": self.site,
             "channel_count": len(self.FREQUENCIES),
-            "start_date": now
+            "start_date": now,
+            "txpower": self.txpower
         }
         json.dump(settings, self.file)
+        self.file.write('\n')
 
         # write csv header
         self.file.write('timestamp,src,dst,frequency,rssi,crc,expected,transctr,' +
-                        'pkctr,txpower\n')
+                        'pkctr\n')
 
         try:
             # start transactions
@@ -219,8 +221,7 @@ class MercatorRunExperiment(object):
                 expected   = notif['expected']
                 transctr   = self.transctr
                 pkctr      = notif['pkctr']
-                txpower    = self.txpower
-                self.file.write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}\n".format(
+                self.file.write("{0},{1},{2},{3},{4},{5},{6},{7},{8}\n".format(
                         timestamp,
                         src,
                         dst,
@@ -230,7 +231,6 @@ class MercatorRunExperiment(object):
                         expected,
                         transctr,
                         pkctr,
-                        txpower,
                     ))
             elif notif['type'] == d.TYPE_IND_UP:
                 logfile.debug("Node %s restarted",
