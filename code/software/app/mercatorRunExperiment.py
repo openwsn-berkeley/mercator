@@ -94,8 +94,8 @@ class MercatorRunExperiment(object):
         self.file.write('\n')
 
         # write csv header
-        self.file.write('timestamp,src,dst,frequency,rssi,crc,expected,transctr,' +
-                        'pkctr\n')
+        self.file.write('timestamp,src,dst,frequency,rssi,crc,expected,' +
+                        'transaction_id,pkctr\n')
 
         try:
             # start transactions
