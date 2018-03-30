@@ -94,7 +94,7 @@ class MercatorRunExperiment(object):
         self.file.write('\n')
 
         # write csv header
-        self.file.write('timestamp,src,dst,frequency,rssi,crc,expected,' +
+        self.file.write('datetime,src,dst,frequency,rssi,crc,expected,' +
                         'transaction_id,pkctr\n')
 
         try:
