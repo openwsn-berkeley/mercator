@@ -9,20 +9,21 @@ import socket
 import Hdlc
 import MercatorDefines as d
 
+BAUDRATE = 500000
+TIMEOUT_RESPONSE = 3
+MAX_TIMEOUTS = 3
+
+STAT_UARTNUMRXCRCOK = 'uartNumRxCrcOk'
+STAT_UARTNUMRXCRCWRONG = 'uartNumRxCrcWrong'
+STAT_UARTNUMTX = 'uartNumTx'
 
 class MoteHandler(threading.Thread):
 
-    _BAUDRATE                     = 500000
-    TIMEOUT_RESPONSE              = 3
-
-    STAT_UARTNUMRXCRCOK           = 'uartNumRxCrcOk'
-    STAT_UARTNUMRXCRCWRONG        = 'uartNumRxCrcWrong'
-    STAT_UARTNUMTX                = 'uartNumTx'
-
-    def __init__(self, serialport, cb=None):
+    def __init__(self, serialport, cb=None, reset_cb=None):
 
         self.serialport           = serialport
         self.cb                   = cb
+        self.reset_cb             = reset_cb
         self.serialLock           = threading.Lock()
         self.dataLock             = threading.RLock()
         self.mac                  = None
@@ -36,13 +37,15 @@ class MoteHandler(threading.Thread):
         self.isActive             = True
         self.response             = None
         self._iotlab              = False
+        self.timeouts             = 0
         self._reset_stats()
+
         try:
             if self.iotlab:
                 self.serial       = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.serial.connect((serialport, 20000))
             else:
-                self.serial  = serial.Serial(self.serialport, self._BAUDRATE)
+                self.serial  = serial.Serial(self.serialport, BAUDRATE)
         except Exception as err:
             msg = 'could not connect to {0}, reason: {1}'.format(serialport, err)
             print msg
@@ -133,12 +136,17 @@ class MoteHandler(threading.Thread):
             )
         )
 
-        self.waitResponseEvent.wait(self.TIMEOUT_RESPONSE)
+        self.waitResponseEvent.wait(TIMEOUT_RESPONSE)
 
         if not self.waitResponseEvent.isSet():
             print "-----------timeout--------------" + self.serialport
             self.isActive = False
+            self.timeouts += 1
+            if self.timeouts > MAX_TIMEOUTS:
+                self.reset_cb(self)
             return
+        else:
+            self.timeouts = 0
 
         with self.dataLock:
             self.waitResponse          = False
