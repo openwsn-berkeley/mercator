@@ -144,6 +144,7 @@ class MoteHandler(threading.Thread):
             self.timeouts += 1
             if self.timeouts > MAX_TIMEOUTS:
                 self.reset_cb(self)
+                self.timeouts = 0
             return
         else:
             self.timeouts = 0
