@@ -103,9 +103,9 @@ class MoteHandler(threading.Thread):
                     try:
                         self.inputBuf        = self.hdlc.dehdlcify(self.inputBuf)
                     except Hdlc.HdlcException:
-                        self.stats[self.STAT_UARTNUMRXCRCWRONG] += 1
+                        self.stats[STAT_UARTNUMRXCRCWRONG] += 1
                     else:
-                        self.stats[self.STAT_UARTNUMRXCRCOK] += 1
+                        self.stats[STAT_UARTNUMRXCRCOK] += 1
                         self._handle_inputbuf([ord(b) for b in self.inputBuf])
 
                 self.lastRxByte = rx_byte
@@ -204,9 +204,9 @@ class MoteHandler(threading.Thread):
     def _reset_stats(self):
         with self.dataLock:
             self.stats = {
-                self.STAT_UARTNUMRXCRCOK       : 0,
-                self.STAT_UARTNUMRXCRCWRONG    : 0,
-                self.STAT_UARTNUMTX            : 0,
+                STAT_UARTNUMRXCRCOK       : 0,
+                STAT_UARTNUMRXCRCWRONG    : 0,
+                STAT_UARTNUMTX            : 0,
             }
 
     #=== serial rx
@@ -314,7 +314,7 @@ class MoteHandler(threading.Thread):
 
     def _send(self, data_to_send):
         with self.dataLock:
-            self.stats[self.STAT_UARTNUMTX] += 1
+            self.stats[STAT_UARTNUMTX] += 1
         with self.serialLock:
             hdlc_data = self.hdlc.hdlcify(data_to_send)
 
