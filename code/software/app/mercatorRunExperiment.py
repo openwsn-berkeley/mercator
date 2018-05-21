@@ -1,5 +1,13 @@
 #!/usr/bin/python
 
+# =========================== adjust path =====================================
+
+import os
+import sys
+if __name__ == '__main__':
+    here = sys.path[0]
+    sys.path.insert(0, os.path.join(here, '..', 'lib'))
+
 # =========================== imports =========================================
 
 import argparse
@@ -11,8 +19,8 @@ import gzip
 import socket
 
 # Mercator
-from ..lib import MoteHandler
-from ..lib import MercatorDefines as d
+import MoteHandler
+import MercatorDefines as d
 
 # IoT-lab
 import iotlabcli as iotlab
