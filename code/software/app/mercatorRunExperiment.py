@@ -250,7 +250,8 @@ class MercatorRunExperiment(object):
 
     def _reset_cb(self, mote):
         logfile.debug('restarting mote {0}'.format(mote.serialport))
-        node.node_command(self.api, 'reset', self.experiment_id, [mote.serialport])
+        mote_url = ".".join([mote.serialport, self.site, ".iot-lab.info"])
+        node.node_command(self.api, 'reset', self.experiment_id, [mote_url])
         logfile.debug('mote {0} restarted'.format(mote.serialport))
 
     @staticmethod
