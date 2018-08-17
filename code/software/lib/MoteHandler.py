@@ -12,7 +12,7 @@ import MercatorDefines as d
 
 class MoteHandler(threading.Thread):
 
-    _BAUDRATE                     = 500000
+    _BAUDRATE                     = 115200
     TIMEOUT_RESPONSE              = 3
 
     STAT_UARTNUMRXCRCOK           = 'uartNumRxCrcOk'
@@ -156,12 +156,14 @@ class MoteHandler(threading.Thread):
             )
         )
 
-    def send_REQ_TX(self, frequency, txpower, transctr, nbpackets, txifdur, txpksize, txfillbyte):
+    def send_REQ_TX(self, channel_spacing, frequency_0, channel, txpower, transctr, nbpackets, txifdur, txpksize, txfillbyte):
         self._send(
             struct.pack(
-                '>BBbHHHBB',
+                '>BHIHbHHHBB',
                 d.TYPE_REQ_TX,
-                frequency,
+                channel_spacing,
+                frequency_0,
+                channel,
                 txpower,
                 transctr,
                 nbpackets,
@@ -171,13 +173,15 @@ class MoteHandler(threading.Thread):
             )
         )
 
-    def send_REQ_RX(self, frequency, srcmac, transctr, txpksize, txfillbyte):
+    def send_REQ_RX(self, channel_spacing, frequency_0, channel, srcmac, transctr, txpksize, txfillbyte):
         [m0, m1, m2, m3, m4, m5, m6, m7] = srcmac
         self._send(
             struct.pack(
-                '>BBBBBBBBBBHBB',
+                '>BHIHBBBBBBBBHBB',
                 d.TYPE_REQ_RX,
-                frequency,
+                channel_spacing,
+                frequency_0,
+                channel,
                 m0, m1, m2, m3, m4, m5, m6, m7,
                 transctr,
                 txpksize,

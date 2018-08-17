@@ -89,7 +89,7 @@ class MercatorCli(object):
             if not self.motes[serialport].isActive:
                 del self.motes[serialport]
 
-    def _cli_list(self):
+    def _cli_list(self,params):
         output          = []
         with self.dataLock:
             output     += ['connected to {0} motes:'.format(len(self.motes))]
@@ -136,7 +136,9 @@ class MercatorCli(object):
 
         with self.dataLock:
             self.motes[serialport].send_REQ_TX(
-                frequency    = 0x14,
+                channel_spacing = 0x0,
+                frequency_0  = 0x0,
+                channel      = 0x1a,
                 txpower      = 0,
                 transctr     = 0x0a0a,
                 nbpackets    = 5,
@@ -159,8 +161,10 @@ class MercatorCli(object):
         with self.dataLock:
             for s in serialports:
                 self.motes[s].send_REQ_RX(
-                    frequency    = 0x14,
-                    srcmac       = [0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88],
+                    channel_spacing = 0x0,
+                    frequency_0  = 0x0,
+                    channel      = 0x1a,
+                    srcmac       = [0, 18, 75, 0, 20, 181, 181, 61],
                     transctr     = 0x0a0a,
                     txpksize     = 100,
                     txfillbyte   = 0x0b,
