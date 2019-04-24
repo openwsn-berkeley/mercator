@@ -24,7 +24,7 @@ import MercatorDefines as d
 
 # IoT-lab
 import iotlabcli as iotlab
-from iotlabcli import experiment
+from iotlabcli import experiment, node
 
 # =========================== logging =========================================
 
@@ -40,7 +40,6 @@ DATASET_PATH    = "./"
 METAS_PATH      = "../../../metas/"
 
 # =========================== body ============================================
-
 
 class MercatorRunExperiment(object):
 
@@ -62,20 +61,33 @@ class MercatorRunExperiment(object):
         self.nbpackets       = args.nbpackets
         self.txpksize        = args.txpksize
         self.txpower         = args.txpower
+        self.experiment_id   = args.expid
+
+        # use the file created by auth-cli command
+        usr, pwd = iotlab.get_user_credentials()
+
+        # authenticate through the REST interface
+        self.api = iotlab.rest.Api(usr, pwd)
 
         # connect to motes
         for s in serialports:
             logfile.debug("connected to %s", s)
-            self.motes[s]    = MoteHandler.MoteHandler(s, self._cb)
+            self.motes[s]    = MoteHandler.MoteHandler(s, self._cb, reset_cb=self._reset_cb)
             if not self.motes[s].isActive:
-                logconsole.info("DELETED %s", s)
-                del self.motes[s]
+                raise Exception("Mote {0} is not responding.".format(s))
 
+        # get current datetime
         now = datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S")
-        self.file = gzip.open('{0}{1}-{2}_raw.csv.gz'.format(DATASET_PATH,
-                                                             self.site,
-                                                             now),
-                              'wb')
+
+        # open file
+        self.file = gzip.open(
+            '{0}{1}-{2}_raw.csv.gz'.format(
+                DATASET_PATH,
+                self.site,
+                now
+            ),
+            'wb'
+        )
 
         # write settings
         settings = {
@@ -85,7 +97,7 @@ class MercatorRunExperiment(object):
             "tx_count": self.nbpackets,
             "transaction_count": self.nbtrans,
             "node_count": len(self.motes),
-            "site": self.site,
+            "location": self.site,
             "channel_count": len(self.FREQUENCIES),
             "start_date": now,
             "txpower": self.txpower
@@ -94,7 +106,7 @@ class MercatorRunExperiment(object):
         self.file.write('\n')
 
         # write csv header
-        self.file.write('datetime,src,dst,frequency,rssi,crc,expected,' +
+        self.file.write('datetime,src,dst,channel,rssi,crc,expected,' +
                         'transaction_id,pkctr\n')
 
         try:
@@ -235,6 +247,12 @@ class MercatorRunExperiment(object):
             elif notif['type'] == d.TYPE_IND_UP:
                 logfile.debug("Node %s restarted",
                               d.format_mac(self.motes[serialport].get_mac()))
+
+    def _reset_cb(self, mote):
+        logfile.debug('restarting mote {0}'.format(mote.serialport))
+        mote_url = ".".join([mote.serialport, self.site, "iot-lab.info"])
+        node.node_command(self.api, 'reset', self.experiment_id, [mote_url])
+        logfile.debug('mote {0} restarted'.format(mote.serialport))
 
     @staticmethod
     def _quit_callback():

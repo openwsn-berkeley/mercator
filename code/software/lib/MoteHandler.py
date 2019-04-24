@@ -9,20 +9,21 @@ import socket
 import Hdlc
 import MercatorDefines as d
 
+BAUDRATE = 500000
+TIMEOUT_RESPONSE = 3
+MAX_TIMEOUTS = 3
+
+STAT_UARTNUMRXCRCOK = 'uartNumRxCrcOk'
+STAT_UARTNUMRXCRCWRONG = 'uartNumRxCrcWrong'
+STAT_UARTNUMTX = 'uartNumTx'
 
 class MoteHandler(threading.Thread):
 
-    _BAUDRATE                     = 500000
-    TIMEOUT_RESPONSE              = 3
-
-    STAT_UARTNUMRXCRCOK           = 'uartNumRxCrcOk'
-    STAT_UARTNUMRXCRCWRONG        = 'uartNumRxCrcWrong'
-    STAT_UARTNUMTX                = 'uartNumTx'
-
-    def __init__(self, serialport, cb=None):
+    def __init__(self, serialport, cb=None, reset_cb=None):
 
         self.serialport           = serialport
         self.cb                   = cb
+        self.reset_cb             = reset_cb
         self.serialLock           = threading.Lock()
         self.dataLock             = threading.RLock()
         self.mac                  = None
@@ -36,13 +37,15 @@ class MoteHandler(threading.Thread):
         self.isActive             = True
         self.response             = None
         self._iotlab              = False
+        self.timeouts             = 0
         self._reset_stats()
+
         try:
             if self.iotlab:
                 self.serial       = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.serial.connect((serialport, 20000))
             else:
-                self.serial  = serial.Serial(self.serialport, self._BAUDRATE)
+                self.serial  = serial.Serial(self.serialport, BAUDRATE)
         except Exception as err:
             msg = 'could not connect to {0}, reason: {1}'.format(serialport, err)
             print msg
@@ -100,9 +103,9 @@ class MoteHandler(threading.Thread):
                     try:
                         self.inputBuf        = self.hdlc.dehdlcify(self.inputBuf)
                     except Hdlc.HdlcException:
-                        self.stats[self.STAT_UARTNUMRXCRCWRONG] += 1
+                        self.stats[STAT_UARTNUMRXCRCWRONG] += 1
                     else:
-                        self.stats[self.STAT_UARTNUMRXCRCOK] += 1
+                        self.stats[STAT_UARTNUMRXCRCOK] += 1
                         self._handle_inputbuf([ord(b) for b in self.inputBuf])
 
                 self.lastRxByte = rx_byte
@@ -133,12 +136,18 @@ class MoteHandler(threading.Thread):
             )
         )
 
-        self.waitResponseEvent.wait(self.TIMEOUT_RESPONSE)
+        self.waitResponseEvent.wait(TIMEOUT_RESPONSE)
 
         if not self.waitResponseEvent.isSet():
             print "-----------timeout--------------" + self.serialport
             self.isActive = False
+            self.timeouts += 1
+            if self.timeouts > MAX_TIMEOUTS:
+                self.reset_cb(self)
+                self.timeouts = 0
             return
+        else:
+            self.timeouts = 0
 
         with self.dataLock:
             self.waitResponse          = False
@@ -196,9 +205,9 @@ class MoteHandler(threading.Thread):
     def _reset_stats(self):
         with self.dataLock:
             self.stats = {
-                self.STAT_UARTNUMRXCRCOK       : 0,
-                self.STAT_UARTNUMRXCRCWRONG    : 0,
-                self.STAT_UARTNUMTX            : 0,
+                STAT_UARTNUMRXCRCOK       : 0,
+                STAT_UARTNUMRXCRCWRONG    : 0,
+                STAT_UARTNUMTX            : 0,
             }
 
     #=== serial rx
@@ -306,7 +315,7 @@ class MoteHandler(threading.Thread):
 
     def _send(self, data_to_send):
         with self.dataLock:
-            self.stats[self.STAT_UARTNUMTX] += 1
+            self.stats[STAT_UARTNUMTX] += 1
         with self.serialLock:
             hdlc_data = self.hdlc.hdlcify(data_to_send)
 
