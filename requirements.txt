@@ -1,3 +1,20 @@
-pyserial
-importlib
-iotlabcli==2.5.2
+colored
+cryptography==2.4.2
+halo
+iotlabcli
+## iotlabclient is not available via pip right now; needs to be installed manually
+#iotlabclient
+matplotlib
+netaddr
+networkx
+numpy
+pandas
+paho-mqtt
+pytest
+python-dateutil
+PyYAML
+scipy
+seaborn
+statsmodels
+tqdm
+websocket-client

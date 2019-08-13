@@ -1,0 +1,40 @@
+platform:
+  name: iotlab
+  experiment_duration_min: 60
+  nodes: &nodes
+    - m3-2.grenoble.iot-lab.info
+    - m3-4.grenoble.iot-lab.info
+    - m3-5.grenoble.iot-lab.info
+    - m3-9.grenoble.iot-lab.info
+    - m3-11.grenoble.iot-lab.info
+    - m3-13.grenoble.iot-lab.info
+    - m3-14.grenoble.iot-lab.info
+  firmware:
+    os: OpenWSN
+    archi: M3
+    path: firmwares/openwsn-iot-lab_M3.elf
+
+measurement:
+  num_transactions: 5
+  channels: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
+  tx_nodes: *nodes
+  tx_len: 100
+  tx_interval_ms: 10
+  tx_num_per_transaction: 100
+  tx_fill_byte: 0x5a
+
+logging:
+  version: 1
+  formatters:
+    default:
+      format: '%(asctime)s: [%(levelname)s] %(message)s'
+  handlers:
+    file:
+      class: logging.handlers.RotatingFileHandler
+      formatter: default
+      filename: mercator.log
+      maxBytes: 1048576  # 1MB
+      backupCount: 2
+  root:
+    level: INFO
+    handlers: [file]
